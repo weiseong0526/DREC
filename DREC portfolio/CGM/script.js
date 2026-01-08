@@ -138,9 +138,6 @@ const translations = {
 const form = document.getElementById('cgmForm');
 const heightInput = document.getElementById('height');
 const weightInput = document.getElementById('weight');
-const bmiDisplay = document.getElementById('bmiDisplay');
-const bmiValue = document.getElementById('bmiValue');
-const bmiCategory = document.getElementById('bmiCategory');
 const reportSection = document.getElementById('report');
 const reportContent = document.getElementById('reportContent');
 const formSection = document.querySelector('.form-section');
@@ -191,45 +188,35 @@ if (navToggle) {
     });
 }
 
-// Calculate BMI in real-time
-function calculateBMI() {
-    const height = parseFloat(heightInput.value) / 100; // Convert cm to meters
-    const weight = parseFloat(weightInput.value);
+// Get age-adjusted BMI ranges
+function getBMIRangesByAge(age) {
+    const ageNum = parseInt(age) || 25; // Default to 25 if age not provided
     
-    if (height > 0 && weight > 0) {
-        const bmi = weight / (height * height);
-        const roundedBMI = bmi.toFixed(1);
-        
-        bmiValue.textContent = roundedBMI;
-        
-        let category = '';
-        let statusClass = '';
-        
-        if (bmi < 18.5) {
-            category = '体重过轻 / Underweight';
-            statusClass = 'status-warning';
-        } else if (bmi < 24.9) {
-            category = '正常范围 / Normal Range';
-            statusClass = 'status-normal';
-        } else if (bmi < 29.9) {
-            category = '体重过重 / Overweight';
-            statusClass = 'status-warning';
-        } else {
-            category = '肥胖 / Obese';
-            statusClass = 'status-danger';
-        }
-        
-        bmiCategory.textContent = category;
-        bmiCategory.className = `bmi-category ${statusClass}`;
-        bmiDisplay.style.display = 'block';
+    if (ageNum < 18) {
+        // For children and teens, use standard ranges (simplified)
+        return { underweight: 18.5, normal: 24.9, overweight: 29.9 };
+    } else if (ageNum < 25) {
+        // 18-24: Standard range
+        return { underweight: 18.5, normal: 24.9, overweight: 29.9 };
+    } else if (ageNum < 35) {
+        // 25-34: Standard range
+        return { underweight: 18.5, normal: 24.9, overweight: 29.9 };
+    } else if (ageNum < 45) {
+        // 35-44: Standard range
+        return { underweight: 18.5, normal: 24.9, overweight: 29.9 };
+    } else if (ageNum < 55) {
+        // 45-54: Slightly more lenient
+        return { underweight: 18.5, normal: 26.9, overweight: 29.9 };
+    } else if (ageNum < 65) {
+        // 55-64: More lenient for older adults
+        return { underweight: 18.5, normal: 27.9, overweight: 29.9 };
     } else {
-        bmiDisplay.style.display = 'none';
+        // 65+: Most lenient (slightly higher BMI may be healthier for elderly)
+        return { underweight: 18.5, normal: 27.9, overweight: 29.9 };
     }
 }
 
-// Event listeners for BMI calculation
-heightInput.addEventListener('input', calculateBMI);
-weightInput.addEventListener('input', calculateBMI);
+// Real-time BMI calculation removed - BMI will only be displayed in report after submission
 
 // Form submission handler
 form.addEventListener('submit', function(e) {
@@ -374,6 +361,7 @@ function generateReport(data) {
         
         <div class="report-section-item">
             <h3 class="report-section-title">BMI (身体质量指数) / Body Mass Index</h3>
+            ${data.bmi ? generateBMIGauge(data.bmi, data.patientAge) : ''}
             <div class="report-data-grid">
                 <div class="report-data-item">
                     <div class="report-data-label">身高 / Height</div>
@@ -387,11 +375,11 @@ function generateReport(data) {
                     <div class="report-data-label">BMI</div>
                     <div class="report-data-value">
                         ${data.bmi || '无法计算 / Cannot calculate'}
-                        ${data.bmi ? getBMIStatus(data.bmi) : ''}
+                        ${data.bmi ? getBMIStatus(data.bmi, data.patientAge) : ''}
                     </div>
                 </div>
             </div>
-            ${generateBMIAnalysis(data.bmi)}
+            ${generateBMIAnalysis(data.bmi, data.patientAge)}
         </div>
         
         <div class="report-section-item">
@@ -578,11 +566,20 @@ function generateReport(data) {
 }
 
 // Helper functions for status indicators
-function getBMIStatus(bmi) {
+function getBMIStatus(bmi, age) {
     const bmiNum = parseFloat(bmi);
-    if (bmiNum < 18.5) return `<span class="report-status status-warning">体重过轻 / Underweight</span>`;
-    if (bmiNum < 24.9) return `<span class="report-status status-normal">正常范围 / Normal Range</span>`;
-    if (bmiNum < 29.9) return `<span class="report-status status-warning">体重过重 / Overweight</span>`;
+    const ageNum = parseInt(age) || 25;
+    const ranges = getBMIRangesByAge(ageNum);
+    
+    if (bmiNum < ranges.underweight) {
+        return `<span class="report-status status-warning">体重过轻 / Underweight</span>`;
+    }
+    if (bmiNum < ranges.normal) {
+        return `<span class="report-status status-normal">正常范围 / Normal Range</span>`;
+    }
+    if (bmiNum < ranges.overweight) {
+        return `<span class="report-status status-warning">体重过重 / Overweight</span>`;
+    }
     return `<span class="report-status status-danger">肥胖 / Obese</span>`;
 }
 
@@ -741,20 +738,214 @@ function getAlcoholText(alcohol) {
     return map[alcohol] || '未填写 / Not filled';
 }
 
-// Analysis generation functions - Bilingual
-function generateBMIAnalysis(bmi) {
+// Generate BMI Gauge Visualization - Redesigned
+function generateBMIGauge(bmi, age) {
     if (!bmi) return '';
     const bmiNum = parseFloat(bmi);
+    const ageNum = parseInt(age) || 25;
+    const ranges = getBMIRangesByAge(ageNum);
+    
+    // Determine category and color
+    let category = '';
+    let categoryEn = '';
+    let gaugeColor = '#ff6b6b';
+    
+    if (bmiNum < ranges.underweight) {
+        category = '体重过轻';
+        categoryEn = 'Underweight';
+        gaugeColor = '#ff6b6b';
+    } else if (bmiNum < ranges.normal) {
+        category = '正常范围';
+        categoryEn = 'Normal';
+        gaugeColor = '#51cf66';
+    } else if (bmiNum < ranges.overweight) {
+        category = '体重过重';
+        categoryEn = 'Overweight';
+        gaugeColor = '#ffd43b';
+    } else {
+        category = '肥胖';
+        categoryEn = 'Obesity';
+        gaugeColor = '#ff6b6b';
+    }
+    
+    // Calculate needle position (0-180 degrees for semicircle)
+    // BMI range: 16-40, map to 0-180 degrees
+    const minBMI = 16;
+    const maxBMI = 40;
+    const normalizedBMI = Math.max(minBMI, Math.min(maxBMI, bmiNum));
+    const needleAngle = ((normalizedBMI - minBMI) / (maxBMI - minBMI)) * 180;
+    
+    // Convert angle to radians for SVG
+    const needleRad = (needleAngle - 90) * Math.PI / 180;
+    const centerX = 200;
+    const centerY = 200;
+    const radius = 150;
+    
+    // Calculate needle end point
+    const needleX = centerX + radius * Math.cos(needleRad);
+    const needleY = centerY + radius * Math.sin(needleRad);
+    
+    // Calculate segment breakpoints
+    function bmiToAngle(bmiValue) {
+        return ((Math.max(minBMI, Math.min(maxBMI, bmiValue)) - minBMI) / (maxBMI - minBMI)) * 180;
+    }
+    
+    function angleToPoint(angle, r) {
+        const rad = (angle - 90) * Math.PI / 180;
+        return {
+            x: centerX + r * Math.cos(rad),
+            y: centerY + r * Math.sin(rad)
+        };
+    }
+    
+    const angle18_5 = bmiToAngle(18.5);
+    const angle25 = bmiToAngle(25);
+    const angle30 = bmiToAngle(30);
+    const angle35 = bmiToAngle(35);
+    const angle40 = bmiToAngle(40);
+    
+    const p0 = angleToPoint(0, radius);
+    const p18_5 = angleToPoint(angle18_5, radius);
+    const p25 = angleToPoint(angle25, radius);
+    const p30 = angleToPoint(angle30, radius);
+    const p35 = angleToPoint(angle35, radius);
+    const p40 = angleToPoint(angle40, radius);
+    const p180 = angleToPoint(180, radius);
+    
+    // Label positions
+    const labelRadius = radius + 25;
+    const label16 = angleToPoint(bmiToAngle(16), labelRadius);
+    const label17 = angleToPoint(bmiToAngle(17), labelRadius);
+    const label18_5 = angleToPoint(angle18_5, labelRadius);
+    const label25 = angleToPoint(angle25, labelRadius);
+    const label30 = angleToPoint(angle30, labelRadius);
+    const label35 = angleToPoint(angle35, labelRadius);
+    const label40 = angleToPoint(angle40, labelRadius);
+    
+    // Create gauge HTML with SVG
+    const gaugeHTML = `
+        <div class="bmi-gauge-container">
+            <div class="bmi-gauge-header">
+                <h4>BMI = ${bmiNum} kg/m² (${category} / ${categoryEn})</h4>
+            </div>
+            <div class="bmi-gauge-wrapper">
+                <svg class="bmi-gauge" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Main semicircle arc background -->
+                    <path d="M ${p0.x} ${p0.y} A ${radius} ${radius} 0 0 1 ${p180.x} ${p180.y}" 
+                          fill="none" 
+                          stroke="#e9ecef" 
+                          stroke-width="20" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Red segment: Underweight (16-18.5) -->
+                    <path d="M ${p0.x} ${p0.y} A ${radius} ${radius} 0 0 1 ${p18_5.x} ${p18_5.y}" 
+                          fill="none" 
+                          stroke="#ff6b6b" 
+                          stroke-width="20" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Green segment: Normal (18.5 to normal range, but show up to 25 for visual) -->
+                    <path d="M ${p18_5.x} ${p18_5.y} A ${radius} ${radius} 0 0 1 ${p25.x} ${p25.y}" 
+                          fill="none" 
+                          stroke="#51cf66" 
+                          stroke-width="20" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Extended green to show normal range (25 to adjusted normal) -->
+                    ${ranges.normal > 25 ? `
+                    <path d="M ${p25.x} ${p25.y} A ${radius} ${radius} 0 0 1 ${angleToPoint(bmiToAngle(ranges.normal), radius).x} ${angleToPoint(bmiToAngle(ranges.normal), radius).y}" 
+                          fill="none" 
+                          stroke="#51cf66" 
+                          stroke-width="20" 
+                          stroke-linecap="round"/>
+                    ` : ''}
+                    
+                    <!-- Yellow segment: Overweight (normal range to 30) -->
+                    <path d="M ${angleToPoint(bmiToAngle(ranges.normal), radius).x} ${angleToPoint(bmiToAngle(ranges.normal), radius).y} A ${radius} ${radius} 0 0 1 ${p30.x} ${p30.y}" 
+                          fill="none" 
+                          stroke="#ffd43b" 
+                          stroke-width="20" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Red segment: Obesity (30-40) -->
+                    <path d="M ${p30.x} ${p30.y} A ${radius} ${radius} 0 0 1 ${p180.x} ${p180.y}" 
+                          fill="none" 
+                          stroke="#ff6b6b" 
+                          stroke-width="20" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Needle -->
+                    <line x1="${centerX}" y1="${centerY}" 
+                          x2="${needleX}" y2="${needleY}" 
+                          stroke="${gaugeColor}" 
+                          stroke-width="4" 
+                          stroke-linecap="round"/>
+                    <circle cx="${centerX}" cy="${centerY}" r="6" fill="${gaugeColor}"/>
+                    
+                    <!-- BMI value in center -->
+                    <text x="${centerX}" y="${centerY + 10}" 
+                          font-size="48" 
+                          font-weight="700" 
+                          fill="#1a1a1a" 
+                          text-anchor="middle" 
+                          font-family="Arial, sans-serif">${bmiNum}</text>
+                    
+                    <!-- Labels on arc -->
+                    <text x="${label16.x}" y="${label16.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">16</text>
+                    <text x="${label17.x}" y="${label17.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">17</text>
+                    <text x="${label18_5.x}" y="${label18_5.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">18.5</text>
+                    <text x="${label25.x}" y="${label25.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">25</text>
+                    <text x="${label30.x}" y="${label30.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">30</text>
+                    <text x="${label35.x}" y="${label35.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">35</text>
+                    <text x="${label40.x}" y="${label40.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">40</text>
+                </svg>
+            </div>
+            
+            <!-- Linear scale for low BMI values (16-18.5) -->
+            <div class="bmi-linear-scale">
+                <div class="linear-scale-line">
+                    <div class="scale-segment red-segment" style="width: 60%;"></div>
+                    <div class="scale-marker" style="left: 0%;">16</div>
+                    <div class="scale-marker" style="left: 20%;">17</div>
+                    <div class="scale-marker red-dot" style="left: 60%;">18.5</div>
+                </div>
+            </div>
+            
+            <div class="bmi-gauge-info">
+                <p><strong>健康BMI范围 / Healthy BMI Range:</strong> ${ranges.underweight} kg/m² - ${ranges.normal} kg/m²</p>
+                <p><strong>根据您的年龄 / Based on your age:</strong> ${ageNum} 岁 / years old</p>
+            </div>
+        </div>
+    `;
+    
+    return gaugeHTML;
+}
+
+// Analysis generation functions - Bilingual
+function generateBMIAnalysis(bmi, age) {
+    if (!bmi) return '';
+    const bmiNum = parseFloat(bmi);
+    const ageNum = parseInt(age) || 25;
+    const ranges = getBMIRangesByAge(ageNum);
+    
     let analysis = '<div class="report-analysis"><h4>BMI 分析 / BMI Analysis</h4><p>';
     
-    if (bmiNum < 18.5) {
-        analysis += '您的 BMI 显示体重过轻。建议增加健康体重，通过均衡饮食和适当运动来改善。<br>Your BMI indicates underweight. It is recommended to increase healthy weight through balanced diet and appropriate exercise.';
-    } else if (bmiNum < 24.9) {
-        analysis += '您的 BMI 在正常范围内，这是良好的健康指标。请继续维持健康的生活习惯。<br>Your BMI is within the normal range, which is a good health indicator. Please continue to maintain healthy lifestyle habits.';
-    } else if (bmiNum < 29.9) {
-        analysis += '您的 BMI 显示体重过重。建议通过饮食控制和规律运动来减重，以 降低相关健康风险。<br>Your BMI indicates overweight. It is recommended to lose weight through diet control and regular exercise to reduce related health risks.';
+    // Add age-specific note
+    let ageNote = '';
+    if (ageNum >= 45 && ageNum < 55) {
+        ageNote = '根据您的年龄（45-54岁），BMI正常范围可适当放宽至26.9。<br>Based on your age (45-54 years), the normal BMI range can be appropriately extended to 26.9.';
+    } else if (ageNum >= 55) {
+        ageNote = '根据您的年龄（55岁以上），BMI正常范围可适当放宽至27.9。对于老年人，稍微高一点的BMI可能更健康。<br>Based on your age (55+ years), the normal BMI range can be appropriately extended to 27.9. For older adults, a slightly higher BMI may be healthier.';
+    }
+    
+    if (bmiNum < ranges.underweight) {
+        analysis += `您的 BMI 显示体重过轻。建议增加健康体重，通过均衡饮食和适当运动来改善。${ageNote ? '<br>' + ageNote : ''}<br>Your BMI indicates underweight. It is recommended to increase healthy weight through balanced diet and appropriate exercise.`;
+    } else if (bmiNum < ranges.normal) {
+        analysis += `您的 BMI 在正常范围内（根据您的年龄调整），这是良好的健康指标。请继续维持健康的生活习惯。${ageNote ? '<br>' + ageNote : ''}<br>Your BMI is within the normal range (adjusted for your age), which is a good health indicator. Please continue to maintain healthy lifestyle habits.`;
+    } else if (bmiNum < ranges.overweight) {
+        analysis += `您的 BMI 显示体重过重。建议通过饮食控制和规律运动来减重，以降低相关健康风险。${ageNote ? '<br>' + ageNote : ''}<br>Your BMI indicates overweight. It is recommended to lose weight through diet control and regular exercise to reduce related health risks.`;
     } else {
-        analysis += '您的 BMI 显示肥胖，这可能增加多种健康风险。强烈建议寻求专业医疗建议，制定减重计划。<br>Your BMI indicates obesity, which may increase various health risks. It is strongly recommended to seek professional medical advice and create a weight loss plan.';
+        analysis += `您的 BMI 显示肥胖，这可能增加多种健康风险。强烈建议寻求专业医疗建议，制定减重计划。${ageNote ? '<br>' + ageNote : ''}<br>Your BMI indicates obesity, which may increase various health risks. It is strongly recommended to seek professional medical advice and create a weight loss plan.`;
     }
     
     analysis += '</p></div>';
@@ -793,8 +984,11 @@ function generateObesityAnalysis(data) {
     
     if (data.bmi) {
         const bmiNum = parseFloat(data.bmi);
-        if (bmiNum >= 25) {
-            analysis += '根据您的 BMI 和相关指标，您可能有较高的肥胖相关健康风险。<br>Based on your BMI and related indicators, you may have a higher risk of obesity-related health issues.';
+        const ageNum = parseInt(data.patientAge) || 25;
+        const ranges = getBMIRangesByAge(ageNum);
+        
+        if (bmiNum >= ranges.normal) {
+            analysis += `根据您的 BMI 和相关指标（已根据您的年龄${ageNum}岁调整），您可能有较高的肥胖相关健康风险。<br>Based on your BMI and related indicators (adjusted for your age of ${ageNum} years), you may have a higher risk of obesity-related health issues.`;
         }
     }
     
@@ -855,13 +1049,16 @@ function generateLifestyleAnalysis(data) {
 function generateRecommendations(data) {
     let recommendations = '<div class="report-recommendations"><h4>健康建议 / Health Recommendations</h4><ul>';
     
-    // BMI recommendations
+    // BMI recommendations (age-adjusted)
     if (data.bmi) {
         const bmiNum = parseFloat(data.bmi);
-        if (bmiNum >= 25) {
+        const ageNum = parseInt(data.patientAge) || 25;
+        const ranges = getBMIRangesByAge(ageNum);
+        
+        if (bmiNum >= ranges.normal) {
             recommendations += '<li>制定减重计划，目标是每周减重 0.5-1 公斤 / Create a weight loss plan, aiming to lose 0.5-1 kg per week</li>';
             recommendations += '<li>减少高热量、高糖分食物的摄取 / Reduce intake of high-calorie and high-sugar foods</li>';
-        } else if (bmiNum < 18.5) {
+        } else if (bmiNum < ranges.underweight) {
             recommendations += '<li>增加健康体重，通过均衡营养和适当运动 / Increase healthy weight through balanced nutrition and appropriate exercise</li>';
         }
     }
@@ -915,7 +1112,6 @@ function showForm() {
     formSection.style.display = 'block';
     formSection.scrollIntoView({ behavior: 'smooth' });
     form.reset();
-    bmiDisplay.style.display = 'none';
     // Destroy chart if exists
     if (window.riskChartInstance) {
         window.riskChartInstance.destroy();
@@ -955,8 +1151,11 @@ function calculateHealthRisks(data) {
     }
     if (data.bmi) {
         const bmi = parseFloat(data.bmi);
+        const ageNum = parseInt(data.patientAge) || 25;
+        const ranges = getBMIRangesByAge(ageNum);
+        
         if (bmi >= 30) diabetesScore += 15;
-        else if (bmi >= 25) diabetesScore += 10;
+        else if (bmi >= ranges.normal) diabetesScore += 10;
     }
     if (data.exerciseFrequency === 'none' || data.exerciseFrequency === 'light') {
         diabetesScore += 10;
@@ -979,8 +1178,13 @@ function calculateHealthRisks(data) {
         if (diastolic >= 90) hypertensionScore += 30;
         else if (diastolic >= 80) hypertensionScore += 20;
     }
-    if (data.bmi && parseFloat(data.bmi) >= 25) {
-        hypertensionScore += 15;
+    if (data.bmi) {
+        const bmi = parseFloat(data.bmi);
+        const ageNum = parseInt(data.patientAge) || 25;
+        const ranges = getBMIRangesByAge(ageNum);
+        if (bmi >= ranges.normal) {
+            hypertensionScore += 15;
+        }
     }
     if (data.smoking === 'regular' || data.smoking === 'occasional') {
         hypertensionScore += 10;
@@ -1000,8 +1204,17 @@ function calculateHealthRisks(data) {
         if (chol >= 240) cardiovascularScore += 25;
         else if (chol >= 200) cardiovascularScore += 15;
     }
-    if (data.bmi && parseFloat(data.bmi) >= 30) {
-        cardiovascularScore += 20;
+    if (data.bmi) {
+        const bmi = parseFloat(data.bmi);
+        if (bmi >= 30) {
+            cardiovascularScore += 20;
+        } else {
+            const ageNum = parseInt(data.patientAge) || 25;
+            const ranges = getBMIRangesByAge(ageNum);
+            if (bmi >= ranges.normal) {
+                cardiovascularScore += 10;
+            }
+        }
     }
     if (data.smoking === 'regular') {
         cardiovascularScore += 20;
@@ -1014,12 +1227,16 @@ function calculateHealthRisks(data) {
     }
     risks.cardiovascular = Math.min(cardiovascularScore, 100);
     
-    // Obesity Risk Calculation
+    // Obesity Risk Calculation (age-adjusted)
     let obesityScore = 0;
     if (data.bmi) {
         const bmi = parseFloat(data.bmi);
+        const ageNum = parseInt(data.patientAge) || 25;
+        const ranges = getBMIRangesByAge(ageNum);
+        
         if (bmi >= 30) obesityScore += 40;
-        else if (bmi >= 25) obesityScore += 25;
+        else if (bmi >= ranges.normal) obesityScore += 25;
+        else if (bmi >= ranges.overweight) obesityScore += 15;
     }
     if (data.waistCircumference) {
         const waist = parseFloat(data.waistCircumference);
