@@ -1,37 +1,33 @@
 <!DOCTYPE html>
-<html lang="zh-TW" id="htmlLang">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="theme-color" content="#2c5f8d">
-    <meta name="description" content="醫生Chang - 專業血糖管理專家，幫助您逆轉糖路，重獲健康主導權">
-    <title data-zh="醫生Chang | 專業血糖管理專家" data-en="Dr. Chang | Professional Blood Sugar Management Expert">醫生Chang | 專業血糖管理專家</title>
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="逆转我的糖路之旅 - 專業血糖管理專家，幫助您逆轉糖路，重獲健康主導權">
+    <title>逆转糖路 | 逆转我的糖路之旅</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <h2 data-zh="醫生Chang" data-en="Dr. Chang">醫生Chang</h2>
-                <span class="subtitle" data-zh="專業血糖管理" data-en="Professional Blood Sugar Management">專業血糖管理</span>
+                <h2>醫生Chang</h2>
             </div>
             <ul class="nav-menu">
-                <li><a href="#home" data-zh="首頁" data-en="Home">首頁</a></li>
-                <li><a href="#about" data-zh="關於醫生" data-en="About Doctor">關於醫生</a></li>
-                <li><a href="#services" data-zh="服務項目" data-en="Services">服務項目</a></li>
-                <li><a href="#testimonials" data-zh="見證分享" data-en="Testimonials">見證分享</a></li>
-                <li><a href="#faq" data-zh="常見問題" data-en="FAQ">常見問題</a></li>
-                <li><a href="#contact" data-zh="聯絡我們" data-en="Contact">聯絡我們</a></li>
+                <li><a href="#home">首頁</a></li>
+                <li><a href="#about">關於醫生</a></li>
+                <li><a href="#services">服務項目</a></li>
+                <li><a href="#testimonials">見證分享</a></li>
+                <li><a href="#blog">媒體報導</a></li>
+                <li><a href="#contact">聯絡我們</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="lang-toggle" id="langToggle" aria-label="Toggle language">
-                    <span class="lang-current">中文</span>
-                    <span class="lang-arrow">⇄</span>
-                </button>
+                <a href="#contact" class="btn-login">聯絡我們</a>
             </div>
             <button class="nav-toggle" aria-label="Toggle navigation">
                 <span></span>
@@ -44,259 +40,501 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-overlay"></div>
+        <div class="hero-pattern"></div>
         <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title" data-zh="逆轉我的糖路之旅！" data-en="Reverse My Diabetes Journey!">逆轉我的糖路之旅！</h1>
-                <p class="hero-subtitle" data-zh="專業醫生指導，科學方法管理，重獲健康主導權" data-en="Professional doctor guidance, scientific management methods, regain control of your health">專業醫生指導，科學方法管理，重獲健康主導權</p>
-                <div class="hero-highlight">
-                    <div class="highlight-box">
-                        <span class="highlight-date" data-zh="1月12日（星期一）" data-en="January 12 (Monday)">1月12日（星期一）</span>
-                        <span class="highlight-time">8PM - 10PM | ZOOM</span>
-                        <span class="highlight-duration" data-zh="120分鐘線上分享會" data-en="120-minute Online Workshop">120分鐘線上分享會</span>
-                        <span class="highlight-free" data-zh="免費參與，名額有限" data-en="Free Participation, Limited Seats">免費參與，名額有限</span>
-                        <span class="highlight-note" data-zh="長者也能輕鬆跟上" data-en="Seniors can easily follow along">長者也能輕鬆跟上</span>
+            <div class="hero-wrapper">
+                <div class="hero-content">
+                    <div class="hero-banner">糖尿病不是終點，而是改變的起點！</div>
+                    <div class="event-date">1月12日（星期一）</div>
+                    <div class="event-time">8PM - 10PM | ZOOM</div>
+                    <h1 class="hero-title">逆转我的糖路之旅！</h1>
+                    <h2 class="hero-subtitle">專業醫生指導，科學方法管理，重獲健康主導權</h2>
+                    <p class="hero-description">120分鐘線上分享會 | 免費參與，名額有限 | 長者也能輕鬆跟上</p>
+                    <div class="hero-messages">
+                        <div class="message-blue">打破對控糖的恐懼</div>
+                        <div class="message-red">用策略穩定血糖</div>
                     </div>
                 </div>
-                <a href="#contact" class="btn btn-primary btn-large" data-zh="立即報名參加" data-en="Register Now">立即報名參加</a>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span data-zh="向下滑動" data-en="Scroll Down">向下滑動</span>
-            <div class="arrow-down"></div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="section-header">
-                <h2 data-zh="關於醫生Chang" data-en="About Dr. Chang">關於醫生Chang</h2>
-                <p class="section-subtitle" data-zh="專業、用心、值得信賴的健康夥伴" data-en="Professional, caring, and trustworthy health partner">專業、用心、值得信賴的健康夥伴</p>
-            </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <h3 data-zh="專業醫療背景" data-en="Professional Medical Background">專業醫療背景</h3>
-                    <p data-zh="醫生Chang擁有豐富的臨床經驗，專注於血糖管理與代謝健康領域。透過科學化的飲食指導與個人化治療方案，幫助無數患者成功改善血糖狀況，減少藥物依賴，重獲健康生活品質。" data-en="Dr. Chang has extensive clinical experience, specializing in blood sugar management and metabolic health. Through scientific dietary guidance and personalized treatment plans, he has helped countless patients successfully improve their blood sugar levels, reduce medication dependence, and regain a healthy quality of life.">醫生Chang擁有豐富的臨床經驗，專注於血糖管理與代謝健康領域。透過科學化的飲食指導與個人化治療方案，幫助無數患者成功改善血糖狀況，減少藥物依賴，重獲健康生活品質。</p>
-                    
-                    <h3 data-zh="個人化關懷" data-en="Personalized Care">個人化關懷</h3>
-                    <p data-zh="不同於傳統醫療模式，醫生Chang親自追蹤每位患者的血糖記錄，提供即時指導與調整建議。他相信每個人的身體狀況都是獨特的，因此需要量身定制的管理方案。" data-en="Unlike traditional medical models, Dr. Chang personally tracks each patient's blood sugar records, providing real-time guidance and adjustment recommendations. He believes that everyone's physical condition is unique, therefore requiring tailored management plans.">不同於傳統醫療模式，醫生Chang親自追蹤每位患者的血糖記錄，提供即時指導與調整建議。他相信每個人的身體狀況都是獨特的，因此需要量身定制的管理方案。</p>
-
-                    <h3 data-zh="實用生活化教學" data-en="Practical Life-Based Teaching">實用生活化教學</h3>
-                    <p data-zh="課程內容設計貼近日常生活，無論是在家烹飪或外出用餐，都能輕鬆應用所學知識。沒有艱深的醫學術語，只有實用的方法與技巧。" data-en="The course content is designed to be close to daily life. Whether cooking at home or dining out, you can easily apply the knowledge learned. No complex medical terminology, only practical methods and techniques.">課程內容設計貼近日常生活，無論是在家烹飪或外出用餐，都能輕鬆應用所學知識。沒有艱深的醫學術語，只有實用的方法與技巧。</p>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label" data-zh="成功案例" data-en="Success Cases">成功案例</div>
+                <div class="hero-image">
+                    <div class="doctor-image">
+                        <img src="https://drec.pages.dev/chang%20pic/Profile.jpg" alt="醫生Chang">
+                        <div class="doctor-placeholder" style="display: none;">
+                            <div class="doctor-icon">👨‍⚕️</div>
+                            <p>醫生照片</p>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">90%</div>
-                        <div class="stat-label" data-zh="血糖改善率" data-en="Improvement Rate">血糖改善率</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">10+</div>
-                        <div class="stat-label" data-zh="年專業經驗" data-en="Years of Experience">年專業經驗</div>
+                    <div class="medical-props">
+                        <div class="prop prop-glucometer">📊</div>
+                        <div class="prop prop-diet-plan">📋</div>
+                        <div class="prop prop-test-strips">🔬</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" class="services">
+    <!-- Main Content Section -->
+    <section id="main-content" class="main-content">
         <div class="container">
-            <div class="section-header">
-                <h2 data-zh="服務項目" data-en="Services">服務項目</h2>
-                <p class="section-subtitle" data-zh="全方位的血糖管理解決方案" data-en="Comprehensive Blood Sugar Management Solutions">全方位的血糖管理解決方案</p>
+            <div class="content-header">
+                <h2>很多人以為糖尿病只是「控制血糖」的問題</h2>
+                <p class="content-description">只要症狀不嚴重，就可以暫時不管。但實際上，糖尿病管理遠不止於此。醫生Chang擁有豐富的臨床經驗，專注於血糖管理與代謝健康領域。透過科學化的飲食指導與個人化治療方案，幫助無數患者成功改善血糖狀況，減少藥物依賴，重獲健康生活品質。</p>
             </div>
+            
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="service-icon">📊</div>
-                    <h3 data-zh="血糖監測指導" data-en="Blood Sugar Monitoring Guidance">血糖監測指導</h3>
-                    <p data-zh="專業教導正確的血糖監測方法與時機，幫助您建立有效的健康追蹤習慣。" data-en="Professional guidance on correct blood sugar monitoring methods and timing, helping you establish effective health tracking habits.">專業教導正確的血糖監測方法與時機，幫助您建立有效的健康追蹤習慣。</p>
+                    <div class="service-image">
+                        <div class="service-placeholder">📊 血糖監測</div>
+                    </div>
+                    <h3>血糖監測指導</h3>
+                    <p>專業教導正確的血糖監測方法與時機，幫助您建立有效的健康追蹤習慣。</p>
+                    <a href="#contact" class="btn btn-secondary">了解更多</a>
                 </div>
+                
                 <div class="service-card">
-                    <div class="service-icon">🍽️</div>
-                    <h3 data-zh="個人化飲食規劃" data-en="Personalized Meal Planning">個人化飲食規劃</h3>
-                    <p data-zh="根據您的身體狀況與生活習慣，量身定制飲食方案，讓您吃得飽也能穩血糖。" data-en="Customized meal plans based on your physical condition and lifestyle, allowing you to eat well while maintaining stable blood sugar.">根據您的身體狀況與生活習慣，量身定制飲食方案，讓您吃得飽也能穩血糖。</p>
+                    <div class="service-image">
+                        <div class="service-placeholder">🍽️ 飲食規劃</div>
+                    </div>
+                    <h3>個人化飲食規劃</h3>
+                    <p>根據您的身體狀況與生活習慣，量身定制飲食方案，讓您吃得飽也能穩血糖。</p>
+                    <a href="#contact" class="btn btn-secondary">了解更多</a>
                 </div>
+                
                 <div class="service-card">
-                    <div class="service-icon">⏰</div>
-                    <h3 data-zh="進食時間與順序指導" data-en="Meal Timing & Sequence Guidance">進食時間與順序指導</h3>
-                    <p data-zh="科學化的進食時間安排與食物順序，最大化血糖控制效果。" data-en="Scientific meal timing arrangements and food sequencing to maximize blood sugar control effectiveness.">科學化的進食時間安排與食物順序，最大化血糖控制效果。</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">💊</div>
-                    <h3 data-zh="藥物減量協助" data-en="Medication Reduction Assistance">藥物減量協助</h3>
-                    <p data-zh="在專業監控下，協助您逐步減少藥物依賴，讓身體自然恢復平衡。" data-en="Under professional monitoring, assist you in gradually reducing medication dependence, allowing your body to naturally restore balance.">在專業監控下，協助您逐步減少藥物依賴，讓身體自然恢復平衡。</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🏥</div>
-                    <h3 data-zh="醫療協調配合" data-en="Medical Coordination">醫療協調配合</h3>
-                    <p data-zh="與您的主治醫師協調，確保治療方案的安全性與有效性。" data-en="Coordinate with your primary physician to ensure the safety and effectiveness of treatment plans.">與您的主治醫師協調，確保治療方案的安全性與有效性。</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">📱</div>
-                    <h3 data-zh="持續追蹤關懷" data-en="Ongoing Follow-up Care">持續追蹤關懷</h3>
-                    <p data-zh="定期檢視您的血糖記錄，提供即時調整建議與專業支持。" data-en="Regularly review your blood sugar records, providing real-time adjustment recommendations and professional support.">定期檢視您的血糖記錄，提供即時調整建議與專業支持。</p>
+                    <div class="service-image">
+                        <div class="service-placeholder">⏰ 進食指導</div>
+                    </div>
+                    <h3>進食時間與順序指導</h3>
+                    <p>科學化的進食時間安排與食物順序，最大化血糖控制效果。</p>
+                    <a href="#contact" class="btn btn-secondary">了解更多</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials">
+    <!-- Success Stories Section -->
+    <section id="testimonials" class="success-stories">
         <div class="container">
             <div class="section-header">
-                <h2 data-zh="真實見證" data-en="Testimonials">真實見證</h2>
-                <p class="section-subtitle" data-zh="他們，曾經也一度感到無力... 以為只能靠外力維持健康的人，如今正用對的方法，逐步找回身體的主導權。" data-en="They once felt powerless... Those who thought they could only rely on external forces to maintain health are now using the right methods to gradually regain control of their bodies.">他們，曾經也一度感到無力... 以為只能靠外力維持健康的人，如今正用對的方法，逐步找回身體的主導權。</p>
+                <h2>真實見證</h2>
+                <p class="section-subtitle">他們，曾經也一度感到無力... 以為只能靠外力維持健康的人，如今正用對的方法，逐步找回身體的主導權。</p>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">MC</div>
-                        <div class="testimonial-info">
-                            <h3>Madam Choo</h3>
-                            <p data-zh="58歲 | 曾手腳麻痺、血糖飆升" data-en="58 years old | Had numbness in hands and feet, blood sugar spikes">58歲 | 曾手腳麻痺、血糖飆升</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        <p class="quote" data-zh="看了很多醫生，吃了不少藥，問題都還在。知道上了醫生Chang的課程，他天天看我的血糖記錄，親自教我吃的時間和順序。幾個月後，麻痺感沒了，血糖穩了，藥也成功減量。我真的第一次覺得身體是可以被好好照顧的！" data-en="I saw many doctors and took many medications, but the problems persisted. After joining Dr. Chang's course, he reviewed my blood sugar records daily and personally taught me the timing and sequence of eating. After a few months, the numbness disappeared, my blood sugar stabilized, and I successfully reduced my medication. For the first time, I truly felt that my body could be well taken care of!">"看了很多醫生，吃了不少藥，問題都還在。知道上了醫生Chang的課程，他天天看我的血糖記錄，親自教我吃的時間和順序。幾個月後，麻痺感沒了，血糖穩了，藥也成功減量。我真的第一次覺得身體是可以被好好照顧的！"</p>
-                    </div>
-                    <div class="testimonial-results">
-                        <span class="result-badge" data-zh="✓ 麻痺感消失" data-en="✓ Numbness Disappeared">✓ 麻痺感消失</span>
-                        <span class="result-badge" data-zh="✓ 血糖穩定" data-en="✓ Stable Blood Sugar">✓ 血糖穩定</span>
-                        <span class="result-badge" data-zh="✓ 藥物減量" data-en="✓ Medication Reduced">✓ 藥物減量</span>
+            <div class="stories-grid">
+                <div class="story-card">
+                    <div class="story-content">
+                        <p class="story-quote">"看了很多醫生，吃了不少藥，問題都還在。知道上了醫生Chang的課程，他天天看我的血糖記錄，親自教我吃的時間和順序。幾個月後，麻痺感沒了，血糖穩了，藥也成功減量。我真的第一次覺得身體是可以被好好照顧的！"</p>
+                        <p class="story-author">- Madam Choo, 58歲 | 曾手腳麻痺、血糖飆升</p>
+                        <a href="https://youtu.be/L7Ud2jqVl-Q" target="_blank" rel="noopener noreferrer" class="story-video-link">
+                            <span class="video-icon">▶</span>
+                            <span>觀看見證影片</span>
+                        </a>
                     </div>
                 </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">CH</div>
-                        <div class="testimonial-info">
-                            <h3>CW. Hong</h3>
-                            <p data-zh="59歲 | 血糖超高、長期頭暈乏力" data-en="59 years old | Extremely high blood sugar, long-term dizziness and fatigue">59歲 | 血糖超高、長期頭暈乏力</p>
-                        </div>
+                <div class="story-card">
+                    <div class="story-content">
+                        <p class="story-quote">"醫生Chang教我怎麼在外面也能選對食物，為我量身規劃飲食節奏，讓我照樣吃飽也能穩住血糖。一段時間後，血糖明顯下降，身體更有力氣了，藥量也開始減了。有專業醫生帶路，真的讓我更安心！"</p>
+                        <p class="story-author">- CW. Hong, 59歲 | 血糖超高、長期頭暈乏力</p>
+                        <a href="https://youtu.be/AlDjJPUl9_w" target="_blank" rel="noopener noreferrer" class="story-video-link">
+                            <span class="video-icon">▶</span>
+                            <span>觀看見證影片</span>
+                        </a>
                     </div>
-                    <div class="testimonial-content">
-                        <p class="quote" data-zh="醫生Chang教我怎麼在外面也能選對食物，為我量身規劃飲食節奏，讓我照樣吃飽也能穩住血糖。一段時間後，血糖明顯下降，身體更有力氣了，藥量也開始減了。有專業醫生帶路，真的讓我更安心！" data-en="Dr. Chang taught me how to choose the right foods even when dining out, customized a meal rhythm for me, allowing me to eat well while maintaining stable blood sugar. After some time, my blood sugar dropped significantly, I had more energy, and my medication dosage began to decrease. Having a professional doctor guide me really gave me peace of mind!">"醫生Chang教我怎麼在外面也能選對食物，為我量身規劃飲食節奏，讓我照樣吃飽也能穩住血糖。一段時間後，血糖明顯下降，身體更有力氣了，藥量也開始減了。有專業醫生帶路，真的讓我更安心！"</p>
-                    </div>
-                    <div class="testimonial-results">
-                        <span class="result-badge" data-zh="✓ 血糖下降" data-en="✓ Blood Sugar Decreased">✓ 血糖下降</span>
-                        <span class="result-badge" data-zh="✓ 體力改善" data-en="✓ Energy Improved">✓ 體力改善</span>
-                        <span class="result-badge" data-zh="✓ 藥量減少" data-en="✓ Medication Reduced">✓ 藥量減少</span>
+                </div>
+                <div class="story-card">
+                    <div class="story-content">
+                        <p class="story-quote">"不同於傳統醫療模式，醫生Chang親自追蹤每位患者的血糖記錄，提供即時指導與調整建議。他相信每個人的身體狀況都是獨特的，因此需要量身定制的管理方案。課程內容設計貼近日常生活，無論是在家烹飪或外出用餐，都能輕鬆應用所學知識。"</p>
+                        <p class="story-author">- 學員分享</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
+    <!-- CTA Section -->
+    <section id="cta" class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>開始您的健康之旅</h2>
+                <p>專業醫生指導，科學方法管理，重獲健康主導權</p>
+                <a href="#contact" class="btn btn-primary btn-large">聯絡我們</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dream Life Section -->
+    <section id="dream-life" class="dream-life">
+        <div class="container">
+            <div class="dream-content">
+                <h2>逆轉我的糖路之旅</h2>
+                <a href="#contact" class="btn btn-primary btn-large">了解更多資訊</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog/Media Section -->
+    <section id="blog" class="blog-section">
         <div class="container">
             <div class="section-header">
-                <h2 data-zh="常見問題" data-en="Frequently Asked Questions">常見問題</h2>
-                <p class="section-subtitle" data-zh="解答您的疑惑" data-en="Answering Your Questions">解答您的疑惑</p>
+                <h2>媒體報導</h2>
+                <p class="section-subtitle">醫生Chang的專業報導與媒體採訪</p>
             </div>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3 data-zh="這堂課程真的免費嗎？" data-en="Is this course really free?">這堂課程真的免費嗎？</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p data-zh="是的，這課程分享是全程免費，無需付款，也不會強迫報名任何計劃；即使您只聽這一堂課，也能帶走實用的方法，改善血糖管理和生活節奏。" data-en="Yes, this course sharing is completely free, no payment required, and we will not force you to enroll in any program. Even if you only attend this one session, you can take away practical methods to improve blood sugar management and lifestyle rhythm.">是的，這課程分享是全程免費，無需付款，也不會強迫報名任何計劃；即使您只聽這一堂課，也能帶走實用的方法，改善血糖管理和生活節奏。</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3 data-zh="我還在吃藥，或血糖已經不高，還適合參加嗎？" data-en="I'm still taking medication, or my blood sugar is already normal. Is it still suitable for me to attend?">我還在吃藥，或血糖已經不高，還適合參加嗎？</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p data-zh="非常適合。本課程是幫助您更科學地配合現有治療，讓身體反應更正向。對血糖已接近正常者，也可透過課程建立好習慣，預防復發或併發症，讓健康更持久。" data-en="Very suitable. This course helps you more scientifically coordinate with existing treatments, making your body's response more positive. For those with blood sugar already close to normal, you can also establish good habits through the course to prevent recurrence or complications, making your health more sustainable.">非常適合。本課程是幫助您更科學地配合現有治療，讓身體反應更正向。對血糖已接近正常者，也可透過課程建立好習慣，預防復發或併發症，讓健康更持久。</p>
+            <div class="blog-grid">
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/1.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/1.jpeg" alt="媒體報導 1" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3 data-zh="我沒有醫學基礎，聽得懂嗎？" data-en="I have no medical background. Will I understand?">我沒有醫學基礎，聽得懂嗎？</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p data-zh="完全沒問題。課程內容是為普通人設計，沒有艱深術語，講解方式生活化、舉例貼近現實，許多60歲以上學員也能輕鬆掌握並應用在生活中。" data-en="Absolutely no problem. The course content is designed for ordinary people, with no complex terminology. The teaching style is life-oriented with realistic examples. Many participants over 60 years old can easily grasp and apply it in their daily lives.">完全沒問題。課程內容是為普通人設計，沒有艱深術語，講解方式生活化、舉例貼近現實，許多60歲以上學員也能輕鬆掌握並應用在生活中。</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3 data-zh="線上課程需要什麼設備？" data-en="What equipment do I need for the online course?">線上課程需要什麼設備？</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p data-zh="只需要有網路連線的電腦、平板或手機，以及Zoom應用程式即可。我們會在報名後提供詳細的參與指南，確保您能順利參加。" data-en="You only need a computer, tablet, or phone with internet connection, and the Zoom application. We will provide detailed participation guidelines after registration to ensure you can participate smoothly.">只需要有網路連線的電腦、平板或手機，以及Zoom應用程式即可。我們會在報名後提供詳細的參與指南，確保您能順利參加。</p>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/2.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/2.jpeg" alt="媒體報導 2" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3 data-zh="課程結束後還能獲得協助嗎？" data-en="Can I still get assistance after the course ends?">課程結束後還能獲得協助嗎？</h3>
-                        <span class="faq-toggle">+</span>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/3.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/3.jpeg" alt="媒體報導 3" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
                     </div>
-                    <div class="faq-answer">
-                        <p data-zh="課程中會提供持續支持的管道，您可以透過我們提供的聯絡方式，繼續獲得專業指導與協助。" data-en="The course provides channels for ongoing support. You can continue to receive professional guidance and assistance through the contact methods we provide.">課程中會提供持續支持的管道，您可以透過我們提供的聯絡方式，繼續獲得專業指導與協助。</p>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/4.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/4.jpeg" alt="媒體報導 4" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/5.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/5.jpeg" alt="媒體報導 5" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/6.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/6.jpeg" alt="媒體報導 6" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/7.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/7.jpeg" alt="媒體報導 7" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/8.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/8.jpeg" alt="媒體報導 8" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/9.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/9.jpeg" alt="媒體報導 9" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/10.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/10.jpeg" alt="媒體報導 10" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/11.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/11.jpeg" alt="媒體報導 11" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/12.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/12.jpeg" alt="媒體報導 12" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/13.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/13.jpeg" alt="媒體報導 13" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/14.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/14.jpeg" alt="媒體報導 14" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/15.jpg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/15.jpg" alt="媒體報導 15" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/16.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/16.jpeg" alt="媒體報導 16" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/17.jpg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/17.jpg" alt="媒體報導 17" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/18.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/18.jpeg" alt="媒體報導 18" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/19.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/19.jpeg" alt="媒體報導 19" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/20.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/20.jpeg" alt="媒體報導 20" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/21.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/21.jpeg" alt="媒體報導 21" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/22.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/22.jpeg" alt="媒體報導 22" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/23.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/23.jpeg" alt="媒體報導 23" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/24.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/24.jpeg" alt="媒體報導 24" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/25.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/25.jpeg" alt="媒體報導 25" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/26.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/26.jpeg" alt="媒體報導 26" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/27.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/27.jpeg" alt="媒體報導 27" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/28.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/28.jpeg" alt="媒體報導 28" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/29.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/29.jpeg" alt="媒體報導 29" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/30.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/30.jpeg" alt="媒體報導 30" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/31.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/31.jpeg" alt="媒體報導 31" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/32.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/32.jpeg" alt="媒體報導 32" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/33.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/33.jpeg" alt="媒體報導 33" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/34.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/34.jpeg" alt="媒體報導 34" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/35.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/35.jpeg" alt="媒體報導 35" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-item" onclick="openLightbox('https://drec.pages.dev/chang%20news/36.jpeg')">
+                    <div class="blog-image">
+                        <img src="https://drec.pages.dev/chang%20news/36.jpeg" alt="媒體報導 36" loading="lazy">
+                        <div class="blog-overlay">
+                            <span class="blog-view-icon">🔍</span>
+                            <span class="blog-view-text">點擊查看</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" src="" alt="媒體報導" onclick="event.stopPropagation()">
+    </div>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <section id="contact" class="contact-section">
         <div class="container">
             <div class="section-header">
-                <h2 data-zh="聯絡我們" data-en="Contact Us">聯絡我們</h2>
-                <p class="section-subtitle" data-zh="立即報名或了解更多資訊" data-en="Register now or learn more">立即報名或了解更多資訊</p>
+                <h2>聯絡我們</h2>
+                <p class="section-subtitle">了解更多資訊或與我們聯絡</p>
             </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-card">
-                        <div class="contact-icon">📍</div>
-                        <h3 data-zh="地址" data-en="Address">地址</h3>
-                        <p>35-3, JALAN PJU 5/12<br>DATARAN SUNWAY KOTA DAMANSARA<br>47810 PETALING JAYA<br>SELANGOR MALAYSIA</p>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon">📧</div>
-                        <h3 data-zh="電子郵件" data-en="Email">電子郵件</h3>
-                        <p><a href="mailto:info@dreasonchang.com">info@dreasonchang.com</a></p>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon">📞</div>
-                        <h3 data-zh="電話" data-en="Phone">電話</h3>
-                        <p><a href="tel:+60172276151">+60 17-227 6151</a></p>
-                    </div>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>地址</h3>
+                    <p>35-3, JALAN PJU 5/12<br>DATARAN SUNWAY KOTA DAMANSARA<br>47810 PETALING JAYA<br>SELANGOR MALAYSIA</p>
                 </div>
-                <div class="contact-form-container">
-                    <form class="contact-form" id="contactForm">
-                        <div class="form-group">
-                            <label for="name" data-zh="姓名 *" data-en="Name *">姓名 *</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone" data-zh="電話 *" data-en="Phone *">電話 *</label>
-                            <input type="tel" id="phone" name="phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" data-zh="電子郵件" data-en="Email">電子郵件</label>
-                            <input type="email" id="email" name="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="message" data-zh="訊息" data-en="Message">訊息</label>
-                            <textarea id="message" name="message" rows="5"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-large" data-zh="確認報名" data-en="Confirm Registration">確認報名</button>
-                    </form>
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>電子郵件</h3>
+                    <p><a href="mailto:info@dreasonchang.com">info@dreasonchang.com</a></p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>電話</h3>
+                    <p><a href="tel:+60172276151">+60 17-227 6151</a></p>
                 </div>
             </div>
         </div>
@@ -306,17 +544,22 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-brand">
-                    <h3 data-zh="醫生Chang" data-en="Dr. Chang">醫生Chang</h3>
-                    <p data-zh="專業血糖管理專家" data-en="Professional Blood Sugar Management Expert">專業血糖管理專家</p>
+                <div class="footer-section">
+                    <h3>醫生Chang</h3>
+                    <p>專業血糖管理專家</p>
                 </div>
-                <div class="footer-info">
-                    <p><strong>DREC HEALTHCARE ACADEMY SDN. BHD.</strong></p>
-                    <p>202501023611 (1625024-M)</p>
+                <div class="footer-section">
+                    <h3>公司資訊</h3>
+                    <p><strong>DREC HEALTHCARE ACADEMY SDN. BHD.</strong><br>202501023611 (1625024-M)</p>
+                </div>
+                <div class="footer-section">
+                    <h3>聯絡方式</h3>
+                    <p>📍 35-3, JALAN PJU 5/12<br>DATARAN SUNWAY KOTA DAMANSARA<br>47810 PETALING JAYA, SELANGOR MALAYSIA</p>
+                    <p>📧 <a href="mailto:info@dreasonchang.com">info@dreasonchang.com</a><br>📞 <a href="tel:+60172276151">+60 17-227 6151</a></p>
                 </div>
             </div>
             <div class="footer-disclaimer">
-                <p><strong data-zh="免責聲明：" data-en="Disclaimer: ">免責聲明：</strong><span data-zh="本文所提供的資訊僅供參考，不能替代個性化建議。如有疑問，請諮詢醫生Chang或透過以上方式聯絡我們。" data-en="The information provided in this article is for reference only and cannot replace personalized advice. If you have any questions, please consult Dr. Chang or contact us through the methods above.">本文所提供的資訊僅供參考，不能替代個性化建議。如有疑問，請諮詢醫生Chang或透過以上方式聯絡我們。</span></p>
+                <p><strong>免責聲明：</strong>本文所提供的資訊僅供參考，不能替代個性化建議。如有疑問，請諮詢醫生Chang或透過以上方式聯絡我們。</p>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 DREC Healthcare Academy. All rights reserved.</p>
@@ -327,4 +570,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-

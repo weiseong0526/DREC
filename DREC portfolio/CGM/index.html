@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="CGM Patient Assessment Form - Comprehensive health evaluation for continuous glucose monitoring">
+    <title>CGM Patient Assessment | 医生Chang</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h2>医生Chang</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../portfolio/index.html">首页 / Home</a></li>
+                <li><a href="#form">填写表单 / Fill Form</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">CGM 患者健康评估 / Patient Health Assessment</h1>
+                <p class="hero-subtitle">请填写以下健康信息，我们将为您生成详细的健康报告<br>Please fill in the following health information, and we will generate a detailed health report for you</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section id="form" class="form-section">
+        <div class="container">
+            <form id="cgmForm" class="cgm-form">
+                <!-- Personal Information -->
+                <div class="form-section-card">
+                    <h2 class="section-title">个人基本资料 / Personal Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patientName">姓名 / Name <span class="required">*</span></label>
+                            <input type="text" id="patientName" name="patientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientAge">年龄 / Age <span class="required">*</span></label>
+                            <input type="number" id="patientAge" name="patientAge" min="1" max="120" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientGender">性别 / Gender <span class="required">*</span></label>
+                            <select id="patientGender" name="patientGender" required>
+                                <option value="">请选择 / Please select</option>
+                                <option value="male">男性 / Male</option>
+                                <option value="female">女性 / Female</option>
+                                <option value="other">其他 / Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientEmail">电子邮件 / Email</label>
+                            <input type="email" id="patientEmail" name="patientEmail">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BMI Section -->
+                <div class="form-section-card">
+                    <h2 class="section-title">BMI (身体质量指数) / Body Mass Index</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="height">身高 / Height (cm) <span class="required">*</span></label>
+                            <input type="number" id="height" name="height" min="50" max="250" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">体重 / Weight (kg) <span class="required">*</span></label>
+                            <input type="number" id="weight" name="weight" min="20" max="300" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="bmi-display" id="bmiDisplay" style="display: none;">
+                        <p>您的 BMI / Your BMI: <span id="bmiValue"></span></p>
+                        <p class="bmi-category" id="bmiCategory"></p>
+                    </div>
+                </div>
+
+                <!-- Blood Glucose Section -->
+                <div class="form-section-card">
+                    <h2 class="section-title">血糖值 / Blood Glucose</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fastingGlucose">空腹血糖 / Fasting Glucose (mg/dL) <span class="required">*</span></label>
+                            <input type="number" id="fastingGlucose" name="fastingGlucose" min="50" max="500" step="0.1" required>
+                            <small class="form-hint">正常范围 / Normal Range: 70-100 mg/dL</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="postprandialGlucose">餐后血糖 / Postprandial Glucose (mg/dL)</label>
+                            <input type="number" id="postprandialGlucose" name="postprandialGlucose" min="50" max="500" step="0.1">
+                            <small class="form-hint">正常范围 / Normal Range: &lt;140 mg/dL (2小时后 / 2 hours after)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="hba1c">糖化血红蛋白 / HbA1c (%)</label>
+                            <input type="number" id="hba1c" name="hba1c" min="3" max="15" step="0.1">
+                            <small class="form-hint">正常范围 / Normal Range: &lt;5.7%</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="glucoseTestDate">检测日期 / Test Date</label>
+                            <input type="date" id="glucoseTestDate" name="glucoseTestDate">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body Fat & Obesity Risk Section -->
+                <div class="form-section-card">
+                    <h2 class="section-title">体脂率与肥胖风险 / Body Fat & Obesity Risk</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="bodyFat">体脂率 / Body Fat (%)</label>
+                            <input type="number" id="bodyFat" name="bodyFat" min="5" max="50" step="0.1">
+                            <small class="form-hint">男性正常 / Male Normal: 10-20%, 女性正常 / Female Normal: 18-28%</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="waistCircumference">腰围 / Waist Circumference (cm)</label>
+                            <input type="number" id="waistCircumference" name="waistCircumference" min="40" max="200" step="0.1">
+                            <small class="form-hint">男性风险 / Male Risk: &gt;90cm, 女性风险 / Female Risk: &gt;80cm</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="obesityRisk">肥胖风险评估 / Obesity Risk Assessment</label>
+                            <select id="obesityRisk" name="obesityRisk">
+                                <option value="">请选择 / Please select</option>
+                                <option value="low">低风险 / Low Risk</option>
+                                <option value="moderate">中等风险 / Moderate Risk</option>
+                                <option value="high">高风险 / High Risk</option>
+                                <option value="very-high">极高风险 / Very High Risk</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blood Pressure & Heart Health Section -->
+                <div class="form-section-card">
+                    <h2 class="section-title">血压与心脏健康 / Blood Pressure & Heart Health</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="systolicBP">收缩压 / Systolic BP (mmHg) <span class="required">*</span></label>
+                            <input type="number" id="systolicBP" name="systolicBP" min="70" max="250" required>
+                            <small class="form-hint">正常 / Normal: &lt;120 mmHg</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="diastolicBP">舒张压 / Diastolic BP (mmHg) <span class="required">*</span></label>
+                            <input type="number" id="diastolicBP" name="diastolicBP" min="40" max="150" required>
+                            <small class="form-hint">正常 / Normal: &lt;80 mmHg</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="heartRate">静息心率 / Resting Heart Rate (bpm)</label>
+                            <input type="number" id="heartRate" name="heartRate" min="40" max="120">
+                            <small class="form-hint">正常 / Normal: 60-100 bpm</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cholesterol">总胆固醇 / Total Cholesterol (mg/dL)</label>
+                            <input type="number" id="cholesterol" name="cholesterol" min="100" max="400">
+                            <small class="form-hint">理想 / Ideal: &lt;200 mg/dL</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="bpTestDate">检测日期 / Test Date</label>
+                            <input type="date" id="bpTestDate" name="bpTestDate">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lifestyle Information Section -->
+                <div class="form-section-card">
+                    <h2 class="section-title">生活习惯信息 / Lifestyle Information</h2>
+                    
+                    <div class="form-group">
+                        <label>运动频率 / Exercise Frequency <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="exerciseFrequency" value="none" required>
+                                <span>几乎不运动 / Almost never</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="exerciseFrequency" value="light" required>
+                                <span>每周1-2次 (轻度) / 1-2 times/week (Light)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="exerciseFrequency" value="moderate" required>
+                                <span>每周3-4次 (中度) / 3-4 times/week (Moderate)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="exerciseFrequency" value="high" required>
+                                <span>每周5次以上 (高度) / 5+ times/week (High)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>运动类型 (可多选) / Exercise Type (Multiple Selection)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="walking">
+                                <span>步行 / Walking</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="running">
+                                <span>跑步 / Running</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="cycling">
+                                <span>骑自行车 / Cycling</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="swimming">
+                                <span>游泳 / Swimming</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="gym">
+                                <span>健身房 / Gym</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="yoga">
+                                <span>瑜伽/太极 / Yoga/Tai Chi</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="exerciseType" value="other">
+                                <span>其他 / Other</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>饮食习惯 / Diet Type <span class="required">*</span></label>
+                        <select id="dietType" name="dietType" required>
+                            <option value="">请选择 / Please select</option>
+                            <option value="balanced">均衡饮食 / Balanced Diet</option>
+                            <option value="vegetarian">素食 / Vegetarian</option>
+                            <option value="low-carb">低碳水化合物 / Low Carbohydrate</option>
+                            <option value="mediterranean">地中海饮食 / Mediterranean</option>
+                            <option value="irregular">不规律 / Irregular</option>
+                            <option value="other">其他 / Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>每日用餐次数 / Meals Per Day <span class="required">*</span></label>
+                        <select id="mealsPerDay" name="mealsPerDay" required>
+                            <option value="">请选择 / Please select</option>
+                            <option value="1-2">1-2次 / 1-2 times</option>
+                            <option value="3">3次 / 3 times</option>
+                            <option value="4-5">4-5次 / 4-5 times</option>
+                            <option value="6+">6次以上 / 6+ times</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>睡眠品质 / Sleep Quality <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="sleepQuality" value="excellent" required>
+                                <span>优秀 (7-9小时，品质好) / Excellent (7-9 hours, good quality)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="sleepQuality" value="good" required>
+                                <span>良好 (6-7小时，品质尚可) / Good (6-7 hours, fair quality)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="sleepQuality" value="fair" required>
+                                <span>一般 (5-6小时，品质普通) / Fair (5-6 hours, average quality)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="sleepQuality" value="poor" required>
+                                <span>不佳 (&lt;5小时或品质差) / Poor (&lt;5 hours or poor quality)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>压力水平 / Stress Level <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="stressLevel" value="low" required>
+                                <span>低 / Low</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="stressLevel" value="moderate" required>
+                                <span>中等 / Moderate</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="stressLevel" value="high" required>
+                                <span>高 / High</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="stressLevel" value="very-high" required>
+                                <span>非常高 / Very High</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>吸烟习惯 / Smoking Habit <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="smoking" value="never" required>
+                                <span>从不吸烟 / Never</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="smoking" value="former" required>
+                                <span>已戒烟 / Former smoker</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="smoking" value="occasional" required>
+                                <span>偶尔吸烟 / Occasional</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="smoking" value="regular" required>
+                                <span>经常吸烟 / Regular</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>饮酒习惯 / Alcohol Consumption <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="alcohol" value="never" required>
+                                <span>从不饮酒 / Never</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="alcohol" value="occasional" required>
+                                <span>偶尔 (每周1-2次) / Occasional (1-2 times/week)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="alcohol" value="moderate" required>
+                                <span>适度 (每周3-4次) / Moderate (3-4 times/week)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="alcohol" value="frequent" required>
+                                <span>经常 (每周5次以上) / Frequent (5+ times/week)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalNotes">其他备注或健康状况 / Additional Notes or Health Conditions</label>
+                        <textarea id="additionalNotes" name="additionalNotes" rows="4" placeholder="请填写任何其他相关的健康信息、药物使用情况、家族病史等... / Please fill in any other relevant health information, medication use, family medical history, etc..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">提交并生成报告 / Submit and Generate Report</button>
+                    <button type="reset" class="btn-reset">重置表单 / Reset Form</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Report Section (Hidden initially) -->
+    <section id="report" class="report-section" style="display: none;">
+        <div class="container">
+            <div class="report-container">
+                <div class="report-header">
+                    <h2 class="report-title">CGM 健康评估报告 / Health Assessment Report</h2>
+                    <button class="btn-print" onclick="window.print()">打印报告 / Print Report</button>
+                    <button class="btn-back" onclick="showForm()">返回表单 / Back to Form</button>
+                </div>
+                <div id="reportContent" class="report-content">
+                    <!-- Report content will be generated here -->
+                </div>
+                <!-- Risk Assessment Chart -->
+                <div class="chart-container" id="chartContainer" style="display: none;">
+                    <div class="chart-wrapper">
+                        <h3 class="chart-title">健康风险评估图表 / Health Risk Assessment Chart</h3>
+                        <canvas id="riskChart"></canvas>
+                        <div class="chart-legend" id="chartLegend"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>医生Chang</h3>
+                    <p>专业血糖管理专家 / Professional Blood Glucose Management Expert</p>
+                </div>
+                <div class="footer-section">
+                    <h3>联系方式 / Contact</h3>
+                    <p>📧 <a href="mailto:info@dreasonchang.com">info@dreasonchang.com</a><br>📞 <a href="tel:+60172276151">+60 17-227 6151</a></p>
+                </div>
+            </div>
+            <div class="footer-disclaimer">
+                <p><strong>免责声明 / Disclaimer:</strong> 本报告仅供参考，不能替代专业医疗建议。如有疑问，请咨询医生Chang或通过以上方式联系我们。<br>This report is for reference only and cannot replace professional medical advice. If you have any questions, please consult Dr. Chang or contact us through the above methods.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 DREC Healthcare Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

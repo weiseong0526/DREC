@@ -1,0 +1,1214 @@
+// Bilingual display - no language switching needed
+// All text will show both Chinese (Simplified) and English simultaneously
+
+const translations = {
+    zh: {
+        // Navigation
+        home: '首页',
+        fillForm: '填写表单',
+        // Hero
+        heroTitle: 'CGM 患者健康评估',
+        heroSubtitle: '请填写以下健康信息，我们将为您生成详细的健康报告',
+        // Form Sections
+        personalInfo: '个人基本资料',
+        bmi: 'BMI (身体质量指数)',
+        bloodGlucose: '血糖值 (Blood Glucose)',
+        bodyFat: '体脂率与肥胖风险 (Body Fat & Obesity Risk)',
+        bloodPressure: '血压与心脏健康 (Blood Pressure & Heart Health)',
+        lifestyle: '生活习惯信息 (Lifestyle Information)',
+        // Form Fields
+        name: '姓名',
+        age: '年龄',
+        gender: '性别',
+        email: '电子邮件',
+        height: '身高 (cm)',
+        weight: '体重 (kg)',
+        yourBMI: '您的 BMI:',
+        fastingGlucose: '空腹血糖 (mg/dL)',
+        postprandialGlucose: '餐后血糖 (mg/dL)',
+        hba1c: '糖化血红蛋白 HbA1c (%)',
+        testDate: '检测日期',
+        bodyFatPercent: '体脂率 (%)',
+        waistCircumference: '腰围 (cm)',
+        obesityRisk: '肥胖风险评估',
+        systolicBP: '收缩压 (mmHg)',
+        diastolicBP: '舒张压 (mmHg)',
+        heartRate: '静息心率 (次/分钟)',
+        cholesterol: '总胆固醇 (mg/dL)',
+        exerciseFrequency: '运动频率',
+        exerciseType: '运动类型 (可多选)',
+        dietType: '饮食习惯',
+        mealsPerDay: '每日用餐次数',
+        sleepQuality: '睡眠品质',
+        stressLevel: '压力水平',
+        smoking: '吸烟习惯',
+        alcohol: '饮酒习惯',
+        additionalNotes: '其他备注或健康状况',
+        // Options
+        pleaseSelect: '请选择',
+        male: '男性',
+        female: '女性',
+        other: '其他',
+        lowRisk: '低风险',
+        moderateRisk: '中等风险',
+        highRisk: '高风险',
+        veryHighRisk: '极高风险',
+        // Buttons
+        submit: '提交并生成报告',
+        reset: '重置表单',
+        print: '打印报告',
+        back: '返回表单',
+        // Report
+        reportTitle: 'CGM 健康评估报告',
+        chartTitle: '健康风险评估图表',
+        // Footer
+        professional: '专业血糖管理专家',
+        contact: '联系方式',
+        disclaimer: '免责声明：',
+        disclaimerText: '本报告仅供参考，不能替代专业医疗建议。如有疑问，请咨询医生Chang或通过以上方式联系我们。'
+    },
+    en: {
+        // Navigation
+        home: 'Home',
+        fillForm: 'Fill Form',
+        // Hero
+        heroTitle: 'CGM Patient Health Assessment',
+        heroSubtitle: 'Please fill in the following health information, and we will generate a detailed health report for you',
+        // Form Sections
+        personalInfo: 'Personal Information',
+        bmi: 'BMI (Body Mass Index)',
+        bloodGlucose: 'Blood Glucose',
+        bodyFat: 'Body Fat & Obesity Risk',
+        bloodPressure: 'Blood Pressure & Heart Health',
+        lifestyle: 'Lifestyle Information',
+        // Form Fields
+        name: 'Name',
+        age: 'Age',
+        gender: 'Gender',
+        email: 'Email',
+        height: 'Height (cm)',
+        weight: 'Weight (kg)',
+        yourBMI: 'Your BMI:',
+        fastingGlucose: 'Fasting Glucose (mg/dL)',
+        postprandialGlucose: 'Postprandial Glucose (mg/dL)',
+        hba1c: 'HbA1c (%)',
+        testDate: 'Test Date',
+        bodyFatPercent: 'Body Fat (%)',
+        waistCircumference: 'Waist Circumference (cm)',
+        obesityRisk: 'Obesity Risk Assessment',
+        systolicBP: 'Systolic BP (mmHg)',
+        diastolicBP: 'Diastolic BP (mmHg)',
+        heartRate: 'Resting Heart Rate (bpm)',
+        cholesterol: 'Total Cholesterol (mg/dL)',
+        exerciseFrequency: 'Exercise Frequency',
+        exerciseType: 'Exercise Type (Multiple Selection)',
+        dietType: 'Diet Type',
+        mealsPerDay: 'Meals Per Day',
+        sleepQuality: 'Sleep Quality',
+        stressLevel: 'Stress Level',
+        smoking: 'Smoking Habit',
+        alcohol: 'Alcohol Consumption',
+        additionalNotes: 'Additional Notes or Health Conditions',
+        // Options
+        pleaseSelect: 'Please select',
+        male: 'Male',
+        female: 'Female',
+        other: 'Other',
+        lowRisk: 'Low Risk',
+        moderateRisk: 'Moderate Risk',
+        highRisk: 'High Risk',
+        veryHighRisk: 'Very High Risk',
+        // Buttons
+        submit: 'Submit and Generate Report',
+        reset: 'Reset Form',
+        print: 'Print Report',
+        back: 'Back to Form',
+        // Report
+        reportTitle: 'CGM Health Assessment Report',
+        chartTitle: 'Health Risk Assessment Chart',
+        // Footer
+        professional: 'Professional Blood Glucose Management Expert',
+        contact: 'Contact',
+        disclaimer: 'Disclaimer:',
+        disclaimerText: 'This report is for reference only and cannot replace professional medical advice. If you have any questions, please consult Dr. Chang or contact us through the above methods.'
+    }
+};
+
+// DOM Elements
+const form = document.getElementById('cgmForm');
+const heightInput = document.getElementById('height');
+const weightInput = document.getElementById('weight');
+const bmiDisplay = document.getElementById('bmiDisplay');
+const bmiValue = document.getElementById('bmiValue');
+const bmiCategory = document.getElementById('bmiCategory');
+const reportSection = document.getElementById('report');
+const reportContent = document.getElementById('reportContent');
+const formSection = document.querySelector('.form-section');
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        const navMenu = document.querySelector('.nav-menu');
+        const navToggle = document.querySelector('.nav-toggle');
+        if (navMenu && navToggle && navMenu.classList.contains('active')) {
+            if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        }
+    });
+    
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            const navMenu = document.querySelector('.nav-menu');
+            if (navMenu) {
+                navMenu.classList.remove('active');
+            }
+        });
+    });
+    
+    // Prevent zoom on input focus (iOS)
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        const inputs = document.querySelectorAll('input[type="number"], input[type="text"], input[type="email"], input[type="date"], select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                if (this.style.fontSize !== '16px') {
+                    this.style.fontSize = '16px';
+                }
+            });
+        });
+    }
+});
+
+// Mobile Navigation Toggle
+const navToggle = document.querySelector('.nav-toggle');
+const navMenu = document.querySelector('.nav-menu');
+
+if (navToggle) {
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+}
+
+// Calculate BMI in real-time
+function calculateBMI() {
+    const height = parseFloat(heightInput.value) / 100; // Convert cm to meters
+    const weight = parseFloat(weightInput.value);
+    
+    if (height > 0 && weight > 0) {
+        const bmi = weight / (height * height);
+        const roundedBMI = bmi.toFixed(1);
+        
+        bmiValue.textContent = roundedBMI;
+        
+        let category = '';
+        let statusClass = '';
+        
+        if (bmi < 18.5) {
+            category = '体重过轻 / Underweight';
+            statusClass = 'status-warning';
+        } else if (bmi < 24.9) {
+            category = '正常范围 / Normal Range';
+            statusClass = 'status-normal';
+        } else if (bmi < 29.9) {
+            category = '体重过重 / Overweight';
+            statusClass = 'status-warning';
+        } else {
+            category = '肥胖 / Obese';
+            statusClass = 'status-danger';
+        }
+        
+        bmiCategory.textContent = category;
+        bmiCategory.className = `bmi-category ${statusClass}`;
+        bmiDisplay.style.display = 'block';
+    } else {
+        bmiDisplay.style.display = 'none';
+    }
+}
+
+// Event listeners for BMI calculation
+heightInput.addEventListener('input', calculateBMI);
+weightInput.addEventListener('input', calculateBMI);
+
+// Form submission handler
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate form
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Collect form data
+    const formData = collectFormData();
+    
+    // Generate report
+    generateReport(formData);
+    
+    // Generate risk assessment chart
+    setTimeout(() => {
+        generateRiskChart(formData);
+    }, 300);
+    
+    // Show report section and hide form
+    formSection.style.display = 'none';
+    reportSection.style.display = 'block';
+    
+    // Scroll to report
+    reportSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+// Collect all form data
+function collectFormData() {
+    const formData = new FormData(form);
+    const data = {};
+    
+    // Personal Information
+    data.patientName = formData.get('patientName');
+    data.patientAge = formData.get('patientAge');
+    data.patientGender = formData.get('patientGender');
+    data.patientEmail = formData.get('patientEmail');
+    
+    // BMI
+    const height = parseFloat(formData.get('height'));
+    const weight = parseFloat(formData.get('weight'));
+    data.height = height;
+    data.weight = weight;
+    data.bmi = height > 0 && weight > 0 ? (weight / ((height / 100) ** 2)).toFixed(1) : null;
+    
+    // Blood Glucose
+    data.fastingGlucose = formData.get('fastingGlucose');
+    data.postprandialGlucose = formData.get('postprandialGlucose');
+    data.hba1c = formData.get('hba1c');
+    data.glucoseTestDate = formData.get('glucoseTestDate');
+    
+    // Body Fat & Obesity
+    data.bodyFat = formData.get('bodyFat');
+    data.waistCircumference = formData.get('waistCircumference');
+    data.obesityRisk = formData.get('obesityRisk');
+    
+    // Blood Pressure
+    data.systolicBP = formData.get('systolicBP');
+    data.diastolicBP = formData.get('diastolicBP');
+    data.heartRate = formData.get('heartRate');
+    data.cholesterol = formData.get('cholesterol');
+    data.bpTestDate = formData.get('bpTestDate');
+    
+    // Lifestyle
+    data.exerciseFrequency = formData.get('exerciseFrequency');
+    data.exerciseType = formData.getAll('exerciseType');
+    data.dietType = formData.get('dietType');
+    data.mealsPerDay = formData.get('mealsPerDay');
+    data.sleepQuality = formData.get('sleepQuality');
+    data.stressLevel = formData.get('stressLevel');
+    data.smoking = formData.get('smoking');
+    data.alcohol = formData.get('alcohol');
+    data.additionalNotes = formData.get('additionalNotes');
+    
+    return data;
+}
+
+// Generate comprehensive report
+function generateReport(data) {
+    const reportDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    // Calculate risks for summary
+    const risks = calculateHealthRisks(data);
+    const highestRisk = Math.max(risks.diabetes, risks.hypertension, risks.cardiovascular, risks.obesity, risks.metabolic);
+    
+    const notFilled = '未填写 / Not filled';
+    const reportDateLabel = '报告生成日期 / Report Date';
+    const riskOverview = '健康风险总览 / Health Risk Overview';
+    const riskSummary = '风险评估摘要 / Risk Assessment Summary';
+    const riskDesc = '根据您填写的健康信息，我们已为您计算出各项健康风险指标。请查看下方的风险评估图表，了解您目前的健康状况。<br>Based on the health information you provided, we have calculated various health risk indicators for you. Please review the risk assessment chart below to understand your current health status.';
+    const highRiskWarning = '您的某些健康指标显示较高风险，建议尽快咨询专业医疗人员。<br>Some of your health indicators show high risk. It is recommended to consult a medical professional as soon as possible.';
+    const moderateRiskWarning = '部分指标需要关注，建议调整生活方式并定期追踪。<br>Some indicators need attention. It is recommended to adjust lifestyle and monitor regularly.';
+    const goodHealth = '您的整体健康状况良好，请继续维持健康的生活习惯。<br>Your overall health status is good. Please continue to maintain healthy lifestyle habits.';
+    
+    let html = `
+        <div class="report-section-item">
+            <div style="text-align: center; margin-bottom: 30px; color: var(--text-light);">
+                <p>${reportDateLabel}: ${reportDate}</p>
+            </div>
+        </div>
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">${riskOverview}</h3>
+            <div class="report-analysis">
+                <h4>${riskSummary}</h4>
+                <p>${riskDesc}${highestRisk >= 50 ? ` <strong style="color: var(--danger-color);">${highRiskWarning}</strong>` : highestRisk >= 30 ? ` <strong style="color: var(--warning-color);">${moderateRiskWarning}</strong>` : ` ${goodHealth}`}</p>
+            </div>
+        </div>
+        
+        <!-- Chart will be inserted here after report generation -->
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">个人基本资料 / Personal Information</h3>
+            <div class="report-data-grid">
+                <div class="report-data-item">
+                    <div class="report-data-label">姓名 / Name</div>
+                    <div class="report-data-value">${data.patientName || notFilled}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">年龄 / Age</div>
+                    <div class="report-data-value">${data.patientAge || notFilled} 岁 / years old</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">性别 / Gender</div>
+                    <div class="report-data-value">${getGenderText(data.patientGender)}</div>
+                </div>
+                ${data.patientEmail ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">电子邮件 / Email</div>
+                    <div class="report-data-value">${data.patientEmail}</div>
+                </div>
+                ` : ''}
+            </div>
+        </div>
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">BMI (身体质量指数) / Body Mass Index</h3>
+            <div class="report-data-grid">
+                <div class="report-data-item">
+                    <div class="report-data-label">身高 / Height</div>
+                    <div class="report-data-value">${data.height || notFilled} cm</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">体重 / Weight</div>
+                    <div class="report-data-value">${data.weight || notFilled} kg</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">BMI</div>
+                    <div class="report-data-value">
+                        ${data.bmi || '无法计算 / Cannot calculate'}
+                        ${data.bmi ? getBMIStatus(data.bmi) : ''}
+                    </div>
+                </div>
+            </div>
+            ${generateBMIAnalysis(data.bmi)}
+        </div>
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">血糖值 / Blood Glucose</h3>
+            <div class="report-data-grid">
+                <div class="report-data-item">
+                    <div class="report-data-label">空腹血糖 / Fasting Glucose</div>
+                    <div class="report-data-value">
+                        ${data.fastingGlucose || notFilled} mg/dL
+                        ${data.fastingGlucose ? getGlucoseStatus(data.fastingGlucose, 'fasting') : ''}
+                    </div>
+                </div>
+                ${data.postprandialGlucose ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">餐后血糖 / Postprandial Glucose</div>
+                    <div class="report-data-value">
+                        ${data.postprandialGlucose} mg/dL
+                        ${getGlucoseStatus(data.postprandialGlucose, 'postprandial')}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.hba1c ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">HbA1c</div>
+                    <div class="report-data-value">
+                        ${data.hba1c}%
+                        ${getHbA1cStatus(data.hba1c)}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.glucoseTestDate ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">检测日期 / Test Date</div>
+                    <div class="report-data-value">${data.glucoseTestDate}</div>
+                </div>
+                ` : ''}
+            </div>
+            ${generateGlucoseAnalysis(data)}
+        </div>
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">体脂率与肥胖风险 / Body Fat & Obesity Risk</h3>
+            <div class="report-data-grid">
+                ${data.bodyFat ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">体脂率 / Body Fat</div>
+                    <div class="report-data-value">
+                        ${data.bodyFat}%
+                        ${getBodyFatStatus(data.bodyFat, data.patientGender)}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.waistCircumference ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">腰围 / Waist Circumference</div>
+                    <div class="report-data-value">
+                        ${data.waistCircumference} cm
+                        ${getWaistStatus(data.waistCircumference, data.patientGender)}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.obesityRisk ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">肥胖风险评估 / Obesity Risk Assessment</div>
+                    <div class="report-data-value">${getObesityRiskText(data.obesityRisk)}</div>
+                </div>
+                ` : ''}
+            </div>
+            ${generateObesityAnalysis(data)}
+        </div>
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">血压与心脏健康 / Blood Pressure & Heart Health</h3>
+            <div class="report-data-grid">
+                <div class="report-data-item">
+                    <div class="report-data-label">收缩压 / Systolic BP</div>
+                    <div class="report-data-value">
+                        ${data.systolicBP || notFilled} mmHg
+                        ${data.systolicBP ? getBPStatus(data.systolicBP, 'systolic') : ''}
+                    </div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">舒张压 / Diastolic BP</div>
+                    <div class="report-data-value">
+                        ${data.diastolicBP || notFilled} mmHg
+                        ${data.diastolicBP ? getBPStatus(data.diastolicBP, 'diastolic') : ''}
+                    </div>
+                </div>
+                ${data.heartRate ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">静息心率 / Resting Heart Rate</div>
+                    <div class="report-data-value">
+                        ${data.heartRate} bpm
+                        ${getHeartRateStatus(data.heartRate)}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.cholesterol ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">总胆固醇 / Total Cholesterol</div>
+                    <div class="report-data-value">
+                        ${data.cholesterol} mg/dL
+                        ${getCholesterolStatus(data.cholesterol)}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.bpTestDate ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">检测日期 / Test Date</div>
+                    <div class="report-data-value">${data.bpTestDate}</div>
+                </div>
+                ` : ''}
+            </div>
+            ${generateBPAnalysis(data)}
+        </div>
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">生活习惯信息 / Lifestyle Information</h3>
+            <div class="report-data-grid">
+                <div class="report-data-item">
+                    <div class="report-data-label">运动频率 / Exercise Frequency</div>
+                    <div class="report-data-value">${getExerciseFrequencyText(data.exerciseFrequency)}</div>
+                </div>
+                ${data.exerciseType && data.exerciseType.length > 0 ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">运动类型 / Exercise Type</div>
+                    <div class="report-data-value">${data.exerciseType.join(', ')}</div>
+                </div>
+                ` : ''}
+                <div class="report-data-item">
+                    <div class="report-data-label">饮食习惯 / Diet Type</div>
+                    <div class="report-data-value">${getDietTypeText(data.dietType)}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">每日用餐次数 / Meals Per Day</div>
+                    <div class="report-data-value">${data.mealsPerDay || notFilled}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">睡眠品质 / Sleep Quality</div>
+                    <div class="report-data-value">${getSleepQualityText(data.sleepQuality)}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">压力水平 / Stress Level</div>
+                    <div class="report-data-value">${getStressLevelText(data.stressLevel)}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">吸烟习惯 / Smoking Habit</div>
+                    <div class="report-data-value">${getSmokingText(data.smoking)}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">饮酒习惯 / Alcohol Consumption</div>
+                    <div class="report-data-value">${getAlcoholText(data.alcohol)}</div>
+                </div>
+            </div>
+            ${generateLifestyleAnalysis(data)}
+        </div>
+        
+        ${data.additionalNotes ? `
+        <div class="report-section-item">
+            <h3 class="report-section-title">其他备注 / Additional Notes</h3>
+            <div class="report-analysis">
+                <p>${data.additionalNotes}</p>
+            </div>
+        </div>
+        ` : ''}
+        
+        <div class="report-section-item">
+            <h3 class="report-section-title">综合建议 / Recommendations</h3>
+            ${generateRecommendations(data)}
+        </div>
+        
+        <div class="report-section-item">
+            <div class="cta-section-report">
+                <h3 class="cta-title">想了解更多如何预防糖尿病？ / Want to Learn More About Preventing Diabetes?</h3>
+                <p class="cta-description">参加医生Chang的免费线上分享会，学习科学的血糖管理方法<br>Join Dr. Chang's free online sharing session to learn scientific blood glucose management methods</p>
+                <a href="https://dreasonchang.com/dreason-253606?fbclid=IwRlRTSAPJPuxleHRuA2FlbQIxMABzcnRjBmFwcF9pZAo2NjI4NTY4Mzc5AAEevsPwp420ilZmtKUJL6LrHgygMGJSxhS7muBVo_o7uRXXos15YMN5D3xYMu8_aem_0hJLupGgm0gy1ROCCP1P1w" target="_blank" rel="noopener noreferrer" class="btn-register">
+                    立即报名参加 / Register Now
+                </a>
+            </div>
+        </div>
+    `;
+    
+    reportContent.innerHTML = html;
+}
+
+// Helper functions for status indicators
+function getBMIStatus(bmi) {
+    const bmiNum = parseFloat(bmi);
+    if (bmiNum < 18.5) return `<span class="report-status status-warning">体重过轻 / Underweight</span>`;
+    if (bmiNum < 24.9) return `<span class="report-status status-normal">正常范围 / Normal Range</span>`;
+    if (bmiNum < 29.9) return `<span class="report-status status-warning">体重过重 / Overweight</span>`;
+    return `<span class="report-status status-danger">肥胖 / Obese</span>`;
+}
+
+function getGlucoseStatus(value, type) {
+    const glucose = parseFloat(value);
+    if (type === 'fasting') {
+        if (glucose < 70) return `<span class="report-status status-warning">偏低 / Low</span>`;
+        if (glucose <= 100) return `<span class="report-status status-normal">正常 / Normal</span>`;
+        if (glucose <= 125) return `<span class="report-status status-warning">偏高 (糖尿病前期) / High (Prediabetes)</span>`;
+        return `<span class="report-status status-danger">高 (可能糖尿病) / High (Possible Diabetes)</span>`;
+    } else {
+        if (glucose < 140) return `<span class="report-status status-normal">正常 / Normal</span>`;
+        if (glucose < 200) return `<span class="report-status status-warning">偏高 / High</span>`;
+        return `<span class="report-status status-danger">高 / High</span>`;
+    }
+}
+
+function getHbA1cStatus(value) {
+    const hba1c = parseFloat(value);
+    if (hba1c < 5.7) return `<span class="report-status status-normal">正常 / Normal</span>`;
+    if (hba1c < 6.5) return `<span class="report-status status-warning">偏高 (糖尿病前期) / High (Prediabetes)</span>`;
+    return `<span class="report-status status-danger">高 (可能糖尿病) / High (Possible Diabetes)</span>`;
+}
+
+function getBodyFatStatus(value, gender) {
+    const bodyFat = parseFloat(value);
+    if (gender === 'male') {
+        if (bodyFat < 10) return `<span class="report-status status-warning">偏低 / Low</span>`;
+        if (bodyFat <= 20) return `<span class="report-status status-normal">正常 / Normal</span>`;
+        if (bodyFat <= 25) return `<span class="report-status status-warning">偏高 / High</span>`;
+        return `<span class="report-status status-danger">过高 / Too High</span>`;
+    } else {
+        if (bodyFat < 18) return `<span class="report-status status-warning">偏低 / Low</span>`;
+        if (bodyFat <= 28) return `<span class="report-status status-normal">正常 / Normal</span>`;
+        if (bodyFat <= 32) return `<span class="report-status status-warning">偏高 / High</span>`;
+        return `<span class="report-status status-danger">过高 / Too High</span>`;
+    }
+}
+
+function getWaistStatus(value, gender) {
+    const waist = parseFloat(value);
+    if (gender === 'male') {
+        return waist > 90 ? `<span class="report-status status-danger">风险 / Risk</span>` : `<span class="report-status status-normal">正常 / Normal</span>`;
+    } else {
+        return waist > 80 ? `<span class="report-status status-danger">风险 / Risk</span>` : `<span class="report-status status-normal">正常 / Normal</span>`;
+    }
+}
+
+function getBPStatus(value, type) {
+    const bp = parseFloat(value);
+    if (type === 'systolic') {
+        if (bp < 120) return `<span class="report-status status-normal">正常 / Normal</span>`;
+        if (bp < 130) return `<span class="report-status status-warning">偏高 (高血压前期) / High (Prehypertension)</span>`;
+        if (bp < 140) return `<span class="report-status status-warning">高血压第1期 / Hypertension Stage 1</span>`;
+        return `<span class="report-status status-danger">高血压第2期 / Hypertension Stage 2</span>`;
+    } else {
+        if (bp < 80) return `<span class="report-status status-normal">正常 / Normal</span>`;
+        if (bp < 90) return `<span class="report-status status-warning">偏高 / High</span>`;
+        return `<span class="report-status status-danger">高 / High</span>`;
+    }
+}
+
+function getHeartRateStatus(value) {
+    const hr = parseFloat(value);
+    if (hr < 60) return '<span class="report-status status-info">偏低 / Low</span>';
+    if (hr <= 100) return '<span class="report-status status-normal">正常 / Normal</span>';
+    return '<span class="report-status status-warning">偏高 / High</span>';
+}
+
+function getCholesterolStatus(value) {
+    const chol = parseFloat(value);
+    if (chol < 200) return '<span class="report-status status-normal">理想 / Ideal</span>';
+    if (chol < 240) return '<span class="report-status status-warning">偏高 / High</span>';
+    return '<span class="report-status status-danger">高 / High</span>';
+}
+
+// Text conversion functions - Bilingual
+function getGenderText(gender) {
+    const map = {
+        'male': '男性 / Male',
+        'female': '女性 / Female',
+        'other': '其他 / Other'
+    };
+    return map[gender] || '未填写 / Not filled';
+}
+
+function getObesityRiskText(risk) {
+    const map = {
+        'low': '低风险 / Low Risk',
+        'moderate': '中等风险 / Moderate Risk',
+        'high': '高风险 / High Risk',
+        'very-high': '极高风险 / Very High Risk'
+    };
+    return map[risk] || '未填写 / Not filled';
+}
+
+function getExerciseFrequencyText(freq) {
+    const map = {
+        'none': '几乎不运动 / Almost never',
+        'light': '每周1-2次 (轻度) / 1-2 times/week (Light)',
+        'moderate': '每周3-4次 (中度) / 3-4 times/week (Moderate)',
+        'high': '每周5次以上 (高度) / 5+ times/week (High)'
+    };
+    return map[freq] || '未填写 / Not filled';
+}
+
+function getDietTypeText(diet) {
+    const map = {
+        'balanced': '均衡饮食 / Balanced Diet',
+        'vegetarian': '素食 / Vegetarian',
+        'low-carb': '低碳水化合物 / Low Carbohydrate',
+        'mediterranean': '地中海饮食 / Mediterranean',
+        'irregular': '不规律 / Irregular',
+        'other': '其他 / Other'
+    };
+    return map[diet] || '未填写 / Not filled';
+}
+
+function getSleepQualityText(quality) {
+    const map = {
+        'excellent': '优秀 (7-9小时，品质好) / Excellent (7-9 hours, good quality)',
+        'good': '良好 (6-7小时，品质尚可) / Good (6-7 hours, fair quality)',
+        'fair': '一般 (5-6小时，品质普通) / Fair (5-6 hours, average quality)',
+        'poor': '不佳 (<5小时或品质差) / Poor (<5 hours or poor quality)'
+    };
+    return map[quality] || '未填写 / Not filled';
+}
+
+function getStressLevelText(level) {
+    const map = {
+        'low': '低 / Low',
+        'moderate': '中等 / Moderate',
+        'high': '高 / High',
+        'very-high': '非常高 / Very High'
+    };
+    return map[level] || '未填写 / Not filled';
+}
+
+function getSmokingText(smoking) {
+    const map = {
+        'never': '从不吸烟 / Never',
+        'former': '已戒烟 / Former smoker',
+        'occasional': '偶尔吸烟 / Occasional',
+        'regular': '经常吸烟 / Regular'
+    };
+    return map[smoking] || '未填写 / Not filled';
+}
+
+function getAlcoholText(alcohol) {
+    const map = {
+        'never': '从不饮酒 / Never',
+        'occasional': '偶尔 (每周1-2次) / Occasional (1-2 times/week)',
+        'moderate': '适度 (每周3-4次) / Moderate (3-4 times/week)',
+        'frequent': '经常 (每周5次以上) / Frequent (5+ times/week)'
+    };
+    return map[alcohol] || '未填写 / Not filled';
+}
+
+// Analysis generation functions - Bilingual
+function generateBMIAnalysis(bmi) {
+    if (!bmi) return '';
+    const bmiNum = parseFloat(bmi);
+    let analysis = '<div class="report-analysis"><h4>BMI 分析 / BMI Analysis</h4><p>';
+    
+    if (bmiNum < 18.5) {
+        analysis += '您的 BMI 显示体重过轻。建议增加健康体重，通过均衡饮食和适当运动来改善。<br>Your BMI indicates underweight. It is recommended to increase healthy weight through balanced diet and appropriate exercise.';
+    } else if (bmiNum < 24.9) {
+        analysis += '您的 BMI 在正常范围内，这是良好的健康指标。请继续维持健康的生活习惯。<br>Your BMI is within the normal range, which is a good health indicator. Please continue to maintain healthy lifestyle habits.';
+    } else if (bmiNum < 29.9) {
+        analysis += '您的 BMI 显示体重过重。建议通过饮食控制和规律运动来减重，以 降低相关健康风险。<br>Your BMI indicates overweight. It is recommended to lose weight through diet control and regular exercise to reduce related health risks.';
+    } else {
+        analysis += '您的 BMI 显示肥胖，这可能增加多种健康风险。强烈建议寻求专业医疗建议，制定减重计划。<br>Your BMI indicates obesity, which may increase various health risks. It is strongly recommended to seek professional medical advice and create a weight loss plan.';
+    }
+    
+    analysis += '</p></div>';
+    return analysis;
+}
+
+function generateGlucoseAnalysis(data) {
+    let analysis = '<div class="report-analysis"><h4>血糖分析 / Glucose Analysis</h4><p>';
+    const fasting = parseFloat(data.fastingGlucose);
+    
+    if (fasting) {
+        if (fasting < 70) {
+            analysis += '您的空腹血糖偏低，可能需要注意低血糖的风险。<br>Your fasting glucose is low, and you may need to pay attention to the risk of hypoglycemia.';
+        } else if (fasting <= 100) {
+            analysis += '您的空腹血糖在正常范围内，这是良好的指标。<br>Your fasting glucose is within the normal range, which is a good indicator.';
+        } else if (fasting <= 125) {
+            analysis += '您的空腹血糖偏高，处于糖尿病前期阶段。建议调整饮食和生活方式，并定期监测。<br>Your fasting glucose is high, indicating prediabetes. It is recommended to adjust diet and lifestyle, and monitor regularly.';
+        } else {
+            analysis += '您的空腹血糖明显偏高，可能患有糖尿病。强烈建议寻求专业医疗评估和治疗。<br>Your fasting glucose is significantly high, and you may have diabetes. It is strongly recommended to seek professional medical evaluation and treatment.';
+        }
+    }
+    
+    if (data.hba1c) {
+        const hba1c = parseFloat(data.hba1c);
+        if (hba1c >= 6.5) {
+            analysis += '您的 HbA1c 值显示可能患有糖尿病，需要立即医疗关注。<br>Your HbA1c value indicates possible diabetes and requires immediate medical attention.';
+        }
+    }
+    
+    analysis += '</p></div>';
+    return analysis;
+}
+
+function generateObesityAnalysis(data) {
+    let analysis = '<div class="report-analysis"><h4>肥胖风险分析 / Obesity Risk Analysis</h4><p>';
+    
+    if (data.bmi) {
+        const bmiNum = parseFloat(data.bmi);
+        if (bmiNum >= 25) {
+            analysis += '根据您的 BMI 和相关指标，您可能有较高的肥胖相关健康风险。<br>Based on your BMI and related indicators, you may have a higher risk of obesity-related health issues.';
+        }
+    }
+    
+    if (data.waistCircumference) {
+        const waist = parseFloat(data.waistCircumference);
+        const gender = data.patientGender;
+        if ((gender === 'male' && waist > 90) || (gender === 'female' && waist > 80)) {
+            analysis += '您的腰围超过建议范围，这与代谢症候群和心血管疾病风险增加有关。<br>Your waist circumference exceeds the recommended range, which is associated with increased risk of metabolic syndrome and cardiovascular disease.';
+        }
+    }
+    
+    analysis += '</p></div>';
+    return analysis;
+}
+
+function generateBPAnalysis(data) {
+    let analysis = '<div class="report-analysis"><h4>血压分析 / Blood Pressure Analysis</h4><p>';
+    const systolic = parseFloat(data.systolicBP);
+    const diastolic = parseFloat(data.diastolicBP);
+    
+    if (systolic && diastolic) {
+        if (systolic < 120 && diastolic < 80) {
+            analysis += '您的血压在正常范围内，请继续维持健康的生活方式。<br>Your blood pressure is within the normal range. Please continue to maintain a healthy lifestyle.';
+        } else if (systolic < 130 && diastolic < 80) {
+            analysis += '您的血压处于高血压前期，建议调整生活方式以预防高血压。<br>Your blood pressure is in the prehypertension stage. It is recommended to adjust your lifestyle to prevent hypertension.';
+        } else {
+            analysis += '您的血压偏高，建议寻求医疗建议，可能需要药物治疗和生活方式调整。<br>Your blood pressure is high. It is recommended to seek medical advice, and you may need medication and lifestyle adjustments.';
+        }
+    }
+    
+    analysis += '</p></div>';
+    return analysis;
+}
+
+function generateLifestyleAnalysis(data) {
+    let analysis = '<div class="report-analysis"><h4>生活习惯分析 / Lifestyle Analysis</h4><p>';
+    
+    if (data.exerciseFrequency === 'none' || data.exerciseFrequency === 'light') {
+        analysis += '您的运动量可能不足，建议增加规律运动以改善整体健康。<br>Your exercise level may be insufficient. It is recommended to increase regular exercise to improve overall health.';
+    }
+    
+    if (data.sleepQuality === 'poor' || data.sleepQuality === 'fair') {
+        analysis += '您的睡眠品质可能需要改善，良好的睡眠对血糖控制和整体健康非常重要。<br>Your sleep quality may need improvement. Good sleep is very important for blood glucose control and overall health.';
+    }
+    
+    if (data.stressLevel === 'high' || data.stressLevel === 'very-high') {
+        analysis += '您的高压力水平可能影响血糖控制和整体健康，建议学习压力管理技巧。<br>Your high stress level may affect blood glucose control and overall health. It is recommended to learn stress management techniques.';
+    }
+    
+    if (data.smoking === 'regular' || data.smoking === 'occasional') {
+        analysis += '吸烟会增加心血管疾病和糖尿病并发症的风险，强烈建议戒烟。<br>Smoking increases the risk of cardiovascular disease and diabetes complications. It is strongly recommended to quit smoking.';
+    }
+    
+    analysis += '</p></div>';
+    return analysis;
+}
+
+function generateRecommendations(data) {
+    let recommendations = '<div class="report-recommendations"><h4>健康建议 / Health Recommendations</h4><ul>';
+    
+    // BMI recommendations
+    if (data.bmi) {
+        const bmiNum = parseFloat(data.bmi);
+        if (bmiNum >= 25) {
+            recommendations += '<li>制定减重计划，目标是每周减重 0.5-1 公斤 / Create a weight loss plan, aiming to lose 0.5-1 kg per week</li>';
+            recommendations += '<li>减少高热量、高糖分食物的摄取 / Reduce intake of high-calorie and high-sugar foods</li>';
+        } else if (bmiNum < 18.5) {
+            recommendations += '<li>增加健康体重，通过均衡营养和适当运动 / Increase healthy weight through balanced nutrition and appropriate exercise</li>';
+        }
+    }
+    
+    // Glucose recommendations
+    if (data.fastingGlucose) {
+        const fasting = parseFloat(data.fastingGlucose);
+        if (fasting > 100) {
+            recommendations += '<li>控制碳水化合物摄取，选择低升糖指数的食物 / Control carbohydrate intake, choose foods with low glycemic index</li>';
+            recommendations += '<li>规律监测血糖，记录饮食和血糖变化 / Regularly monitor blood glucose and record diet and glucose changes</li>';
+            recommendations += '<li>考虑咨询营养师制定个人化饮食计划 / Consider consulting a nutritionist to create a personalized diet plan</li>';
+        }
+    }
+    
+    // Blood pressure recommendations
+    if (data.systolicBP && parseFloat(data.systolicBP) >= 120) {
+        recommendations += '<li>减少钠盐摄取，控制在每日 5 克以下 / Reduce sodium intake, keep it below 5g per day</li>';
+        recommendations += '<li>增加蔬果摄取，特别是富含钾的食物 / Increase intake of fruits and vegetables, especially those rich in potassium</li>';
+    }
+    
+    // Exercise recommendations
+    if (data.exerciseFrequency === 'none' || data.exerciseFrequency === 'light') {
+        recommendations += '<li>开始规律运动，目标每周至少 150 分钟中等强度运动 / Start regular exercise, aim for at least 150 minutes of moderate-intensity exercise per week</li>';
+        recommendations += '<li>从轻度活动开始，如快走、游泳或骑自行车 / Start with light activities such as brisk walking, swimming, or cycling</li>';
+    }
+    
+    // Sleep recommendations
+    if (data.sleepQuality === 'poor' || data.sleepQuality === 'fair') {
+        recommendations += '<li>建立规律的睡眠时间表，每天固定时间睡觉和起床 / Establish a regular sleep schedule, sleep and wake up at fixed times daily</li>';
+        recommendations += '<li>创造良好的睡眠环境，避免睡前使用电子设备 / Create a good sleep environment, avoid using electronic devices before bed</li>';
+    }
+    
+    // Stress recommendations
+    if (data.stressLevel === 'high' || data.stressLevel === 'very-high') {
+        recommendations += '<li>学习压力管理技巧，如深呼吸、冥想或瑜伽 / Learn stress management techniques such as deep breathing, meditation, or yoga</li>';
+        recommendations += '<li>确保充足的休息和放松时间 / Ensure adequate rest and relaxation time</li>';
+    }
+    
+    // General recommendations
+    recommendations += '<li>定期进行健康检查，追踪各项指标的变化 / Regular health check-ups to track changes in various indicators</li>';
+    recommendations += '<li>如有任何健康疑虑，请咨询专业医疗人员 / If you have any health concerns, please consult a medical professional</li>';
+    recommendations += '<li>保持积极的心态，健康管理是一个持续的过程 / Maintain a positive attitude, health management is an ongoing process</li>';
+    
+    recommendations += '</ul></div>';
+    return recommendations;
+}
+
+// Show form function
+function showForm() {
+    reportSection.style.display = 'none';
+    formSection.style.display = 'block';
+    formSection.scrollIntoView({ behavior: 'smooth' });
+    form.reset();
+    bmiDisplay.style.display = 'none';
+    // Destroy chart if exists
+    if (window.riskChartInstance) {
+        window.riskChartInstance.destroy();
+        window.riskChartInstance = null;
+    }
+    document.getElementById('chartContainer').style.display = 'none';
+}
+
+// Calculate health risks
+function calculateHealthRisks(data) {
+    const risks = {
+        diabetes: 0,
+        hypertension: 0,
+        cardiovascular: 0,
+        obesity: 0,
+        metabolic: 0,
+        healthy: 0
+    };
+    
+    // Diabetes Risk Calculation
+    let diabetesScore = 0;
+    if (data.fastingGlucose) {
+        const glucose = parseFloat(data.fastingGlucose);
+        if (glucose >= 126) diabetesScore += 40;
+        else if (glucose >= 100) diabetesScore += 25;
+        else if (glucose < 70) diabetesScore += 10;
+    }
+    if (data.hba1c) {
+        const hba1c = parseFloat(data.hba1c);
+        if (hba1c >= 6.5) diabetesScore += 30;
+        else if (hba1c >= 5.7) diabetesScore += 20;
+    }
+    if (data.postprandialGlucose) {
+        const pp = parseFloat(data.postprandialGlucose);
+        if (pp >= 200) diabetesScore += 20;
+        else if (pp >= 140) diabetesScore += 15;
+    }
+    if (data.bmi) {
+        const bmi = parseFloat(data.bmi);
+        if (bmi >= 30) diabetesScore += 15;
+        else if (bmi >= 25) diabetesScore += 10;
+    }
+    if (data.exerciseFrequency === 'none' || data.exerciseFrequency === 'light') {
+        diabetesScore += 10;
+    }
+    if (data.stressLevel === 'high' || data.stressLevel === 'very-high') {
+        diabetesScore += 5;
+    }
+    risks.diabetes = Math.min(diabetesScore, 100);
+    
+    // Hypertension Risk Calculation
+    let hypertensionScore = 0;
+    if (data.systolicBP) {
+        const systolic = parseFloat(data.systolicBP);
+        if (systolic >= 140) hypertensionScore += 40;
+        else if (systolic >= 130) hypertensionScore += 25;
+        else if (systolic >= 120) hypertensionScore += 15;
+    }
+    if (data.diastolicBP) {
+        const diastolic = parseFloat(data.diastolicBP);
+        if (diastolic >= 90) hypertensionScore += 30;
+        else if (diastolic >= 80) hypertensionScore += 20;
+    }
+    if (data.bmi && parseFloat(data.bmi) >= 25) {
+        hypertensionScore += 15;
+    }
+    if (data.smoking === 'regular' || data.smoking === 'occasional') {
+        hypertensionScore += 10;
+    }
+    if (data.stressLevel === 'high' || data.stressLevel === 'very-high') {
+        hypertensionScore += 10;
+    }
+    risks.hypertension = Math.min(hypertensionScore, 100);
+    
+    // Cardiovascular Risk Calculation
+    let cardiovascularScore = 0;
+    if (data.systolicBP && parseFloat(data.systolicBP) >= 140) {
+        cardiovascularScore += 25;
+    }
+    if (data.cholesterol) {
+        const chol = parseFloat(data.cholesterol);
+        if (chol >= 240) cardiovascularScore += 25;
+        else if (chol >= 200) cardiovascularScore += 15;
+    }
+    if (data.bmi && parseFloat(data.bmi) >= 30) {
+        cardiovascularScore += 20;
+    }
+    if (data.smoking === 'regular') {
+        cardiovascularScore += 20;
+    }
+    if (data.exerciseFrequency === 'none') {
+        cardiovascularScore += 15;
+    }
+    if (data.diabetes && risks.diabetes >= 50) {
+        cardiovascularScore += 15;
+    }
+    risks.cardiovascular = Math.min(cardiovascularScore, 100);
+    
+    // Obesity Risk Calculation
+    let obesityScore = 0;
+    if (data.bmi) {
+        const bmi = parseFloat(data.bmi);
+        if (bmi >= 30) obesityScore += 40;
+        else if (bmi >= 25) obesityScore += 25;
+    }
+    if (data.waistCircumference) {
+        const waist = parseFloat(data.waistCircumference);
+        const gender = data.patientGender;
+        if ((gender === 'male' && waist > 90) || (gender === 'female' && waist > 80)) {
+            obesityScore += 25;
+        }
+    }
+    if (data.bodyFat) {
+        const bodyFat = parseFloat(data.bodyFat);
+        const gender = data.patientGender;
+        if ((gender === 'male' && bodyFat > 25) || (gender === 'female' && bodyFat > 32)) {
+            obesityScore += 20;
+        }
+    }
+    if (data.exerciseFrequency === 'none') {
+        obesityScore += 15;
+    }
+    risks.obesity = Math.min(obesityScore, 100);
+    
+    // Metabolic Syndrome Risk
+    let metabolicScore = 0;
+    if (risks.diabetes >= 30) metabolicScore += 25;
+    if (risks.hypertension >= 30) metabolicScore += 20;
+    if (risks.obesity >= 30) metabolicScore += 25;
+    if (data.waistCircumference) {
+        const waist = parseFloat(data.waistCircumference);
+        const gender = data.patientGender;
+        if ((gender === 'male' && waist > 90) || (gender === 'female' && waist > 80)) {
+            metabolicScore += 20;
+        }
+    }
+    if (data.cholesterol && parseFloat(data.cholesterol) >= 200) {
+        metabolicScore += 10;
+    }
+    risks.metabolic = Math.min(metabolicScore, 100);
+    
+    // Calculate healthy percentage (inverse of average risk)
+    const totalRisk = risks.diabetes + risks.hypertension + risks.cardiovascular + risks.obesity + risks.metabolic;
+    const avgRisk = totalRisk / 5;
+    risks.healthy = Math.max(0, 100 - avgRisk);
+    
+    return risks;
+}
+
+// Generate Risk Assessment Chart
+function generateRiskChart(data) {
+    const risks = calculateHealthRisks(data);
+    const chartContainer = document.getElementById('chartContainer');
+    const chartCanvas = document.getElementById('riskChart');
+    const chartLegend = document.getElementById('chartLegend');
+    
+    if (!chartContainer || !chartCanvas) return;
+    
+    // Show chart container and ensure it's visible
+    chartContainer.style.display = 'block';
+    
+    // Scroll chart into view smoothly
+    setTimeout(() => {
+        chartContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 500);
+    
+    // Destroy existing chart if any
+    if (window.riskChartInstance) {
+        window.riskChartInstance.destroy();
+    }
+    
+    // Prepare chart data
+    const chartData = [];
+    const chartLabels = [];
+    const chartColors = [];
+    const chartDescriptions = [];
+    
+    // Add risks to chart (only if risk > 0)
+    if (risks.diabetes > 0) {
+        chartData.push(risks.diabetes);
+        chartLabels.push('糖尿病风险 / Diabetes Risk');
+        chartColors.push('#dc3545'); // Red
+        chartDescriptions.push(getRiskDescription(risks.diabetes, '糖尿病 / Diabetes'));
+    }
+    
+    if (risks.hypertension > 0) {
+        chartData.push(risks.hypertension);
+        chartLabels.push('高血压风险 / Hypertension Risk');
+        chartColors.push('#ff6b6b'); // Light red
+        chartDescriptions.push(getRiskDescription(risks.hypertension, '高血压 / Hypertension'));
+    }
+    
+    if (risks.cardiovascular > 0) {
+        chartData.push(risks.cardiovascular);
+        chartLabels.push('心血管疾病风险 / Cardiovascular Disease Risk');
+        chartColors.push('#ff9800'); // Orange
+        chartDescriptions.push(getRiskDescription(risks.cardiovascular, '心血管疾病 / Cardiovascular Disease'));
+    }
+    
+    if (risks.obesity > 0) {
+        chartData.push(risks.obesity);
+        chartLabels.push('肥胖风险 / Obesity Risk');
+        chartColors.push('#ffc107'); // Yellow
+        chartDescriptions.push(getRiskDescription(risks.obesity, '肥胖 / Obesity'));
+    }
+    
+    if (risks.metabolic > 0) {
+        chartData.push(risks.metabolic);
+        chartLabels.push('代谢症候群风险 / Metabolic Syndrome Risk');
+        chartColors.push('#f44336'); // Dark red
+        chartDescriptions.push(getRiskDescription(risks.metabolic, '代谢症候群 / Metabolic Syndrome'));
+    }
+    
+    if (risks.healthy > 0) {
+        chartData.push(risks.healthy);
+        chartLabels.push('健康状态 / Healthy Status');
+        chartColors.push('#28a745'); // Green
+        chartDescriptions.push('您的健康指标良好 / Your health indicators are good');
+    }
+    
+    // Create chart
+    const ctx = chartCanvas.getContext('2d');
+    
+    // Detect mobile device
+    const isMobile = window.innerWidth <= 768;
+    
+    window.riskChartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: chartColors,
+                borderColor: '#ffffff',
+                borderWidth: isMobile ? 1 : 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: isMobile ? 1.2 : 1.5,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            return `${label}: ${value.toFixed(1)}%`;
+                        }
+                    }
+                }
+            },
+            interaction: {
+                intersect: true
+            }
+        }
+    });
+    
+    // Generate legend
+    let legendHTML = '';
+    chartLabels.forEach((label, index) => {
+        const value = chartData[index];
+        const color = chartColors[index];
+        const description = chartDescriptions[index];
+        legendHTML += `
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: ${color};"></div>
+                <div class="legend-text">
+                    <div class="legend-label">${label}</div>
+                    <div class="legend-value">${value.toFixed(1)}% - ${description}</div>
+                </div>
+            </div>
+        `;
+    });
+    chartLegend.innerHTML = legendHTML;
+}
+
+// Get risk description - Bilingual
+function getRiskDescription(risk, disease) {
+    if (risk >= 70) {
+        return `极高风险 - 强烈建议立即寻求医疗协助 / Very High Risk - Strongly recommend seeking medical assistance immediately`;
+    } else if (risk >= 50) {
+        return `高风险 - 建议尽快咨询专业医疗人员 / High Risk - Recommend consulting a medical professional as soon as possible`;
+    } else if (risk >= 30) {
+        return `中等风险 - 需要关注并调整生活方式 / Moderate Risk - Need attention and lifestyle adjustments`;
+    } else if (risk >= 15) {
+        return `低风险 - 保持良好习惯 / Low Risk - Maintain good habits`;
+    } else {
+        return `风险较低 - 继续维持 / Lower Risk - Continue to maintain`;
+    }
+}
+
