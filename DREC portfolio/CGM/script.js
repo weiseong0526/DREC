@@ -136,14 +136,63 @@ const translations = {
 
 // DOM Elements
 const form = document.getElementById('cgmForm');
-const heightInput = document.getElementById('height');
-const weightInput = document.getElementById('weight');
 const reportSection = document.getElementById('report');
 const reportContent = document.getElementById('reportContent');
 const formSection = document.querySelector('.form-section');
 
+// Check URL parameters for patient type
+function getPatientTypeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('type') || sessionStorage.getItem('patientType');
+}
+
+// Redirect to selection page if no patient type
+function checkPatientType() {
+    const patientType = getPatientTypeFromURL();
+    if (!patientType || (patientType !== 'prediabetic' && patientType !== 'diabetic')) {
+        window.location.href = 'patient-type-selection.html';
+        return false;
+    }
+    return patientType;
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if patient type is selected
+    const patientType = checkPatientType();
+    if (!patientType) return;
+    
+    // Set patient type in hidden input
+    const patientTypeInput = document.getElementById('patientType');
+    if (patientTypeInput) {
+        patientTypeInput.value = patientType;
+    }
+    
+    // Show/hide conditional fields based on patient type
+    const prediabeticFields = document.querySelectorAll('.conditional-prediabetic');
+    const diabeticFields = document.querySelectorAll('.conditional-diabetic');
+    
+    if (patientType === 'prediabetic') {
+        prediabeticFields.forEach(field => {
+            field.classList.add('show');
+            const requiredInputs = field.querySelectorAll('[data-required="true"]');
+            requiredInputs.forEach(inp => {
+                inp.setAttribute('required', 'required');
+            });
+        });
+        diabeticFields.forEach(field => field.classList.remove('show'));
+    } else if (patientType === 'diabetic') {
+        diabeticFields.forEach(field => {
+            field.classList.add('show');
+            const requiredInputs = field.querySelectorAll('[data-required="true"]');
+            requiredInputs.forEach(inp => {
+                inp.setAttribute('required', 'required');
+            });
+        });
+        prediabeticFields.forEach(field => field.classList.remove('show'));
+    }
+    
+    
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
         const navMenu = document.querySelector('.nav-menu');
@@ -218,6 +267,50 @@ function getBMIRangesByAge(age) {
 
 // Real-time BMI calculation removed - BMI will only be displayed in report after submission
 
+
+// Blood glucose unit conversion functions
+function mgdlToMmol(mgdl) {
+    return (mgdl / 18.0182).toFixed(1);
+}
+
+function mmolToMgdl(mmol) {
+    return (mmol * 18.0182).toFixed(1);
+}
+
+// Auto-convert between glucose units
+const fastingGlucoseMgdl = document.getElementById('fastingGlucoseMgdl');
+const fastingGlucoseMmol = document.getElementById('fastingGlucoseMmol');
+const postprandialGlucoseMgdl = document.getElementById('postprandialGlucoseMgdl');
+const postprandialGlucoseMmol = document.getElementById('postprandialGlucoseMmol');
+
+if (fastingGlucoseMgdl && fastingGlucoseMmol) {
+    fastingGlucoseMgdl.addEventListener('input', function() {
+        if (this.value) {
+            fastingGlucoseMmol.value = mgdlToMmol(this.value);
+        }
+    });
+    
+    fastingGlucoseMmol.addEventListener('input', function() {
+        if (this.value) {
+            fastingGlucoseMgdl.value = mmolToMgdl(this.value);
+        }
+    });
+}
+
+if (postprandialGlucoseMgdl && postprandialGlucoseMmol) {
+    postprandialGlucoseMgdl.addEventListener('input', function() {
+        if (this.value) {
+            postprandialGlucoseMmol.value = mgdlToMmol(this.value);
+        }
+    });
+    
+    postprandialGlucoseMmol.addEventListener('input', function() {
+        if (this.value) {
+            postprandialGlucoseMgdl.value = mmolToMgdl(this.value);
+        }
+    });
+}
+
 // Form submission handler
 form.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -226,6 +319,17 @@ form.addEventListener('submit', function(e) {
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
+    }
+    
+    // Additional validation for prediabetic patients
+    const patientType = getPatientTypeFromURL();
+    if (patientType === 'prediabetic') {
+        const recentFbs = document.querySelector('input[name="prediabetic_recent_fbs"]').value;
+        const recentHba1c = document.querySelector('input[name="prediabetic_recent_hba1c"]').value;
+        if (!recentFbs && !recentHba1c) {
+            alert('请至少填写空腹血糖 (FBS) 或糖化血红蛋白 (HbA1c) 中的一项 / Please fill in at least FBS or HbA1c');
+            return;
+        }
     }
     
     // Collect form data
@@ -252,8 +356,12 @@ function collectFormData() {
     const formData = new FormData(form);
     const data = {};
     
+    // Patient Type
+    data.patientType = formData.get('patientType');
+    
     // Personal Information
     data.patientName = formData.get('patientName');
+    data.patientContact = formData.get('patientContact');
     data.patientAge = formData.get('patientAge');
     data.patientGender = formData.get('patientGender');
     data.patientEmail = formData.get('patientEmail');
@@ -263,11 +371,24 @@ function collectFormData() {
     const weight = parseFloat(formData.get('weight'));
     data.height = height;
     data.weight = weight;
-    data.bmi = height > 0 && weight > 0 ? (weight / ((height / 100) ** 2)).toFixed(1) : null;
+    // BMI formula: weight (kg) / height (m)^2
+    // Convert height from cm to meters by dividing by 100
+    data.bmi = height > 0 && weight > 0 ? (weight / Math.pow(height / 100, 2)).toFixed(1) : null;
     
-    // Blood Glucose
-    data.fastingGlucose = formData.get('fastingGlucose');
-    data.postprandialGlucose = formData.get('postprandialGlucose');
+    // Blood Glucose - handle dual units
+    const fastingMgdl = formData.get('fastingGlucoseMgdl');
+    const fastingMmol = formData.get('fastingGlucoseMmol');
+    data.fastingGlucoseMgdl = fastingMgdl || null;
+    data.fastingGlucoseMmol = fastingMmol || null;
+    // Store primary value (prefer mg/dL if both filled, otherwise use whichever is filled)
+    data.fastingGlucose = fastingMgdl || (fastingMmol ? (parseFloat(fastingMmol) * 18.0182).toFixed(1) : null);
+    
+    const postprandialMgdl = formData.get('postprandialGlucoseMgdl');
+    const postprandialMmol = formData.get('postprandialGlucoseMmol');
+    data.postprandialGlucoseMgdl = postprandialMgdl || null;
+    data.postprandialGlucoseMmol = postprandialMmol || null;
+    data.postprandialGlucose = postprandialMgdl || (postprandialMmol ? (parseFloat(postprandialMmol) * 18.0182).toFixed(1) : null);
+    
     data.hba1c = formData.get('hba1c');
     data.glucoseTestDate = formData.get('glucoseTestDate');
     
@@ -276,17 +397,19 @@ function collectFormData() {
     data.waistCircumference = formData.get('waistCircumference');
     data.obesityRisk = formData.get('obesityRisk');
     
-    // Blood Pressure
+    // Blood Pressure & Cholesterol
     data.systolicBP = formData.get('systolicBP');
     data.diastolicBP = formData.get('diastolicBP');
     data.heartRate = formData.get('heartRate');
     data.cholesterol = formData.get('cholesterol');
+    data.triglycerides = formData.get('triglycerides');
+    data.ldl = formData.get('ldl');
+    data.hdl = formData.get('hdl');
     data.bpTestDate = formData.get('bpTestDate');
     
     // Lifestyle
     data.exerciseFrequency = formData.get('exerciseFrequency');
     data.exerciseType = formData.getAll('exerciseType');
-    data.dietType = formData.get('dietType');
     data.mealsPerDay = formData.get('mealsPerDay');
     data.sleepQuality = formData.get('sleepQuality');
     data.stressLevel = formData.get('stressLevel');
@@ -294,7 +417,204 @@ function collectFormData() {
     data.alcohol = formData.get('alcohol');
     data.additionalNotes = formData.get('additionalNotes');
     
+    // Conditional fields based on patient type
+    if (data.patientType === 'prediabetic') {
+        data.prediabetic_family_diabetes = formData.get('prediabetic_family_diabetes');
+        data.prediabetic_sugary_foods = formData.get('prediabetic_sugary_foods');
+        data.prediabetic_recent_fbs = formData.get('prediabetic_recent_fbs');
+        data.prediabetic_recent_hba1c = formData.get('prediabetic_recent_hba1c');
+        data.prediabetic_fear_complications = formData.getAll('prediabetic_fear_complications');
+        data.prediabetic_hypertension = formData.get('prediabetic_hypertension');
+        data.prediabetic_high_cholesterol = formData.get('prediabetic_high_cholesterol');
+        data.prediabetic_preferred_method = formData.get('prediabetic_preferred_method');
+        data.prediabetic_willing_20min = formData.get('prediabetic_willing_20min');
+    } else if (data.patientType === 'diabetic') {
+        data.diabetic_blurred_vision = formData.get('diabetic_blurred_vision');
+        data.diabetic_night_vision = formData.get('diabetic_night_vision');
+        data.diabetic_visual_spots = formData.get('diabetic_visual_spots');
+        data.diabetic_foamy_urine = formData.get('diabetic_foamy_urine');
+        data.diabetic_frequent_urination = formData.get('diabetic_frequent_urination');
+        data.diabetic_edema = formData.get('diabetic_edema');
+        data.diabetic_numbness = formData.get('diabetic_numbness');
+        data.diabetic_decreased_sensation = formData.get('diabetic_decreased_sensation');
+        data.diabetic_shortness_breath = formData.get('diabetic_shortness_breath');
+        data.diabetic_foot_pain = formData.get('diabetic_foot_pain');
+        data.diabetic_cardiovascular_history = formData.get('diabetic_cardiovascular_history');
+        data.diabetic_duration = formData.get('diabetic_duration');
+        data.diabetic_recent_hba1c = formData.get('diabetic_recent_hba1c');
+        data.diabetic_taking_medication = formData.get('diabetic_taking_medication');
+        data.diabetic_insulin_injection = formData.get('diabetic_insulin_injection');
+        data.diabetic_fear_complications = formData.getAll('diabetic_fear_complications');
+    }
+    
     return data;
+}
+
+// Calculate organ-specific risks
+function calculateOrganRisks(data) {
+    const risks = {
+        eyes: 0,      // 眼睛 / Eyes (Retinopathy)
+        kidneys: 0,   // 肾脏 / Kidneys (Nephropathy)
+        nerves: 0,    // 神经 / Nerves (Neuropathy)
+        heart: 0      // 心脏 / Heart (Cardiovascular)
+    };
+    
+    // Get glucose value (prefer mg/dL, convert mmol/L if needed)
+    let fastingGlucose = null;
+    if (data.fastingGlucoseMgdl) {
+        fastingGlucose = parseFloat(data.fastingGlucoseMgdl);
+    } else if (data.fastingGlucoseMmol) {
+        fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
+    } else if (data.fastingGlucose) {
+        fastingGlucose = parseFloat(data.fastingGlucose);
+    }
+    
+    let postprandialGlucose = null;
+    if (data.postprandialGlucoseMgdl) {
+        postprandialGlucose = parseFloat(data.postprandialGlucoseMgdl);
+    } else if (data.postprandialGlucoseMmol) {
+        postprandialGlucose = parseFloat(data.postprandialGlucoseMmol) * 18.0182;
+    } else if (data.postprandialGlucose) {
+        postprandialGlucose = parseFloat(data.postprandialGlucose);
+    }
+    
+    // Eyes (Retinopathy) Risk - based on glucose control and duration
+    let eyesScore = 0;
+    if (fastingGlucose) {
+        if (fastingGlucose >= 200) eyesScore += 40;
+        else if (fastingGlucose >= 140) eyesScore += 30;
+        else if (fastingGlucose >= 126) eyesScore += 20;
+        else if (fastingGlucose >= 100) eyesScore += 10;
+    }
+    if (data.hba1c) {
+        const hba1c = parseFloat(data.hba1c);
+        if (hba1c >= 8.0) eyesScore += 35;
+        else if (hba1c >= 7.0) eyesScore += 25;
+        else if (hba1c >= 6.5) eyesScore += 15;
+    }
+    if (data.patientType === 'diabetic') {
+        eyesScore += 20; // Diabetic patients have higher baseline risk
+    }
+    if (data.systolicBP && parseFloat(data.systolicBP) >= 140) {
+        eyesScore += 15; // Hypertension increases retinopathy risk
+    }
+    risks.eyes = Math.min(eyesScore, 100);
+    
+    // Kidneys (Nephropathy) Risk - based on glucose, BP, and protein markers
+    let kidneysScore = 0;
+    if (fastingGlucose) {
+        if (fastingGlucose >= 200) kidneysScore += 35;
+        else if (fastingGlucose >= 140) kidneysScore += 25;
+        else if (fastingGlucose >= 126) kidneysScore += 15;
+    }
+    if (data.hba1c) {
+        const hba1c = parseFloat(data.hba1c);
+        if (hba1c >= 8.0) kidneysScore += 30;
+        else if (hba1c >= 7.0) kidneysScore += 20;
+    }
+    if (data.systolicBP && parseFloat(data.systolicBP) >= 140) {
+        kidneysScore += 25; // High BP is major risk for kidney disease
+    }
+    if (data.diastolicBP && parseFloat(data.diastolicBP) >= 90) {
+        kidneysScore += 20;
+    }
+    if (data.patientType === 'diabetic') {
+        kidneysScore += 20;
+    }
+    risks.kidneys = Math.min(kidneysScore, 100);
+    
+    // Nerves (Neuropathy) Risk - based on glucose control
+    let nervesScore = 0;
+    if (fastingGlucose) {
+        if (fastingGlucose >= 200) nervesScore += 40;
+        else if (fastingGlucose >= 140) nervesScore += 30;
+        else if (fastingGlucose >= 126) nervesScore += 20;
+    }
+    if (data.hba1c) {
+        const hba1c = parseFloat(data.hba1c);
+        if (hba1c >= 8.0) nervesScore += 35;
+        else if (hba1c >= 7.0) nervesScore += 25;
+        else if (hba1c >= 6.5) nervesScore += 15;
+    }
+    if (data.patientType === 'diabetic') {
+        nervesScore += 25;
+    }
+    // Check if patient reported neuropathy symptoms
+    if (data.diabetic_complications && Array.isArray(data.diabetic_complications) && data.diabetic_complications.includes('neuropathy')) {
+        nervesScore += 30;
+    }
+    risks.nerves = Math.min(nervesScore, 100);
+    
+    // Heart (Cardiovascular) Risk - based on multiple factors
+    let heartScore = 0;
+    if (data.systolicBP) {
+        const systolic = parseFloat(data.systolicBP);
+        if (systolic >= 140) heartScore += 30;
+        else if (systolic >= 130) heartScore += 20;
+        else if (systolic >= 120) heartScore += 10;
+    }
+    if (data.diastolicBP) {
+        const diastolic = parseFloat(data.diastolicBP);
+        if (diastolic >= 90) heartScore += 25;
+        else if (diastolic >= 80) heartScore += 15;
+    }
+    if (data.cholesterol) {
+        const chol = parseFloat(data.cholesterol);
+        if (chol >= 240) heartScore += 25;
+        else if (chol >= 200) heartScore += 15;
+    }
+    if (data.ldl) {
+        const ldl = parseFloat(data.ldl);
+        if (ldl >= 160) heartScore += 30;
+        else if (ldl >= 130) heartScore += 20;
+        else if (ldl >= 100) heartScore += 10;
+    }
+    if (data.hdl) {
+        const hdl = parseFloat(data.hdl);
+        const gender = data.patientGender;
+        if ((gender === 'male' && hdl < 40) || (gender === 'female' && hdl < 50)) {
+            heartScore += 15;
+        }
+    }
+    if (data.triglycerides && parseFloat(data.triglycerides) >= 200) {
+        heartScore += 15;
+    }
+    if (data.bmi) {
+        const bmi = parseFloat(data.bmi);
+        if (bmi >= 30) heartScore += 20;
+        else {
+            const ageNum = parseInt(data.patientAge) || 25;
+            const ranges = getBMIRangesByAge(ageNum);
+            if (bmi >= ranges.normal) heartScore += 10;
+        }
+    }
+    if (data.smoking === 'regular') {
+        heartScore += 25;
+    } else if (data.smoking === 'occasional') {
+        heartScore += 15;
+    }
+    if (fastingGlucose && fastingGlucose >= 126) {
+        heartScore += 20; // Diabetes increases cardiovascular risk
+    }
+    if (data.patientType === 'diabetic') {
+        heartScore += 15;
+    }
+    risks.heart = Math.min(heartScore, 100);
+    
+    return risks;
+}
+
+// Get risk level text and color
+function getRiskLevel(score) {
+    if (score >= 70) {
+        return { text: '高风险 / High Risk', class: 'status-danger', color: '#dc3545' };
+    } else if (score >= 40) {
+        return { text: '中等风险 / Moderate Risk', class: 'status-warning', color: '#ffc107' };
+    } else if (score >= 20) {
+        return { text: '低风险 / Low Risk', class: 'status-info', color: '#17a2b8' };
+    } else {
+        return { text: '正常 / Normal', class: 'status-normal', color: '#28a745' };
+    }
 }
 
 // Generate comprehensive report
@@ -305,18 +625,12 @@ function generateReport(data) {
         day: 'numeric'
     });
     
-    // Calculate risks for summary
-    const risks = calculateHealthRisks(data);
-    const highestRisk = Math.max(risks.diabetes, risks.hypertension, risks.cardiovascular, risks.obesity, risks.metabolic);
+    // Calculate organ-specific risks
+    const organRisks = calculateOrganRisks(data);
+    const highestRisk = Math.max(organRisks.eyes, organRisks.kidneys, organRisks.nerves, organRisks.heart);
     
     const notFilled = '未填写 / Not filled';
     const reportDateLabel = '报告生成日期 / Report Date';
-    const riskOverview = '健康风险总览 / Health Risk Overview';
-    const riskSummary = '风险评估摘要 / Risk Assessment Summary';
-    const riskDesc = '根据您填写的健康信息，我们已为您计算出各项健康风险指标。请查看下方的风险评估图表，了解您目前的健康状况。<br>Based on the health information you provided, we have calculated various health risk indicators for you. Please review the risk assessment chart below to understand your current health status.';
-    const highRiskWarning = '您的某些健康指标显示较高风险，建议尽快咨询专业医疗人员。<br>Some of your health indicators show high risk. It is recommended to consult a medical professional as soon as possible.';
-    const moderateRiskWarning = '部分指标需要关注，建议调整生活方式并定期追踪。<br>Some indicators need attention. It is recommended to adjust lifestyle and monitor regularly.';
-    const goodHealth = '您的整体健康状况良好，请继续维持健康的生活习惯。<br>Your overall health status is good. Please continue to maintain healthy lifestyle habits.';
     
     let html = `
         <div class="report-section-item">
@@ -325,11 +639,116 @@ function generateReport(data) {
             </div>
         </div>
         
+        <!-- Organ-Specific Risk Assessment -->
         <div class="report-section-item">
-            <h3 class="report-section-title">${riskOverview}</h3>
-            <div class="report-analysis">
-                <h4>${riskSummary}</h4>
-                <p>${riskDesc}${highestRisk >= 50 ? ` <strong style="color: var(--danger-color);">${highRiskWarning}</strong>` : highestRisk >= 30 ? ` <strong style="color: var(--warning-color);">${moderateRiskWarning}</strong>` : ` ${goodHealth}`}</p>
+            <h3 class="report-section-title">器官风险评估 / Organ Risk Assessment</h3>
+            <div class="organ-risk-grid">
+                <!-- Eyes Risk -->
+                <div class="organ-risk-card">
+                    <div class="organ-icon">👁️</div>
+                    <h4 class="organ-name">眼睛 / Eyes</h4>
+                    <div class="organ-risk-level ${getRiskLevel(organRisks.eyes).class}">
+                        ${getRiskLevel(organRisks.eyes).text}
+                    </div>
+                    <div class="organ-risk-score">风险评分 / Risk Score: ${organRisks.eyes}%</div>
+                    <div class="organ-risk-details">
+                        <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
+                        <ul>
+                            ${(() => {
+                                let fastingGlucose = null;
+                                if (data.fastingGlucoseMgdl) fastingGlucose = parseFloat(data.fastingGlucoseMgdl);
+                                else if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
+                                else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
+                                return fastingGlucose && fastingGlucose >= 200 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
+                            })()}
+                            ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
+                            ${data.systolicBP && parseFloat(data.systolicBP) >= 140 ? '<li>高血压 / Hypertension</li>' : ''}
+                            ${data.patientType === 'diabetic' ? '<li>糖尿病患者 / Diabetic patient</li>' : ''}
+                        </ul>
+                        <p><strong>建议 / Recommendations:</strong></p>
+                        <p>${organRisks.eyes >= 70 ? '建议立即咨询眼科医生进行详细检查 / Recommend immediate ophthalmologist consultation' : organRisks.eyes >= 40 ? '建议定期进行眼科检查 / Recommend regular eye examinations' : '保持良好血糖控制，定期检查 / Maintain good glucose control and regular checkups'}</p>
+                    </div>
+                </div>
+                
+                <!-- Kidneys Risk -->
+                <div class="organ-risk-card">
+                    <div class="organ-icon">🫘</div>
+                    <h4 class="organ-name">肾脏 / Kidneys</h4>
+                    <div class="organ-risk-level ${getRiskLevel(organRisks.kidneys).class}">
+                        ${getRiskLevel(organRisks.kidneys).text}
+                    </div>
+                    <div class="organ-risk-score">风险评分 / Risk Score: ${organRisks.kidneys}%</div>
+                    <div class="organ-risk-details">
+                        <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
+                        <ul>
+                            ${(() => {
+                                let fastingGlucose = null;
+                                if (data.fastingGlucoseMgdl) fastingGlucose = parseFloat(data.fastingGlucoseMgdl);
+                                else if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
+                                else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
+                                return fastingGlucose && fastingGlucose >= 140 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
+                            })()}
+                            ${data.systolicBP && parseFloat(data.systolicBP) >= 140 ? '<li>高血压 / Hypertension</li>' : ''}
+                            ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
+                        </ul>
+                        <p><strong>建议 / Recommendations:</strong></p>
+                        <p>${organRisks.kidneys >= 70 ? '建议立即进行肾功能检查 / Recommend immediate kidney function tests' : organRisks.kidneys >= 40 ? '建议定期监测肾功能 / Recommend regular kidney function monitoring' : '控制血糖和血压，定期检查 / Control glucose and blood pressure, regular checkups'}</p>
+                    </div>
+                </div>
+                
+                <!-- Nerves Risk -->
+                <div class="organ-risk-card">
+                    <div class="organ-icon">🧠</div>
+                    <h4 class="organ-name">神经 / Nerves</h4>
+                    <div class="organ-risk-level ${getRiskLevel(organRisks.nerves).class}">
+                        ${getRiskLevel(organRisks.nerves).text}
+                    </div>
+                    <div class="organ-risk-score">风险评分 / Risk Score: ${organRisks.nerves}%</div>
+                    <div class="organ-risk-details">
+                        <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
+                        <ul>
+                            ${(() => {
+                                let fastingGlucose = null;
+                                if (data.fastingGlucoseMgdl) fastingGlucose = parseFloat(data.fastingGlucoseMgdl);
+                                else if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
+                                else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
+                                return fastingGlucose && fastingGlucose >= 200 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
+                            })()}
+                            ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
+                            ${data.patientType === 'diabetic' ? '<li>糖尿病患者 / Diabetic patient</li>' : ''}
+                        </ul>
+                        <p><strong>建议 / Recommendations:</strong></p>
+                        <p>${organRisks.nerves >= 70 ? '建议立即咨询神经科医生 / Recommend immediate neurologist consultation' : organRisks.nerves >= 40 ? '建议定期进行神经功能检查 / Recommend regular neurological examinations' : '保持良好血糖控制 / Maintain good glucose control'}</p>
+                    </div>
+                </div>
+                
+                <!-- Heart Risk -->
+                <div class="organ-risk-card">
+                    <div class="organ-icon">❤️</div>
+                    <h4 class="organ-name">心脏 / Heart</h4>
+                    <div class="organ-risk-level ${getRiskLevel(organRisks.heart).class}">
+                        ${getRiskLevel(organRisks.heart).text}
+                    </div>
+                    <div class="organ-risk-score">风险评分 / Risk Score: ${organRisks.heart}%</div>
+                    <div class="organ-risk-details">
+                        <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
+                        <ul>
+                            ${data.systolicBP && parseFloat(data.systolicBP) >= 140 ? '<li>高血压 / Hypertension</li>' : ''}
+                            ${data.cholesterol && parseFloat(data.cholesterol) >= 200 ? '<li>高胆固醇 / High cholesterol</li>' : ''}
+                            ${data.ldl && parseFloat(data.ldl) >= 130 ? '<li>LDL偏高 / Elevated LDL</li>' : ''}
+                            ${data.smoking === 'regular' ? '<li>吸烟 / Smoking</li>' : ''}
+                            ${(() => {
+                                let fastingGlucose = null;
+                                if (data.fastingGlucoseMgdl) fastingGlucose = parseFloat(data.fastingGlucoseMgdl);
+                                else if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
+                                else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
+                                return fastingGlucose && fastingGlucose >= 126 ? '<li>糖尿病 / Diabetes</li>' : '';
+                            })()}
+                        </ul>
+                        <p><strong>建议 / Recommendations:</strong></p>
+                        <p>${organRisks.heart >= 70 ? '建议立即咨询心脏科医生 / Recommend immediate cardiologist consultation' : organRisks.heart >= 40 ? '建议定期进行心脏健康检查 / Recommend regular cardiovascular health checkups' : '保持健康生活方式，定期监测 / Maintain healthy lifestyle and regular monitoring'}</p>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -339,8 +758,16 @@ function generateReport(data) {
             <h3 class="report-section-title">个人基本资料 / Personal Information</h3>
             <div class="report-data-grid">
                 <div class="report-data-item">
+                    <div class="report-data-label">患者类型 / Patient Type</div>
+                    <div class="report-data-value">${data.patientType === 'prediabetic' ? '糖尿病前期/边缘 / Prediabetic/Borderline' : data.patientType === 'diabetic' ? '糖尿病患者 / Diabetic Patient' : notFilled}</div>
+                </div>
+                <div class="report-data-item">
                     <div class="report-data-label">姓名 / Name</div>
                     <div class="report-data-value">${data.patientName || notFilled}</div>
+                </div>
+                <div class="report-data-item">
+                    <div class="report-data-label">联系电话 / Contact Number</div>
+                    <div class="report-data-value">${data.patientContact || notFilled}</div>
                 </div>
                 <div class="report-data-item">
                     <div class="report-data-label">年龄 / Age</div>
@@ -365,11 +792,11 @@ function generateReport(data) {
             <div class="report-data-grid">
                 <div class="report-data-item">
                     <div class="report-data-label">身高 / Height</div>
-                    <div class="report-data-value">${data.height || notFilled} cm</div>
+                    <div class="report-data-value">${data.height ? `${data.height.toFixed(1)} cm` : notFilled}</div>
                 </div>
                 <div class="report-data-item">
                     <div class="report-data-label">体重 / Weight</div>
-                    <div class="report-data-value">${data.weight || notFilled} kg</div>
+                    <div class="report-data-value">${data.weight ? `${data.weight.toFixed(1)} kg` : notFilled}</div>
                 </div>
                 <div class="report-data-item">
                     <div class="report-data-label">BMI</div>
@@ -388,16 +815,19 @@ function generateReport(data) {
                 <div class="report-data-item">
                     <div class="report-data-label">空腹血糖 / Fasting Glucose</div>
                     <div class="report-data-value">
-                        ${data.fastingGlucose || notFilled} mg/dL
+                        ${data.fastingGlucoseMgdl ? `${data.fastingGlucoseMgdl} mg/dL` : ''}
+                        ${data.fastingGlucoseMmol ? `${data.fastingGlucoseMmol} mmol/L` : ''}
+                        ${!data.fastingGlucoseMgdl && !data.fastingGlucoseMmol ? notFilled : ''}
                         ${data.fastingGlucose ? getGlucoseStatus(data.fastingGlucose, 'fasting') : ''}
                     </div>
                 </div>
-                ${data.postprandialGlucose ? `
+                ${data.postprandialGlucoseMgdl || data.postprandialGlucoseMmol ? `
                 <div class="report-data-item">
                     <div class="report-data-label">餐后血糖 / Postprandial Glucose</div>
                     <div class="report-data-value">
-                        ${data.postprandialGlucose} mg/dL
-                        ${getGlucoseStatus(data.postprandialGlucose, 'postprandial')}
+                        ${data.postprandialGlucoseMgdl ? `${data.postprandialGlucoseMgdl} mg/dL` : ''}
+                        ${data.postprandialGlucoseMmol ? `${data.postprandialGlucoseMmol} mmol/L` : ''}
+                        ${data.postprandialGlucose ? getGlucoseStatus(data.postprandialGlucose, 'postprandial') : ''}
                     </div>
                 </div>
                 ` : ''}
@@ -483,6 +913,40 @@ function generateReport(data) {
                     <div class="report-data-value">
                         ${data.cholesterol} mg/dL
                         ${getCholesterolStatus(data.cholesterol)}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.triglycerides ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">甘油三酯 / Triglycerides (TG)</div>
+                    <div class="report-data-value">
+                        ${data.triglycerides} mg/dL
+                        ${parseFloat(data.triglycerides) >= 200 ? '<span class="report-status status-danger">高 / High</span>' : parseFloat(data.triglycerides) >= 150 ? '<span class="report-status status-warning">偏高 / Elevated</span>' : '<span class="report-status status-normal">正常 / Normal</span>'}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.ldl ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">低密度脂蛋白 / LDL</div>
+                    <div class="report-data-value">
+                        ${data.ldl} mg/dL
+                        ${parseFloat(data.ldl) >= 160 ? '<span class="report-status status-danger">高 / High</span>' : parseFloat(data.ldl) >= 130 ? '<span class="report-status status-warning">偏高 / Elevated</span>' : parseFloat(data.ldl) >= 100 ? '<span class="report-status status-info">接近理想 / Near Ideal</span>' : '<span class="report-status status-normal">理想 / Ideal</span>'}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.hdl ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">高密度脂蛋白 / HDL</div>
+                    <div class="report-data-value">
+                        ${data.hdl} mg/dL
+                        ${(() => {
+                            const hdl = parseFloat(data.hdl);
+                            const gender = data.patientGender;
+                            if ((gender === 'male' && hdl < 40) || (gender === 'female' && hdl < 50)) {
+                                return '<span class="report-status status-danger">偏低 / Low</span>';
+                            }
+                            return '<span class="report-status status-normal">正常 / Normal</span>';
+                        })()}
                     </div>
                 </div>
                 ` : ''}

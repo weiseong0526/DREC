@@ -208,6 +208,15 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 15px;
 }
 
+.section-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    margin-top: 20px;
+    color: var(--primary-color);
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -266,6 +275,158 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.85rem;
     color: var(--text-light);
     font-style: italic;
+}
+
+/* Dual Unit Input Styles */
+.dual-unit-input {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.unit-input-group {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.unit-input-group input {
+    flex: 1;
+    min-width: 0;
+}
+
+.unit-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.unit-separator {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Patient Type Selection Page */
+.patient-type-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.patient-type-card {
+    background: var(--bg-white);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    cursor: pointer;
+    border: 3px solid transparent;
+    text-align: center;
+}
+
+.patient-type-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-color);
+}
+
+.patient-type-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.patient-type-title {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+}
+
+.patient-type-description {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+.patient-type-features {
+    text-align: left;
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.patient-type-features p {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.patient-type-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.patient-type-features li {
+    padding: 8px 0;
+    color: var(--text-dark);
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.patient-type-features li:last-child {
+    border-bottom: none;
+}
+
+.patient-type-features li::before {
+    content: "✓ ";
+    color: var(--success-color);
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.btn-select-type {
+    width: 100%;
+    padding: 18px 30px;
+    background: var(--primary-color);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-select-type:hover {
+    background: var(--primary-dark);
+    transform: scale(1.02);
+}
+
+.btn-select-type:active {
+    transform: scale(0.98);
+}
+
+/* Conditional Fields */
+.conditional-field {
+    display: none;
+}
+
+.conditional-field.show {
+    display: block;
 }
 
 /* Radio and Checkbox Groups */
@@ -677,6 +838,23 @@ h1, h2, h3, h4, h5, h6 {
     .bmi-linear-scale {
         max-width: 100%;
     }
+    
+    .organ-risk-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .organ-risk-card {
+        padding: 20px;
+    }
+    
+    .organ-icon {
+        font-size: 2.5rem;
+    }
+    
+    .organ-name {
+        font-size: 1.2rem;
+    }
 }
 
 /* CTA Section in Report */
@@ -727,6 +905,99 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-register:active {
     transform: translateY(-1px);
+}
+
+/* Organ Risk Assessment Styles */
+.organ-risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.organ-risk-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border-top: 4px solid var(--accent-color);
+}
+
+.organ-risk-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.organ-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.organ-name {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.organ-risk-level {
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.organ-risk-level.status-danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.organ-risk-level.status-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: #856404;
+}
+
+.organ-risk-level.status-info {
+    background: rgba(23, 162, 184, 0.1);
+    color: var(--info-color);
+}
+
+.organ-risk-level.status-normal {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+}
+
+.organ-risk-score {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.organ-risk-details {
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.organ-risk-details p {
+    margin: 10px 0;
+    color: var(--text-dark);
+}
+
+.organ-risk-details ul {
+    margin: 10px 0 15px 20px;
+    padding-left: 0;
+}
+
+.organ-risk-details li {
+    margin: 8px 0;
+    color: var(--text-light);
 }
 
 /* Chart Styles */

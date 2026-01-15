@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="CGM Patient Type Selection - Choose your diabetes status">
+    <title>选择患者类型 / Patient Type Selection | 医生Chang</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h2>医生Chang</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../portfolio/index.html">首页 / Home</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">CGM 患者健康评估 / Patient Health Assessment</h1>
+                <p class="hero-subtitle">请先选择您的患者类型，我们将为您提供相应的评估表单<br>Please select your patient type first, and we will provide you with the corresponding assessment form</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Patient Type Selection Section -->
+    <section class="form-section">
+        <div class="container">
+            <div class="patient-type-selection">
+                <div class="patient-type-card" onclick="selectPatientType('prediabetic')">
+                    <div class="patient-type-icon">🔸</div>
+                    <h2 class="patient-type-title">糖尿病前期/边缘 / Prediabetic/Borderline</h2>
+                    <p class="patient-type-description">
+                        如果您被诊断为糖尿病前期或血糖处于边缘水平，请选择此选项<br>
+                        If you have been diagnosed with prediabetes or have borderline blood glucose levels, please select this option
+                    </p>
+                    <div class="patient-type-features">
+                        <p><strong>适合人群 / Suitable for:</strong></p>
+                        <ul>
+                            <li>空腹血糖 100-125 mg/dL / Fasting glucose 100-125 mg/dL</li>
+                            <li>HbA1c 5.7-6.4% / HbA1c 5.7-6.4%</li>
+                            <li>有糖尿病家族史 / Family history of diabetes</li>
+                            <li>希望预防糖尿病 / Want to prevent diabetes</li>
+                        </ul>
+                    </div>
+                    <button class="btn-select-type">选择此类型 / Select This Type</button>
+                </div>
+
+                <div class="patient-type-card" onclick="selectPatientType('diabetic')">
+                    <div class="patient-type-icon">🔴</div>
+                    <h2 class="patient-type-title">糖尿病患者 / Diabetic Patient</h2>
+                    <p class="patient-type-description">
+                        如果您已被诊断为糖尿病患者，请选择此选项<br>
+                        If you have been diagnosed with diabetes, please select this option
+                    </p>
+                    <div class="patient-type-features">
+                        <p><strong>适合人群 / Suitable for:</strong></p>
+                        <ul>
+                            <li>空腹血糖 ≥126 mg/dL / Fasting glucose ≥126 mg/dL</li>
+                            <li>HbA1c ≥6.5% / HbA1c ≥6.5%</li>
+                            <li>正在使用降糖药物 / Currently using diabetes medication</li>
+                            <li>需要监测并发症风险 / Need to monitor complication risks</li>
+                        </ul>
+                    </div>
+                    <button class="btn-select-type">选择此类型 / Select This Type</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>医生Chang</h3>
+                    <p>专业血糖管理专家 / Professional Blood Glucose Management Expert</p>
+                </div>
+                <div class="footer-section">
+                    <h3>联系方式 / Contact</h3>
+                    <p>📧 <a href="mailto:info@dreasonchang.com">info@dreasonchang.com</a><br>📞 <a href="tel:+60172276151">+60 17-227 6151</a></p>
+                </div>
+            </div>
+            <div class="footer-disclaimer">
+                <p><strong>免责声明 / Disclaimer:</strong> 本报告仅供参考，不能替代专业医疗建议。如有疑问，请咨询医生Chang或通过以上方式联系我们。<br>This report is for reference only and cannot replace professional medical advice. If you have any questions, please consult Dr. Chang or contact us through the above methods.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 DREC Healthcare Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function selectPatientType(type) {
+            // Store patient type in sessionStorage
+            sessionStorage.setItem('patientType', type);
+            // Redirect to form page
+            window.location.href = 'index.html?type=' + type;
+        }
+
+        // Mobile Navigation Toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (navMenu && navToggle && navMenu.classList.contains('active')) {
+                if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
