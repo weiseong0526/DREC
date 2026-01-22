@@ -683,7 +683,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .organ-risk-page .organ-card-top-left { 
-        top: 15% !important; 
+        top: 18% !important; 
         left: -6% !important; 
         right: auto !important; 
         bottom: auto !important; 
@@ -699,7 +699,7 @@ h1, h2, h3, h4, h5, h6 {
         transform: none !important;
     }
     .organ-risk-page .organ-card-middle-left { 
-        top: 46% !important; 
+        top: 49% !important; 
         left: -6% !important; 
         right: auto !important; 
         bottom: auto !important; 
@@ -1794,7 +1794,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .organ-card-top-left {
-    top: 15%;
+    top: 18%;
     left: -6%;
 }
 

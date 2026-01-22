@@ -389,7 +389,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .patient-type-features li::before {
-    content: "âœ“ ";
+    content: "✓ ";
     color: var(--success-color);
     font-weight: 700;
     margin-right: 8px;
@@ -683,7 +683,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .organ-risk-page .organ-card-top-left { 
-        top: 15% !important; 
+        top: 18% !important; 
         left: -6% !important; 
         right: auto !important; 
         bottom: auto !important; 
@@ -699,7 +699,7 @@ h1, h2, h3, h4, h5, h6 {
         transform: none !important;
     }
     .organ-risk-page .organ-card-middle-left { 
-        top: 46% !important; 
+        top: 49% !important; 
         left: -6% !important; 
         right: auto !important; 
         bottom: auto !important; 
@@ -1284,7 +1284,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .report-section-with-bg:not(.bmi-page-section)::before {
-    content: "æ‚£è€…å¥åº·è¯„ä¼°æŠ¥å‘Š\A Patient Health assessment\A report";
+    content: "患者健康评估报告\A Patient Health assessment\A report";
     position: absolute;
     top: 12mm;
     left: 50%;
@@ -1495,7 +1495,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .report-recommendations li::before {
-    content: 'âœ“';
+    content: '✓';
     position: absolute;
     left: 0;
     color: var(--success-color);
@@ -1794,7 +1794,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .organ-card-top-left {
-    top: 15%;
+    top: 18%;
     left: -6%;
 }
 

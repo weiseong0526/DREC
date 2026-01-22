@@ -56,12 +56,12 @@
                     <h2 class="section-title">个人基本资料 / Personal Information</h2>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="patientName">姓名 / Name <span class="required">*</span></label>
-                            <input type="text" id="patientName" name="patientName" required>
+                            <label for="patientName">姓名 / Name </label>
+                            <input type="text" id="patientName" name="patientName">
                         </div>
                         <div class="form-group">
-                            <label for="patientContact">联系电话 / Contact Number <span class="required">*</span></label>
-                            <input type="tel" id="patientContact" name="patientContact" required>
+                            <label for="patientContact">联系电话 / Contact Number </label>
+                            <input type="tel" id="patientContact" name="patientContact">
                         </div>
                         <div class="form-group">
                             <label for="patientEmail">电子邮件 / Email</label>
@@ -75,13 +75,13 @@
                     <h2 class="section-title">BMI (身体质量指数) / Body Mass Index</h2>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="patientAge">年龄 / Age <span class="required">*</span></label>
-                            <input type="number" id="patientAge" name="patientAge" min="1" max="120" required>
+                            <label for="patientAge">年龄 / Age </label>
+                            <input type="number" id="patientAge" name="patientAge" min="1" max="120">
                             <small class="form-hint">用于调整BMI评估标准 / Used to adjust BMI assessment standards</small>
                         </div>
                         <div class="form-group">
-                            <label for="patientGender">性别 / Gender <span class="required">*</span></label>
-                            <select id="patientGender" name="patientGender" required>
+                            <label for="patientGender">性别 / Gender </label>
+                            <select id="patientGender" name="patientGender">
                                 <option value="">请选择 / Please select</option>
                                 <option value="male">男性 / Male</option>
                                 <option value="female">女性 / Female</option>
@@ -90,12 +90,12 @@
                             <small class="form-hint">用于体脂率和腰围评估 / Used for body fat and waist circumference assessment</small>
                         </div>
                         <div class="form-group">
-                            <label for="height">身高 / Height (cm) <span class="required">*</span></label>
-                            <input type="number" id="height" name="height" min="50" max="250" step="0.1" required>
+                            <label for="height">身高 / Height (cm) </label>
+                            <input type="number" id="height" name="height" min="50" max="250" step="0.1">
                         </div>
                         <div class="form-group">
-                            <label for="weight">体重 / Weight (kg) <span class="required">*</span></label>
-                            <input type="number" id="weight" name="weight" min="20" max="300" step="0.1" required>
+                            <label for="weight">体重 / Weight (kg) </label>
+                            <input type="number" id="weight" name="weight" min="20" max="300" step="0.1">
                         </div>
                     </div>
                 </div>
@@ -105,34 +105,14 @@
                     <h2 class="section-title">血糖值 / Blood Glucose</h2>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="fastingGlucose">空腹血糖 / Fasting Glucose <span class="required">*</span></label>
-                            <div class="dual-unit-input">
-                                <div class="unit-input-group">
-                                    <input type="number" id="fastingGlucoseMgdl" name="fastingGlucoseMgdl" min="50" max="500" step="0.1" placeholder="mg/dL">
-                                    <span class="unit-label">mg/dL</span>
-                                </div>
-                                <div class="unit-separator">或 / or</div>
-                                <div class="unit-input-group">
-                                    <input type="number" id="fastingGlucoseMmol" name="fastingGlucoseMmol" min="2.8" max="27.8" step="0.1" placeholder="mmol/L">
-                                    <span class="unit-label">mmol/L</span>
-                                </div>
-                            </div>
-                            <small class="form-hint">正常范围 / Normal Range: 70-100 mg/dL (3.9-5.6 mmol/L)</small>
+                            <label for="fastingGlucose">空腹血糖 / Fasting Glucose (mmol/L) </label>
+                            <input type="number" id="fastingGlucoseMmol" name="fastingGlucoseMmol" min="2.8" max="27.8" step="0.1">
+                            <small class="form-hint">正常范围 / Normal Range: 3.9-5.6 mmol/L</small>
                         </div>
                         <div class="form-group">
-                            <label for="postprandialGlucose">餐后血糖 / Postprandial Glucose</label>
-                            <div class="dual-unit-input">
-                                <div class="unit-input-group">
-                                    <input type="number" id="postprandialGlucoseMgdl" name="postprandialGlucoseMgdl" min="50" max="500" step="0.1" placeholder="mg/dL">
-                                    <span class="unit-label">mg/dL</span>
-                                </div>
-                                <div class="unit-separator">或 / or</div>
-                                <div class="unit-input-group">
-                                    <input type="number" id="postprandialGlucoseMmol" name="postprandialGlucoseMmol" min="2.8" max="27.8" step="0.1" placeholder="mmol/L">
-                                    <span class="unit-label">mmol/L</span>
-                                </div>
-                            </div>
-                            <small class="form-hint">正常范围 / Normal Range: &lt;140 mg/dL (&lt;7.8 mmol/L) (2小时后 / 2 hours after)</small>
+                            <label for="postprandialGlucose">餐后血糖 / Postprandial Glucose (mmol/L)</label>
+                            <input type="number" id="postprandialGlucoseMmol" name="postprandialGlucoseMmol" min="2.8" max="27.8" step="0.1">
+                            <small class="form-hint">正常范围 / Normal Range: &lt;7.8 mmol/L (2小时后 / 2 hours after)</small>
                         </div>
                         <div class="form-group">
                             <label for="hba1c">糖化血红蛋白 / HbA1c (%)</label>
@@ -146,75 +126,19 @@
                     </div>
                 </div>
 
-                <!-- Body Fat & Obesity Risk Section -->
-                <div class="form-section-card">
-                    <h2 class="section-title">体脂率与肥胖风险 / Body Fat & Obesity Risk</h2>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="bodyFat">体脂率 / Body Fat (%)</label>
-                            <input type="number" id="bodyFat" name="bodyFat" min="5" max="50" step="0.1">
-                            <small class="form-hint">男性正常 / Male Normal: 10-20%, 女性正常 / Female Normal: 18-28%</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="waistCircumference">腰围 / Waist Circumference (cm)</label>
-                            <input type="number" id="waistCircumference" name="waistCircumference" min="40" max="200" step="0.1">
-                            <small class="form-hint">男性风险 / Male Risk: &gt;90cm, 女性风险 / Female Risk: &gt;80cm</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="obesityRisk">肥胖风险评估 / Obesity Risk Assessment</label>
-                            <select id="obesityRisk" name="obesityRisk">
-                                <option value="">请选择 / Please select</option>
-                                <option value="low">低风险 / Low Risk</option>
-                                <option value="moderate">中等风险 / Moderate Risk</option>
-                                <option value="high">高风险 / High Risk</option>
-                                <option value="very-high">极高风险 / Very High Risk</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Blood Pressure & Heart Health Section -->
                 <div class="form-section-card">
                     <h2 class="section-title">血压与心脏健康 / Blood Pressure & Heart Health</h2>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="systolicBP">收缩压 / Systolic BP (mmHg) <span class="required">*</span></label>
-                            <input type="number" id="systolicBP" name="systolicBP" min="70" max="250" required>
+                            <label for="systolicBP">收缩压 / Systolic BP (mmHg) </label>
+                            <input type="number" id="systolicBP" name="systolicBP" min="70" max="250">
                             <small class="form-hint">正常 / Normal: &lt;120 mmHg</small>
                         </div>
                         <div class="form-group">
-                            <label for="diastolicBP">舒张压 / Diastolic BP (mmHg) <span class="required">*</span></label>
-                            <input type="number" id="diastolicBP" name="diastolicBP" min="40" max="150" required>
+                            <label for="diastolicBP">舒张压 / Diastolic BP (mmHg) </label>
+                            <input type="number" id="diastolicBP" name="diastolicBP" min="40" max="150">
                             <small class="form-hint">正常 / Normal: &lt;80 mmHg</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="heartRate">静息心率 / Resting Heart Rate (bpm)</label>
-                            <input type="number" id="heartRate" name="heartRate" min="40" max="120">
-                            <small class="form-hint">正常 / Normal: 60-100 bpm</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="cholesterol">总胆固醇 / Total Cholesterol (mg/dL)</label>
-                            <input type="number" id="cholesterol" name="cholesterol" min="100" max="400">
-                            <small class="form-hint">理想 / Ideal: &lt;200 mg/dL</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="triglycerides">甘油三酯 / Triglycerides (TG) (mg/dL)</label>
-                            <input type="number" id="triglycerides" name="triglycerides" min="30" max="1000">
-                            <small class="form-hint">理想 / Ideal: &lt;150 mg/dL</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="ldl">低密度脂蛋白 / LDL (mg/dL)</label>
-                            <input type="number" id="ldl" name="ldl" min="50" max="300">
-                            <small class="form-hint">理想 / Ideal: &lt;100 mg/dL</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="hdl">高密度脂蛋白 / HDL (mg/dL)</label>
-                            <input type="number" id="hdl" name="hdl" min="20" max="150">
-                            <small class="form-hint">理想 / Ideal: &gt;40 mg/dL (男性 / Male), &gt;50 mg/dL (女性 / Female)</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="bpTestDate">检测日期 / Test Date</label>
-                            <input type="date" id="bpTestDate" name="bpTestDate">
                         </div>
                     </div>
                 </div>
@@ -225,427 +149,113 @@
                     
                     <!-- Conditional questions for Prediabetic patients -->
                     <div class="conditional-field conditional-prediabetic">
-                        <h3 class="section-subtitle">糖尿病前期/边缘专项问题 / Prediabetic Specific Questions</h3>
-                        
                         <div class="form-group">
-                            <label>1. 直系亲属（父母、兄弟姐妹）有没有糖尿病？/ Do you have first-degree relatives (parents, siblings) with diabetes? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_family_diabetes" value="yes" data-required="true">
-                                    <span>有 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_family_diabetes" value="no" data-required="true">
-                                    <span>没有 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>2. 过去7天内有没有喝含糖饮料、吃甜食/油炸？/ In the past 7 days, have you consumed sugary drinks, sweets, or fried foods? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_sugary_foods" value="yes" data-required="true">
-                                    <span>有 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_sugary_foods" value="no" data-required="true">
-                                    <span>没有 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>3. 最近一次空腹血糖 (FBS) 或糖化血红蛋白 (HbA1c) 是多少？/ What was your most recent Fasting Blood Sugar (FBS) or HbA1c? <span class="required">*</span></label>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <input type="number" name="prediabetic_recent_fbs" min="50" max="500" step="0.1" placeholder="空腹血糖 FBS (mg/dL)">
-                                </div>
-                                <div class="form-group">
-                                    <input type="number" name="prediabetic_recent_hba1c" min="3" max="15" step="0.1" placeholder="HbA1c (%)">
-                                </div>
-                            </div>
-                            <small class="form-hint">请至少填写一项 / Please fill in at least one</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label>4. 你最怕糖尿病的什么并发症？/ What diabetes complications are you most afraid of? <span class="required">*</span></label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="prediabetic_fear_complications" value="dialysis" data-required="true">
-                                    <span>洗肾 / Dialysis</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="prediabetic_fear_complications" value="cardiovascular" data-required="true">
-                                    <span>心血管疾病（例如 心脏病，冠心病，中风等等）/ Cardiovascular disease (e.g., heart disease, coronary heart disease, stroke, etc.)</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="prediabetic_fear_complications" value="neuropathy" data-required="true">
-                                    <span>神经病变 → 手脚麻木、烧灼痛、感觉减退 / Neuropathy → numbness, burning pain, decreased sensation in hands and feet</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="prediabetic_fear_complications" value="amputation" data-required="true">
-                                    <span>截肢 / Amputation</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>5. 有没有高血压？/ Do you have hypertension? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_hypertension" value="yes" data-required="true">
-                                    <span>有 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_hypertension" value="no" data-required="true">
-                                    <span>没有 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>6. 有没有高胆固醇？/ Do you have high cholesterol? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_high_cholesterol" value="yes" data-required="true">
-                                    <span>有 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_high_cholesterol" value="no" data-required="true">
-                                    <span>没有 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>7. 你觉得哪一个更好？/ Which do you think is better? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_preferred_method" value="natural" data-required="true">
-                                    <span>靠天然方法逆转糖尿病 / Reverse diabetes through natural methods</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_preferred_method" value="medication" data-required="true">
-                                    <span>靠吃药打针去控制血糖 / Control blood glucose with medication and injections</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>8. 如果每天只需要花20分钟，就可以逆转糖尿病，你愿意吗？/ If you only need to spend 20 minutes a day to reverse diabetes, would you be willing? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_willing_20min" value="yes" data-required="true">
-                                    <span>愿意 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="prediabetic_willing_20min" value="no" data-required="true">
-                                    <span>不愿意 / No</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Conditional questions for Diabetic patients -->
-                    <div class="conditional-field conditional-diabetic">
-                        <h3 class="section-subtitle">糖尿病患者专项问题 / Diabetic Patient Specific Questions</h3>
-                        
-                        <div class="form-group">
-                            <label>1. 你是否视力模糊，看东西不清楚？/ Do you have blurred vision or unclear sight? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_blurred_vision" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_blurred_vision" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>2. 你会不会在夜晚或暗光下看东西更困难？/ Do you have difficulty seeing at night or in dim light? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_night_vision" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_night_vision" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>3. 是否看东西有黑点、阴影或缺角？/ Do you see black spots, shadows, or missing corners when looking at things? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_visual_spots" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_visual_spots" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>4. 是否小便泡泡多、尿液有泡沫？/ Do you have foamy urine with many bubbles? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_foamy_urine" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_foamy_urine" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>5. 是否小便频繁，尤其是夜间？/ Do you urinate frequently, especially at night? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_frequent_urination" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_frequent_urination" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>6. 是否容易水肿（脚、脚踝或眼皮浮肿）？/ Do you experience easy swelling (feet, ankles, or eyelid edema)? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_edema" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_edema" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>7. 是否有手脚麻痹或者刺痛？/ Do you have numbness or tingling in your hands and feet? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_numbness" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_numbness" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>8. 是否感觉迟钝，容易被烫伤或受伤却不觉得疼？/ Do you have decreased sensation, easily getting burned or injured without feeling pain? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_decreased_sensation" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_decreased_sensation" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>9. 是否容易气喘、胸口闷痛？/ Do you experience shortness of breath or chest tightness? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_shortness_breath" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_shortness_breath" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>10. 是否走一小段路脚就酸痛或无力？/ Do your feet become sore or weak after walking a short distance? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_foot_pain" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_foot_pain" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>11. 曾经被医生告知心脏病、中风或动脉阻塞？/ Have you ever been told by a doctor that you have heart disease, stroke, or arterial blockage? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_cardiovascular_history" value="yes" data-required="true">
-                                    <span>是 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_cardiovascular_history" value="no" data-required="true">
-                                    <span>否 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>12. 被诊断患上糖尿病多久了？/ How long have you been diagnosed with diabetes? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_duration" value="less_than_1" data-required="true">
-                                    <span>少于1年 / Less than 1 year</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_duration" value="1_5" data-required="true">
-                                    <span>1-5年 / 1-5 years</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_duration" value="5_10" data-required="true">
-                                    <span>5-10年 / 5-10 years</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_duration" value="more_than_10" data-required="true">
-                                    <span>10年以上 / More than 10 years</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>13. 最近一次的糖化血红蛋白指数 (HbA1c) 是多少？/ What was your most recent HbA1c level? <span class="required">*</span></label>
-                            <input type="number" name="diabetic_recent_hba1c" min="3" max="15" step="0.1" placeholder="HbA1c (%)" data-required="true">
-                        </div>
-
-                        <div class="form-group">
-                            <label>14. 有在吃高血糖药吗？/ Are you taking diabetes medication? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_taking_medication" value="yes" data-required="true">
-                                    <span>有 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_taking_medication" value="no" data-required="true">
-                                    <span>没有 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>15. 有在注射胰岛素💉吗？/ Are you injecting insulin? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_insulin_injection" value="yes" data-required="true">
-                                    <span>有 / Yes</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diabetic_insulin_injection" value="no" data-required="true">
-                                    <span>没有 / No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>16. 你最怕糖尿病的什么并发症？/ What diabetes complications are you most afraid of? <span class="required">*</span></label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="diabetic_fear_complications" value="dialysis" data-required="true">
-                                    <span>洗肾 / Dialysis</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="diabetic_fear_complications" value="cardiovascular" data-required="true">
-                                    <span>心血管疾病（例如 心脏病，冠心病，中风等等）/ Cardiovascular disease (e.g., heart disease, coronary heart disease, stroke, etc.)</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="diabetic_fear_complications" value="neuropathy" data-required="true">
-                                    <span>神经病变 → 手脚麻木、烧灼痛、感觉减退 / Neuropathy → numbness, burning pain, decreased sensation in hands and feet</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="diabetic_fear_complications" value="amputation" data-required="true">
-                                    <span>截肢 / Amputation</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="diabetic_fear_complications" value="retinopathy" data-required="true">
-                                    <span>视网膜病变 / Retinopathy</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>运动频率 / Exercise Frequency <span class="required">*</span></label>
+                            <label>1. 直系亲属（父母、兄弟姐妹）有没有糖尿病？/ Do you have first-degree relatives (parents, siblings) with diabetes? </label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="exerciseFrequency" value="none" required>
-                                <span>几乎不运动 / Almost never</span>
+                                <input type="radio" name="family_diabetes" value="yes">
+                                <span>有 / Yes</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="exerciseFrequency" value="light" required>
-                                <span>每周1-2次 (轻度) / 1-2 times/week (Light)</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="exerciseFrequency" value="moderate" required>
-                                <span>每周3-4次 (中度) / 3-4 times/week (Moderate)</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="exerciseFrequency" value="high" required>
-                                <span>每周5次以上 (高度) / 5+ times/week (High)</span>
+                                <input type="radio" name="family_diabetes" value="no">
+                                <span>没有 / No</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>运动类型 (可多选) / Exercise Type (Multiple Selection)</label>
+                        <label>2. 过去7天内有没有喝含糖饮料、吃甜食/油炸？/ In the past 7 days, have you consumed sugary drinks, sweets, or fried foods? </label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="sugary_foods" value="almost_daily">
+                                <span>几乎每天都喝 / Almost daily</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="sugary_foods" value="occasional">
+                                <span>偶尔喝 / Occasional</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="sugary_foods" value="rarely">
+                                <span>几乎不喝 / Rarely</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>3. 腰围是否超标？（男 >90cm，女 >80cm）/ Is your waist circumference above the standard? (Male >90cm, Female >80cm) </label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="waist_exceeded" value="yes">
+                                <span>有 / Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="waist_exceeded" value="no">
+                                <span>没有 / No</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="waist_exceeded" value="unsure">
+                                <span>不清楚，可能有 / Unsure, possibly</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>4. 每周是否有规律运动 ≥150 分钟？/ Do you engage in regular exercise ≥150 minutes per week? </label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="regular_exercise_150min" value="yes">
+                                <span>是 / Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="regular_exercise_150min" value="no">
+                                <span>否 / No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>5. 最近一次空腹血糖 (FBS) 或糖化血红蛋白 (HbA1c) 是多少？/ What was your most recent Fasting Blood Sugar (FBS) or HbA1c? </label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="recent_glucose_level" value="normal">
+                                <span>FBS &lt; 5.6 或 HbA1c &lt; 5.7% / FBS &lt; 5.6 or HbA1c &lt; 5.7%</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="recent_glucose_level" value="prediabetic">
+                                <span>FBS 5.6–6.0 或 HbA1c 5.7–6.0% / FBS 5.6–6.0 or HbA1c 5.7–6.0%</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="recent_glucose_level" value="diabetic">
+                                <span>FBS &gt;6.1 或 HbA1c &gt;6.1% / FBS &gt;6.1 or HbA1c &gt;6.1%</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>6. 你最怕糖尿病的什么并发症？/ What diabetes complications are you most afraid of? </label>
                         <div class="checkbox-group">
                             <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="walking">
-                                <span>步行 / Walking</span>
+                                <input type="checkbox" name="prediabetic_fear_complications" value="dialysis" >
+                                <span>洗肾 / Dialysis</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="running">
-                                <span>跑步 / Running</span>
+                                <input type="checkbox" name="prediabetic_fear_complications" value="cardiovascular" >
+                                <span>心血管疾病（例如 心脏病，冠心病，中风等等）/ Cardiovascular disease (e.g., heart disease, coronary heart disease, stroke, etc.)</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="cycling">
-                                <span>骑自行车 / Cycling</span>
+                                <input type="checkbox" name="prediabetic_fear_complications" value="neuropathy" >
+                                <span>神经病变 → 手脚麻木、烧灼痛、感觉减退 / Neuropathy → numbness, burning pain, decreased sensation in hands and feet</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="swimming">
-                                <span>游泳 / Swimming</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="gym">
-                                <span>健身房 / Gym</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="yoga">
-                                <span>瑜伽/太极 / Yoga/Tai Chi</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="exerciseType" value="other">
-                                <span>其他 / Other</span>
+                                <input type="checkbox" name="prediabetic_fear_complications" value="amputation" >
+                                <span>截肢 / Amputation</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>每日用餐次数 / Meals Per Day <span class="required">*</span></label>
-                        <select id="mealsPerDay" name="mealsPerDay" required>
+                        <label class="common-question-label">7. 每日用餐次数 / Meals Per Day </label>
+                        <select id="mealsPerDay" name="mealsPerDay">
                             <option value="">请选择 / Please select</option>
                             <option value="1-2">1-2次 / 1-2 times</option>
                             <option value="3">3次 / 3 times</option>
@@ -655,98 +265,422 @@
                     </div>
 
                     <div class="form-group">
-                        <label>睡眠品质 / Sleep Quality <span class="required">*</span></label>
+                        <label class="common-question-label">8. 睡眠品质 / Sleep Quality </label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="sleepQuality" value="excellent" required>
+                                <input type="radio" name="sleepQuality" value="excellent">
                                 <span>优秀 (7-9小时，品质好) / Excellent (7-9 hours, good quality)</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="sleepQuality" value="good" required>
+                                <input type="radio" name="sleepQuality" value="good">
                                 <span>良好 (6-7小时，品质尚可) / Good (6-7 hours, fair quality)</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="sleepQuality" value="fair" required>
+                                <input type="radio" name="sleepQuality" value="fair">
                                 <span>一般 (5-6小时，品质普通) / Fair (5-6 hours, average quality)</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="sleepQuality" value="poor" required>
+                                <input type="radio" name="sleepQuality" value="poor">
                                 <span>不佳 (&lt;5小时或品质差) / Poor (&lt;5 hours or poor quality)</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>压力水平 / Stress Level <span class="required">*</span></label>
+                        <label class="common-question-label">9. 压力水平 / Stress Level </label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="stressLevel" value="low" required>
+                                <input type="radio" name="stressLevel" value="low">
                                 <span>低 / Low</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="stressLevel" value="moderate" required>
+                                <input type="radio" name="stressLevel" value="moderate">
                                 <span>中等 / Moderate</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="stressLevel" value="high" required>
+                                <input type="radio" name="stressLevel" value="high">
                                 <span>高 / High</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="stressLevel" value="very-high" required>
+                                <input type="radio" name="stressLevel" value="very-high">
                                 <span>非常高 / Very High</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>吸烟习惯 / Smoking Habit <span class="required">*</span></label>
+                        <label class="common-question-label">10. 吸烟习惯 / Smoking Habit </label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="smoking" value="never" required>
+                                <input type="radio" name="smoking" value="never">
                                 <span>从不吸烟 / Never</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="smoking" value="former" required>
+                                <input type="radio" name="smoking" value="former">
                                 <span>已戒烟 / Former smoker</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="smoking" value="occasional" required>
+                                <input type="radio" name="smoking" value="occasional">
                                 <span>偶尔吸烟 / Occasional</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="smoking" value="regular" required>
+                                <input type="radio" name="smoking" value="regular">
                                 <span>经常吸烟 / Regular</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>饮酒习惯 / Alcohol Consumption <span class="required">*</span></label>
+                        <label class="common-question-label">11. 饮酒习惯 / Alcohol Consumption </label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="alcohol" value="never" required>
+                                <input type="radio" name="alcohol" value="never">
                                 <span>从不饮酒 / Never</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="alcohol" value="occasional" required>
+                                <input type="radio" name="alcohol" value="occasional">
                                 <span>偶尔 (每周1-2次) / Occasional (1-2 times/week)</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="alcohol" value="moderate" required>
+                                <input type="radio" name="alcohol" value="moderate">
                                 <span>适度 (每周3-4次) / Moderate (3-4 times/week)</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="alcohol" value="frequent" required>
+                                <input type="radio" name="alcohol" value="frequent">
                                 <span>经常 (每周5次以上) / Frequent (5+ times/week)</span>
                             </label>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="additionalNotes">其他备注或健康状况 / Additional Notes or Health Conditions</label>
-                        <textarea id="additionalNotes" name="additionalNotes" rows="4" placeholder="请填写任何其他相关的健康信息、药物使用情况、家族病史等... / Please fill in any other relevant health information, medication use, family medical history, etc..."></textarea>
                     </div>
-                </div>
+
+                    <!-- Conditional questions for Diabetic patients -->
+                    <div class="conditional-field conditional-diabetic">
+                        <div class="form-group">
+                            <label>1. 你是否视力模糊，看东西不清楚？/ Do you have blurred vision or unclear sight? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_blurred_vision" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_blurred_vision" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>2. 你会不会在夜晚或暗光下看东西更困难？/ Do you have difficulty seeing at night or in dim light? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_night_vision" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_night_vision" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>3. 是否看东西有黑点、阴影或缺角？/ Do you see black spots, shadows, or missing corners when looking at things? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_visual_spots" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_visual_spots" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>4. 是否小便泡泡多、尿液有泡沫？/ Do you have foamy urine with many bubbles? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_foamy_urine" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_foamy_urine" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>5. 是否小便频繁，尤其是夜间？/ Do you urinate frequently, especially at night? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_frequent_urination" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_frequent_urination" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>6. 是否容易水肿（脚、脚踝或眼皮浮肿）？/ Do you experience easy swelling (feet, ankles, or eyelid edema)? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_edema" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_edema" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>7. 是否有手脚麻痹或者刺痛？/ Do you have numbness or tingling in your hands and feet? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_numbness" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_numbness" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>8. 是否感觉迟钝，容易被烫伤或受伤却不觉得疼？/ Do you have decreased sensation, easily getting burned or injured without feeling pain? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_decreased_sensation" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_decreased_sensation" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>9. 是否容易气喘、胸口闷痛？/ Do you experience shortness of breath or chest tightness? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_shortness_breath" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_shortness_breath" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>10. 是否走一小段路脚就酸痛或无力？/ Do your feet become sore or weak after walking a short distance? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_foot_pain" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_foot_pain" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>11. 曾经被医生告知心脏病、中风或动脉阻塞？/ Have you ever been told by a doctor that you have heart disease, stroke, or arterial blockage? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_cardiovascular_history" value="yes" >
+                                    <span>是 / Yes</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_cardiovascular_history" value="no" >
+                                    <span>否 / No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>12. 被诊断患上糖尿病多久了？/ How long have you been diagnosed with diabetes? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_duration" value="less_than_5" >
+                                    <span>&lt; 5 年 / Less than 5 years</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_duration" value="5_10" >
+                                    <span>5–10 年 / 5–10 years</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_duration" value="more_than_10" >
+                                    <span>&gt; 10 年 / More than 10 years</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>13. 最近一次的糖化血红蛋白指数 (HbA1c) 是多少？/ What was your most recent HbA1c level? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_recent_hba1c" value="normal" >
+                                    <span>≤ 6.3% / ≤ 6.3%</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_recent_hba1c" value="moderate" >
+                                    <span>6.3% - 7% / 6.3% - 7%</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_recent_hba1c" value="high" >
+                                    <span>&gt; 7.1% / &gt; 7.1%</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>14. 有在吃高血糖药吗？/ Are you taking diabetes medication? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_taking_medication" value="none" >
+                                    <span>无需药物/仅饮食控制 / No medication/Diet control only</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_taking_medication" value="one" >
+                                    <span>1 种药 / 1 medication</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_taking_medication" value="multiple" >
+                                    <span>≥2 种药 / ≥2 medications</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>15. 有在注射胰岛素💉吗？/ Are you injecting insulin? </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_insulin_injection" value="none" >
+                                    <span>不用 / No</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_insulin_injection" value="once_daily" >
+                                    <span>每日注射胰岛素1次 / Once daily injection</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diabetic_insulin_injection" value="multiple_daily" >
+                                    <span>每日多次注射 / Multiple daily injections</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Common questions for diabetic patients (16-20) -->
+                        <div class="form-group">
+                            <label class="common-question-label">16. 每日用餐次数 / Meals Per Day </label>
+                            <select id="mealsPerDayDiabetic" name="mealsPerDay">
+                                <option value="">请选择 / Please select</option>
+                                <option value="1-2">1-2次 / 1-2 times</option>
+                                <option value="3">3次 / 3 times</option>
+                                <option value="4-5">4-5次 / 4-5 times</option>
+                                <option value="6+">6次以上 / 6+ times</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="common-question-label">17. 睡眠品质 / Sleep Quality </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="sleepQuality" value="excellent">
+                                    <span>优秀 (7-9小时，品质好) / Excellent (7-9 hours, good quality)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="sleepQuality" value="good">
+                                    <span>良好 (6-7小时，品质尚可) / Good (6-7 hours, fair quality)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="sleepQuality" value="fair">
+                                    <span>一般 (5-6小时，品质普通) / Fair (5-6 hours, average quality)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="sleepQuality" value="poor">
+                                    <span>不佳 (&lt;5小时或品质差) / Poor (&lt;5 hours or poor quality)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="common-question-label">18. 压力水平 / Stress Level </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="stressLevel" value="low">
+                                    <span>低 / Low</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="stressLevel" value="moderate">
+                                    <span>中等 / Moderate</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="stressLevel" value="high">
+                                    <span>高 / High</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="stressLevel" value="very-high">
+                                    <span>非常高 / Very High</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="common-question-label">19. 吸烟习惯 / Smoking Habit </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="smoking" value="never">
+                                    <span>从不吸烟 / Never</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="smoking" value="former">
+                                    <span>已戒烟 / Former smoker</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="smoking" value="occasional">
+                                    <span>偶尔吸烟 / Occasional</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="smoking" value="regular">
+                                    <span>经常吸烟 / Regular</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="common-question-label">20. 饮酒习惯 / Alcohol Consumption </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="alcohol" value="never">
+                                    <span>从不饮酒 / Never</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="alcohol" value="occasional">
+                                    <span>偶尔 (每周1-2次) / Occasional (1-2 times/week)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="alcohol" value="moderate">
+                                    <span>适度 (每周3-4次) / Moderate (3-4 times/week)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="alcohol" value="frequent">
+                                    <span>经常 (每周5次以上) / Frequent (5+ times/week)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
                 <!-- Submit Button -->
                 <div class="form-actions">
@@ -762,7 +696,6 @@
         <div class="container">
             <div class="report-container">
                 <div class="report-header">
-                    <h2 class="report-title">CGM 健康评估报告 / Health Assessment Report</h2>
                     <button class="btn-print" onclick="window.print()">打印报告 / Print Report</button>
                     <button class="btn-back" onclick="showForm()">返回表单 / Back to Form</button>
                 </div>
@@ -772,9 +705,25 @@
                 <!-- Risk Assessment Chart -->
                 <div class="chart-container" id="chartContainer" style="display: none;">
                     <div class="chart-wrapper">
-                        <h3 class="chart-title">健康风险评估图表 / Health Risk Assessment Chart</h3>
+                        <div class="chart-page-title">
+                            <div class="chart-page-title-cn">健康风险评估图表</div>
+                            <div class="chart-page-title-en">Health Risk Assessment Chart</div>
+                        </div>
                         <canvas id="riskChart"></canvas>
                         <div class="chart-legend" id="chartLegend"></div>
+                    </div>
+                </div>
+
+                <!-- CTA Page (next A4 page after the chart) -->
+                <div class="chart-container" id="ctaPage" style="display: none;">
+                    <div class="chart-wrapper">
+                        <div class="cta-section-report">
+                            <h3 class="cta-title">想了解更多如何预防糖尿病？ / Want to Learn More About Preventing Diabetes?</h3>
+                            <p class="cta-description">参加医生Chang的免费线上分享会，学习科学的血糖管理方法<br>Join Dr. Chang's free online sharing session to learn scientific blood glucose management methods</p>
+                            <a href="https://dreasonchang.com/dreason-253606?fbclid=IwRlRTSAPJPuxleHRuA2FlbQIxMABzcnRjBmFwcF9pZAo2NjI4NTY4Mzc5AAEevsPwp420ilZmtKUJL6LrHgygMGJSxhS7muBVo_o7uRXXos15YMN5D3xYMu8_aem_0hJLupGgm0gy1ROCCP1P1w" target="_blank" rel="noopener noreferrer" class="btn-register">
+                                立即报名参加 / Register Now
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
