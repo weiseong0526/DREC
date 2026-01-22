@@ -1,2643 +1,2643 @@
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
-}
-
-*:focus {
-    outline: none;
-}
-
-*:focus-visible {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
-}
-
-:root {
-    --primary-color: #1a1a1a;
-    --primary-dark: #000000;
-    --primary-light: #333333;
-    --accent-color: #d4af37;
-    --accent-light: #f4d03f;
-    --text-dark: #1a1a1a;
-    --text-light: #666666;
-    --text-lighter: #999999;
-    --bg-light: #f8f9fa;
-    --bg-white: #ffffff;
-    --bg-dark: #1a1a1a;
-    --success-color: #28a745;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
-    --info-color: #17a2b8;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
-    --transition: all 0.3s ease;
-}
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.6;
-    color: var(--text-dark);
-    background-color: var(--bg-light);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    width: 100%;
-    position: relative;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Navigation */
-.navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--shadow);
-    z-index: 1000;
-    transition: var(--transition);
-}
-
-.navbar .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 20px;
-}
-
-.nav-brand h2 {
-    color: var(--primary-color);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 2.5rem;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-menu a {
-    text-decoration: none;
-    color: var(--text-dark);
-    font-weight: 500;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: var(--transition);
-    position: relative;
-}
-
-.nav-menu a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--accent-color);
-    transition: var(--transition);
-}
-
-.nav-menu a:hover::after {
-    width: 100%;
-}
-
-.nav-toggle {
-    display: none;
-    flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.nav-toggle span {
-    width: 25px;
-    height: 3px;
-    background: var(--primary-color);
-    margin: 3px 0;
-    transition: var(--transition);
-}
-
-/* Language switcher removed - using bilingual display */
-
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-    color: var(--bg-white);
-    padding: 150px 0 80px;
-    text-align: center;
-    margin-top: 70px;
-}
-
-.hero-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.hero-title {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--bg-white);
-    word-wrap: break-word;
-    hyphens: auto;
-}
-
-.hero-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 300;
-}
-
-/* Form Section */
-.form-section {
-    padding: 60px 0;
-}
-
-.cgm-form {
-    max-width: 900px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.form-section-card {
-    background: var(--bg-white);
-    border-radius: 12px;
-    padding: 40px;
-    margin-bottom: 30px;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.form-section-card:hover {
-    box-shadow: var(--shadow-lg);
-}
-
-.section-title {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-    color: var(--primary-color);
-    border-bottom: 3px solid var(--accent-color);
-    padding-bottom: 15px;
-}
-
-.section-subtitle {
-    font-size: 1.5rem;
-    margin-bottom: 25px;
-    margin-top: 20px;
-    color: var(--primary-color);
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    margin-bottom: 20px;
-}
-
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text-dark);
-    font-size: 0.95rem;
-}
-
-.required {
-    color: var(--danger-color);
-    margin-left: 3px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group input[type="email"],
-.form-group input[type="date"],
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: 'Inter', sans-serif;
-    transition: var(--transition);
-    background: var(--bg-white);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    box-sizing: border-box;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-.form-hint {
-    display: block;
-    margin-top: 5px;
-    font-size: 0.85rem;
-    color: var(--text-light);
-    font-style: italic;
-}
-
-/* Dual Unit Input Styles */
-.dual-unit-input {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.unit-input-group {
-    flex: 1;
-    min-width: 150px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.unit-input-group input {
-    flex: 1;
-    min-width: 0;
-}
-
-.unit-label {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.unit-separator {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    font-style: italic;
-}
-
-/* Patient Type Selection Page */
-.patient-type-selection {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    margin: 40px 0;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.patient-type-card {
-    background: var(--bg-white);
-    border-radius: 16px;
-    padding: 40px;
-    box-shadow: var(--shadow-lg);
-    transition: var(--transition);
-    cursor: pointer;
-    border: 3px solid transparent;
-    text-align: center;
-}
-
-.patient-type-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    border-color: var(--accent-color);
-}
-
-.patient-type-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-}
-
-.patient-type-title {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-    font-family: 'Playfair Display', serif;
-}
-
-.patient-type-description {
-    font-size: 1.1rem;
-    color: var(--text-light);
-    margin-bottom: 25px;
-    line-height: 1.8;
-}
-
-.patient-type-features {
-    text-align: left;
-    background: var(--bg-light);
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 25px;
-}
-
-.patient-type-features p {
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
-
-.patient-type-features ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.patient-type-features li {
-    padding: 8px 0;
-    color: var(--text-dark);
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.patient-type-features li:last-child {
-    border-bottom: none;
-}
-
-.patient-type-features li::before {
-    content: "âœ“ ";
-    color: var(--success-color);
-    font-weight: 700;
-    margin-right: 8px;
-}
-
-.btn-select-type {
-    width: 100%;
-    padding: 18px 30px;
-    background: var(--primary-color);
-    color: var(--bg-white);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: 'Inter', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-select-type:hover {
-    background: var(--primary-dark);
-    transform: scale(1.02);
-}
-
-.btn-select-type:active {
-    transform: scale(0.98);
-}
-
-/* Conditional Fields */
-.conditional-field {
-    display: none;
-}
-
-.conditional-field.show {
-    display: block;
-}
-
-/* Radio and Checkbox Groups */
-.radio-group,
-.checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-}
-
-.radio-label,
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 8px;
-    transition: var(--transition);
-}
-
-.radio-label:hover,
-.checkbox-label:hover {
-    background: var(--bg-light);
-}
-
-.radio-label input[type="radio"],
-.checkbox-label input[type="checkbox"] {
-    margin-right: 10px;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: var(--accent-color);
-}
-
-.radio-label span,
-.checkbox-label span {
-    font-weight: 400;
-    color: var(--text-dark);
-}
-
-/* BMI Display */
-.bmi-display {
-    background: var(--bg-light);
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border-left: 4px solid var(--accent-color);
-}
-
-.bmi-display p {
-    margin: 5px 0;
-    font-size: 1.1rem;
-}
-
-#bmiValue {
-    font-weight: 700;
-    font-size: 1.3rem;
-    color: var(--primary-color);
-}
-
-.bmi-category {
-    font-weight: 600;
-    margin-top: 10px !important;
-}
-
-/* Form Actions */
-.form-actions {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 40px;
-    padding: 40px 0;
-}
-
-.btn-submit,
-.btn-reset {
-    padding: 15px 40px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: 'Inter', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-submit {
-    background: var(--accent-color);
-    color: var(--primary-color);
-}
-
-.btn-submit:hover {
-    background: var(--accent-light);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-reset {
-    background: var(--text-light);
-    color: var(--bg-white);
-}
-
-.btn-reset:hover {
-    background: var(--text-dark);
-    transform: translateY(-2px);
-}
-
-/* Report Section */
-.report-section {
-    padding: 100px 0 60px;
-    background: var(--bg-light);
-}
-
-/* A4 Page Size */
-@page {
-    size: A4;
-    margin: 0;
-}
-
-/* Print layout: force true A4 pages and consistent pagination */
-@media print {
-    html, body {
-        width: 210mm;
-        height: auto;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    /* Print ONLY the report (hide landing/form/footer content) */
-    .navbar,
-    .hero-section,
-    #form,
-    .footer {
-        display: none !important;
-    }
-
-    #report {
-        display: block !important;
-    }
-
-    /* Remove screen-only framing */
-    .report-section {
-        padding: 0 !important;
-        background: transparent !important;
-    }
-
-    /* Hide UI controls in print */
-    .report-header,
-    .btn-print,
-    .btn-back {
-        display: none !important;
-    }
-
-    .report-container {
-        margin: 0 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        width: 210mm !important;
-        max-width: 210mm !important;
-    }
-
-    .report-content {
-        width: 210mm !important;
-        max-width: 210mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-    }
-
-    /* Every report block prints as exactly one A4 page */
-    .report-cover-page,
-    .report-content > .report-section-item,
-    .report-section-with-bg {
-        width: 210mm !important;
-        height: 297mm !important;
-        min-height: 297mm !important;
-        max-height: 297mm !important;
-        margin: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        page-break-inside: avoid !important;
-        page-break-after: always !important;
-        overflow: hidden !important;
-    }
-
-    /* Chart page prints as A4 too */
-    #chartContainer.chart-container {
-        width: 210mm !important;
-        height: 297mm !important;
-        min-height: 297mm !important;
-        max-height: 297mm !important;
-        margin: 0 !important;
-        page-break-before: always !important;
-        break-before: page !important;
-        page-break-after: always !important;
-        overflow: hidden !important;
-        background-size: 100% 100% !important;
-        background-position: left 10px top !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    /* CTA page prints with natural height (no forced A4 blank space) */
-    #ctaPage.chart-container {
-        /* Keep printed report at 6 pages: CTA is screen-only */
-        display: none !important;
-    }
-
-    /* Ensure background pages keep the background image aligned to A4 */
-    .report-section-with-bg {
-        background-size: 100% 100% !important;
-        background-position: left 10px top !important;
-        background-attachment: local !important;
-    }
-
-    /* Disable screen-only page separators */
-    .report-content > .report-section-item {
-        border-top: none !important;
-    }
-
-    /* Organ risk page: force "original" absolute-position card layout in print */
-    .organ-risk-page .human-body-visualization-layout {
-        position: relative !important;
-        padding: 40px 20px !important;
-        min-height: 700px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    .organ-risk-page .body-silhouette-container {
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        margin: 0 !important;
-    }
-
-    .organ-risk-page .organ-card-positioned {
-        position: absolute !important;
-        width: 200px !important;
-        margin: 0 !important;
-        padding: 12px !important;
-    }
-
-    .organ-risk-page .organ-card-top-left { 
-        top: 15% !important; 
-        left: -6% !important; 
-        right: auto !important; 
-        bottom: auto !important; 
-        position: absolute !important;
-        transform: none !important;
-    }
-    .organ-risk-page .organ-card-top-right { 
-        top: 6% !important; 
-        right: -9% !important; 
-        left: auto !important; 
-        bottom: auto !important; 
-        position: absolute !important;
-        transform: none !important;
-    }
-    .organ-risk-page .organ-card-middle-left { 
-        top: 46% !important; 
-        left: -6% !important; 
-        right: auto !important; 
-        bottom: auto !important; 
-        position: absolute !important;
-        transform: none !important;
-    }
-    .organ-risk-page .organ-card-middle-right { 
-        top: 51% !important; 
-        right: -9% !important; 
-        left: auto !important; 
-        bottom: auto !important; 
-        position: absolute !important;
-        transform: translateY(-50%) !important; 
-    }
-    .organ-risk-page .organ-card-bottom-left { 
-        bottom: 5% !important; 
-        left: -6% !important; 
-        right: auto !important; 
-        top: auto !important; 
-        position: absolute !important;
-        transform: none !important;
-    }
-    .organ-risk-page .organ-card-bottom-right { 
-        bottom: 6% !important; 
-        right: -9% !important; 
-        left: auto !important; 
-        top: auto !important; 
-        position: absolute !important;
-        transform: none !important;
-    }
-
-    .organ-risk-page .connection-lines {
-        display: block !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 1 !important;
-    }
-}
-
-/* Report Cover Page - A4 Size */
-.report-cover-page {
-    width: 100%;
-    max-width: 210mm;
-    height: 297mm;
-    min-height: 297mm;
-    margin: 0 auto 30px;
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 15mm 12mm;
-    page-break-after: always;
-    page-break-inside: avoid;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.report-cover-content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.report-cover-title-section {
-    text-align: center;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 40px 0;
-}
-
-.report-cover-cgm {
-    font-size: 72px;
-    font-weight: 900;
-    color: #000;
-    margin-bottom: 20px;
-    letter-spacing: 4px;
-}
-
-.report-cover-title-chinese {
-    font-size: 36px;
-    font-weight: 700;
-    color: #000;
-    margin-bottom: 10px;
-}
-
-.report-cover-title-english {
-    font-size: 28px;
-    font-weight: 700;
-    color: #000;
-    letter-spacing: 2px;
-}
-
-.report-cover-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: auto;
-    padding-top: 20px;
-    flex-shrink: 0;
-    gap: 30px;
-}
-
-.report-cover-info-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.report-cover-info-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.report-cover-info-icon {
-    width: 32px;
-    height: 32px;
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #9C27B0;
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-.report-cover-info-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000;
-}
-
-.report-cover-info-item {
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #333;
-    line-height: 1.5;
-    display: flex;
-    align-items: baseline;
-}
-
-.report-cover-info-label {
-    font-weight: 500;
-    margin-right: 8px;
-    min-width: 80px;
-    flex-shrink: 0;
-}
-
-.report-cover-info-value {
-    color: #000;
-    flex: 1;
-}
-
-.report-cover-divider {
-    width: 1px;
-    background: #999;
-    margin: 0 20px;
-    align-self: stretch;
-    min-height: 120px;
-    flex-shrink: 0;
-}
-
-/* Report Content Background */
-.report-content {
-    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    padding: 0;
-    position: relative;
-}
-
-.report-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
-    z-index: 0;
-}
-
-.report-content > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* Organ Risk Page - Separate A4 page without background */
-.organ-risk-page {
-    min-height: 297mm;
-    height: 297mm;
-    padding: 0;
-    page-break-after: always;
-    page-break-before: always;
-    background: #fafafa !important;
-    border-bottom: none;
-    width: 100%;
-    max-width: 210mm;
-    margin: 0 auto 30px;
-    box-sizing: border-box;
-}
-
-.organ-risk-page .human-body-visualization-layout {
-    background: transparent;
-    padding: 0;
-    margin: -20mm auto 0;
-    width: 100%;
-    height: 100%;
-    min-height: 297mm;
-}
-
-/* Print Styles for Report - A4 Size */
-@media print {
-    @page {
-        size: A4;
-        margin: 0;
-    }
-    
-    body {
-        margin: 0;
-        padding: 0;
-    }
-    
-    .report-section {
-        padding: 0;
-        background: transparent;
-    }
-    
-    .report-container {
-        max-width: 210mm;
-        width: 210mm;
-        margin: 0;
-        box-shadow: none;
-        border-radius: 0;
-    }
-    
-    .report-header {
-        padding: 10mm 15mm;
-    }
-    
-    .report-cover-page {
-        width: 210mm;
-        height: 297mm;
-        min-height: 297mm;
-        max-width: 210mm;
-        margin: 0;
-        padding: 40px 30px;
-        page-break-after: always;
-        page-break-inside: avoid;
-    }
-    
-    .report-content {
-        width: 210mm;
-        max-width: 210mm;
-        padding: 0;
-        background-attachment: scroll;
-        background-image: none;
-        min-height: auto;
-    }
-    
-    .report-content::before {
-        display: none;
-    }
-    
-    .report-section-item {
-        page-break-inside: avoid;
-        margin-bottom: 0;
-        padding: 20mm 15mm;
-        page-break-after: always;
-    }
-    
-    .organ-risk-page {
-        width: 210mm;
-        height: 297mm;
-        min-height: 297mm;
-        padding: 0mm 15mm 20mm 15mm;
-        page-break-after: always;
-        page-break-before: always;
-        background: #fafafa !important;
-        background-image: none !important;
-    }
-    
-    .organ-risk-page .human-body-visualization-layout {
-        width: 100%;
-        max-width: 210mm;
-        min-height: 297mm;
-        height: 297mm;
-        padding: 0;
-        margin-top: 0 !important;
-        page-break-inside: avoid;
-    }
-    
-    .organ-risk-page .body-silhouette-container {
-        top: 45% !important;
-        transform: translate(-50%, -50%) !important;
-    }
-    
-    .organ-risk-page .human-body-image {
-        width: 100%;
-        max-width: 210mm;
-        height: 100%;
-        max-height: 297mm;
-        object-fit: contain;
-    }
-    
-    .btn-print,
-    .btn-back {
-        display: none;
-    }
-    
-    .navbar,
-    .footer {
-        display: none;
-    }
-}
-
-.report-container {
-    max-width: 210mm;
-    width: 210mm;
-    margin: 0 auto;
-    background: var(--bg-white);
-    border-radius: 0;
-    box-shadow: none;
-    overflow: visible;
-    box-sizing: border-box;
-}
-
-.report-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-    color: var(--bg-white);
-    padding: 20px 40px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.report-title {
-    font-size: 2.2rem;
-    color: var(--bg-white);
-    margin: 0;
-}
-
-.btn-print,
-.btn-back {
-    padding: 12px 30px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: 2px solid var(--bg-white);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: 'Inter', sans-serif;
-    background: transparent;
-    color: var(--bg-white);
-}
-
-.btn-print:hover,
-.btn-back:hover {
-    background: var(--bg-white);
-    color: var(--primary-color);
-}
-
-.report-content {
-    width: 100%;
-    max-width: 210mm;
-    margin: 0 auto;
-    padding: 0;
-    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    position: relative;
-    min-height: 297mm;
-    box-sizing: border-box;
-}
-
-.report-content .report-section-item:first-child {
-    padding: 15mm 12mm;
-}
-
-.report-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.92);
-    z-index: 0;
-}
-
-.report-content > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* A4 Size adjustments for screen view */
-@media screen {
-    .report-section {
-        padding: 40px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .report-container {
-        box-shadow: var(--shadow-lg);
-        border-radius: 12px;
-        margin: 20px auto;
-        width: 210mm;
-        max-width: 210mm;
-    }
-    
-    .report-cover-page {
-        box-shadow: var(--shadow-lg);
-        border-radius: 12px;
-        margin: 0 auto 30px;
-        width: 100%;
-        max-width: 210mm;
-        height: 297mm;
-    }
-    
-    .report-content {
-        width: 100%;
-        max-width: 210mm;
-        margin: 0 auto;
-    }
-    
-    .report-content > .report-cover-page {
-        margin: 0 auto 30px;
-    }
-
-    /* Visual page separator lines (screen preview only) */
-    .report-content > .report-section-item {
-        border-top: 2px solid var(--accent-color);
-        margin-top: 22px;
-        box-shadow: var(--shadow-lg);
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    .report-content > .report-section-item:first-of-type {
-        border-top: none;
-        margin-top: 0;
-    }
-
-    /* Keep background pages showing their background image */
-    .report-content > .report-section-item.report-section-with-bg {
-        background-color: transparent;
-    }
-
-    /* Non-background pages get a white paper background */
-    .report-content > .report-section-item:not(.report-section-with-bg) {
-        background: var(--bg-white);
-    }
-}
-
-.report-section-item {
-    margin-bottom: 0;
-    padding: 15mm 12mm;
-    border-bottom: 1px solid var(--bg-light);
-    page-break-inside: avoid;
-    width: 100%;
-    max-width: 210mm;
-    box-sizing: border-box;
-}
-
-.report-section-item:last-child {
-    border-bottom: none;
-}
-
-.report-section-with-bg {
-    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
-    /* Use a fixed, page-filling background so every page looks identical */
-    background-size: 100% 100%;
-    /* Anchor logo to a fixed spot so it won't "move" when scrollbar appears/disappears */
-    background-position: left 10px top;
-    background-repeat: no-repeat;
-    background-attachment: local;
-    position: relative;
-    min-height: 297mm;
-    max-height: 297mm;
-    /* Tighter padding so content fits within one A4 page */
-    padding: 16mm 12mm 14mm 12mm;
-    width: 100%;
-    max-width: 210mm;
-    margin: 0 auto 30px;
-    page-break-after: always;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-/* Risk Assessment Chart: match report background page style */
-#chartContainer.chart-container {
-    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
-    background-size: 100% 100%;
-    background-position: left 10px top;
-    background-repeat: no-repeat;
-    background-attachment: local;
-    width: 100%;
-    max-width: 210mm;
-    height: 297mm;
-    min-height: 297mm;
-    margin: 0 auto 30px;
-    padding: 16mm 12mm 14mm 12mm;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-/* Make chart card sit on top of background */
-#chartContainer .chart-wrapper {
-    position: relative;
-    z-index: 1;
-}
-
-/* Chart page title: push away from top-left logo */
-#chartContainer .chart-page-title {
-    margin-top: 22mm;
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    color: #000;
-    line-height: 1.05;
-    margin-bottom: 18px;
-}
-
-#chartContainer .chart-page-title-cn {
-    font-size: 1.8rem;
-    font-weight: 800;
-}
-
-#chartContainer .chart-page-title-en {
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-}
-
-/* CTA page: same background/A4 sizing as chart page */
-#ctaPage.chart-container {
-    background: #fff;
-    width: 100%;
-    max-width: 210mm;
-    height: auto;
-    min-height: 0;
-    margin: 0 auto 30px;
-    padding: 0;
-    box-sizing: border-box;
-    overflow: visible;
-}
-
-#ctaPage .chart-wrapper {
-    position: relative;
-    z-index: 1;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 0;
-}
-
-#ctaPage .cta-section-report {
-    width: 100%;
-    max-width: 700px;
-}
-
-.report-section-with-bg:not(.bmi-page-section)::before {
-    content: "æ‚£è€…å¥åº·è¯„ä¼°æŠ¥å‘Š\A Patient Health assessment\A report";
-    position: absolute;
-    top: 12mm;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    white-space: pre-line;
-    font-family: 'Playfair Display', serif;
-    font-weight: 800;
-    line-height: 1.05;
-    color: #000;
-    font-size: 1.35rem;
-    letter-spacing: 0.02em;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.risk-assessment-section {
-    /* Reduce top padding so sections like Blood Pressure & Heart Health don't get clipped */
-    padding-top: 45mm;
-}
-
-
-.bmi-page-section {
-    /* Move BMI titles upward without affecting other risk assessment pages */
-    padding-top: 15mm;
-}
-
-/* BMI page only: make the BMI gauge block a bit smaller so it doesn't crowd the logo area */
-.bmi-page-section .bmi-gauge-container {
-    padding: 28px 22px;
-    margin: 12px 0;
-}
-
-.bmi-page-section .bmi-gauge-header h4 {
-    margin-bottom: 18px;
-    font-size: 1.25rem;
-}
-
-.bmi-page-section .bmi-gauge-wrapper {
-    height: 240px;
-    margin-bottom: 18px;
-}
-
-.bmi-page-section .bmi-gauge-info {
-    padding: 16px;
-    margin-top: 14px;
-}
-
-.lifestyle-section {
-    /* More compact so Lifestyle Analysis fits within one A4 page */
-    padding-top: 42mm;
-}
-
-/* Lifestyle page: compact cards + analysis block to avoid clipping */
-.lifestyle-section .report-data-grid {
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-/* Push the risk assessment block (inserted above Lifestyle Information) slightly downward */
-.lifestyle-section > .report-section-title:first-child {
-    margin-top: 6mm;
-}
-
-.lifestyle-section .report-data-item {
-    padding: 10px;
-}
-
-.lifestyle-section .report-data-label {
-    font-size: 0.85rem;
-    margin-bottom: 4px;
-}
-
-.lifestyle-section .report-data-value {
-    font-size: 1.1rem;
-    gap: 8px;
-}
-
-.lifestyle-section .report-analysis {
-    padding: 14px;
-    margin-top: 12px;
-}
-
-.lifestyle-section .report-analysis h4 {
-    font-size: 1.05rem;
-    margin-bottom: 8px;
-}
-
-.lifestyle-section .report-analysis p {
-    font-size: 0.9rem;
-    line-height: 1.55;
-}
-
-.report-section-title {
-    font-size: 1.4rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--accent-color);
-    page-break-after: avoid;
-}
-
-.report-data-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin-bottom: 15px;
-    page-break-inside: avoid;
-}
-
-.report-data-item {
-    background: var(--bg-light);
-    padding: 12px;
-    border-radius: 6px;
-    page-break-inside: avoid;
-}
-
-.report-data-label {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.report-data-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.report-status {
-    display: inline-block;
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-left: 0;
-}
-
-.status-normal {
-    background: rgba(40, 167, 69, 0.1);
-    color: var(--success-color);
-}
-
-.status-warning {
-    background: rgba(255, 193, 7, 0.1);
-    color: var(--warning-color);
-}
-
-.status-danger {
-    background: rgba(220, 53, 69, 0.1);
-    color: var(--danger-color);
-}
-
-.status-info {
-    background: rgba(23, 162, 184, 0.1);
-    color: var(--info-color);
-}
-
-.report-analysis {
-    background: var(--bg-light);
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border-left: 4px solid var(--accent-color);
-}
-
-.report-analysis h4 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-}
-
-.report-analysis p {
-    color: var(--text-dark);
-    line-height: 1.8;
-}
-
-.report-recommendations {
-    background: #e8f5e9;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border-left: 4px solid var(--success-color);
-}
-
-.report-recommendations h4 {
-    color: var(--success-color);
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-}
-
-.report-recommendations ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.report-recommendations li {
-    padding: 8px 0;
-    padding-left: 25px;
-    position: relative;
-    color: var(--text-dark);
-}
-
-.report-recommendations li::before {
-    content: 'âœ“';
-    position: absolute;
-    left: 0;
-    color: var(--success-color);
-    font-weight: bold;
-}
-
-/* BMI Gauge Styles - Redesigned */
-.bmi-gauge-container {
-    background: var(--bg-white);
-    padding: 40px 30px;
-    border-radius: 12px;
-    margin: 20px 0;
-    box-shadow: var(--shadow);
-    text-align: center;
-}
-
-.bmi-gauge-header h4 {
-    color: var(--primary-color);
-    margin-bottom: 30px;
-    font-size: 1.4rem;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-}
-
-.bmi-gauge-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 30px;
-    height: 300px;
-}
-
-.bmi-gauge {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Linear scale for low BMI values */
-.bmi-linear-scale {
-    margin: 20px auto;
-    max-width: 400px;
-    padding: 0 20px;
-}
-
-.linear-scale-line {
-    position: relative;
-    height: 8px;
-    background: #e9ecef;
-    border-radius: 4px;
-    margin: 15px 0;
-}
-
-.scale-segment {
-    position: absolute;
-    height: 100%;
-    border-radius: 4px;
-    left: 0;
-}
-
-.red-segment {
-    background: #ff6b6b;
-    width: 60%;
-}
-
-.scale-marker {
-    position: absolute;
-    top: -25px;
-    transform: translateX(-50%);
-    font-size: 11px;
-    color: #666;
-    font-weight: 500;
-}
-
-.scale-marker.red-dot {
-    top: -8px;
-    width: 12px;
-    height: 12px;
-    background: #ff6b6b;
-    border-radius: 50%;
-    transform: translateX(-50%);
-}
-
-.scale-marker.red-dot::after {
-    content: '';
-    position: absolute;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    color: #666;
-    content: '18.5';
-    white-space: nowrap;
-}
-
-.bmi-gauge-info {
-    background: var(--bg-light);
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-}
-
-.bmi-gauge-info p {
-    margin: 10px 0;
-    color: var(--text-dark);
-    font-size: 1rem;
-    line-height: 1.6;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .bmi-gauge-wrapper {
-        height: 250px;
-        max-width: 100%;
-    }
-    
-    .bmi-gauge-header h4 {
-        font-size: 1.2rem;
-    }
-    
-    .bmi-linear-scale {
-        max-width: 100%;
-    }
-    
-    .organ-risk-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .organ-risk-card {
-        padding: 20px;
-    }
-    
-    .organ-icon {
-        font-size: 2.5rem;
-    }
-    
-    .organ-name {
-        font-size: 1.2rem;
-    }
-    
-    .human-body-visualization-layout {
-        padding: 40px 20px;
-        min-height: 700px;
-    }
-    
-    .organ-card-positioned {
-        width: 240px;
-        padding: 15px;
-        position: relative !important;
-        margin-bottom: 20px;
-    }
-    
-    .organ-card-top-left,
-    .organ-card-top-right,
-    .organ-card-bottom-left,
-    .organ-card-bottom-right {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-        bottom: auto !important;
-        margin: 0 auto 20px;
-    }
-    
-    .body-silhouette-container {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        margin: 20px auto;
-    }
-    
-    .human-body-silhouette {
-        width: 200px;
-    }
-    
-    .connection-lines {
-        display: none;
-    }
-}
-
-/* CTA Section in Report */
-.cta-section-report {
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
-    margin-top: 20px;
-    box-shadow: var(--shadow-lg);
-}
-
-.cta-title {
-    font-size: 1.6rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    font-family: 'Playfair Display', serif;
-}
-
-.cta-description {
-    font-size: 1.1rem;
-    color: var(--primary-color);
-    margin-bottom: 30px;
-    line-height: 1.8;
-}
-
-.btn-register {
-    display: inline-block;
-    padding: 18px 50px;
-    background: var(--primary-color);
-    color: var(--bg-white);
-    text-decoration: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    transition: var(--transition);
-    font-family: 'Inter', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: var(--shadow);
-}
-
-.btn-register:hover {
-    background: var(--primary-dark);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-register:active {
-    transform: translateY(-1px);
-}
-
-/* Human Body Visualization Layout - A4 Page */
-.human-body-visualization-layout {
-    position: relative;
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
-    margin-bottom: 0;
-    box-shadow: none;
-    min-height: 240mm;
-    width: 100%;
-    max-width: 210mm;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    page-break-inside: avoid;
-    box-sizing: border-box;
-}
-
-.body-silhouette-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    width: 210mm;
-    height: 297mm;
-    max-width: 210mm;
-    max-height: 297mm;
-}
-
-.human-body-silhouette,
-.human-body-image {
-    width: 100%;
-    max-width: 210mm;
-    height: 100%;
-    max-height: 297mm;
-    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
-    object-fit: contain;
-    display: block;
-}
-
-.connection-point {
-    pointer-events: none;
-}
-
-/* Organ Cards Positioned Around Body */
-.organ-cards-layout {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 297mm;
-}
-
-.organ-card-positioned {
-    position: absolute;
-    width: 200px;
-    background: var(--bg-white);
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: var(--shadow-lg);
-    z-index: 2;
-    border: 2px solid #e0e0e0;
-}
-
-.organ-card-top-left {
-    top: 15%;
-    left: -6%;
-}
-
-.organ-card-top-right {
-    top: 10%;
-    right: -6%;
-}
-
-.organ-card-middle-left {
-    top: 49%;
-    left: -6%;
-}
-
-.organ-card-middle-right {
-    top: 57%;
-    right: -6%;
-    transform: translateY(-50%);
-}
-
-.organ-card-bottom-left {
-    bottom: 0%;
-    left: -6%;
-}
-
-.organ-card-bottom-right {
-    bottom: 0%;
-    right: -6%;
-}
-
-.organ-card-icon {
-    font-size: 1.8rem;
-    text-align: center;
-    margin-bottom: 6px;
-}
-
-.organ-card-title {
-    font-size: 1rem;
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 8px;
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
-}
-
-.organ-card-status {
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    margin-bottom: 6px;
-}
-
-.organ-card-status.status-normal {
-    background: rgba(40, 167, 69, 0.15);
-    color: var(--success-color);
-}
-
-.organ-card-status.status-info {
-    background: rgba(23, 162, 184, 0.15);
-    color: var(--info-color);
-}
-
-.organ-card-status.status-warning {
-    background: rgba(255, 193, 7, 0.15);
-    color: #856404;
-}
-
-.organ-card-status.status-danger {
-    background: rgba(220, 53, 69, 0.15);
-    color: var(--danger-color);
-}
-
-.organ-card-score {
-    text-align: center;
-    font-size: 0.75rem;
-    color: var(--text-light);
-    margin-bottom: 15px;
-    font-weight: 500;
-}
-
-.organ-card-factors,
-.organ-card-recommendations {
-    font-size: 0.7rem;
-    line-height: 1.4;
-    margin-top: 8px;
-}
-
-.organ-card-factors p,
-.organ-card-recommendations p {
-    margin: 5px 0;
-    color: var(--text-dark);
-    font-weight: 600;
-}
-
-.organ-card-factors ul {
-    margin: 8px 0 8px 20px;
-    padding: 0;
-    list-style: disc;
-}
-
-.organ-card-factors li {
-    margin: 5px 0;
-    color: var(--text-light);
-}
-
-.organ-card-recommendations p:last-child {
-    font-weight: 400;
-    color: var(--text-dark);
-    margin-top: 5px;
-}
-
-/* Connection Lines */
-.connection-lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.connection-line {
-    stroke: #666;
-    stroke-width: 2;
-    stroke-dasharray: 5, 5;
-}
-
-.risk-legend {
-    background: var(--bg-light);
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-}
-
-.risk-legend h4 {
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    font-family: 'Playfair Display', serif;
-}
-
-.legend-items {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    color: var(--text-dark);
-}
-
-.legend-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Organ Risk Assessment Styles */
-.organ-risk-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
-}
-
-.organ-risk-card {
-    background: var(--bg-white);
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    border-top: 4px solid var(--accent-color);
-}
-
-.organ-risk-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.organ-icon {
-    font-size: 3rem;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.organ-name {
-    font-size: 1.4rem;
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 15px;
-    font-family: 'Playfair Display', serif;
-}
-
-.organ-risk-level {
-    text-align: center;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-.organ-risk-level.status-danger {
-    background: rgba(220, 53, 69, 0.1);
-    color: var(--danger-color);
-}
-
-.organ-risk-level.status-warning {
-    background: rgba(255, 193, 7, 0.1);
-    color: #856404;
-}
-
-.organ-risk-level.status-info {
-    background: rgba(23, 162, 184, 0.1);
-    color: var(--info-color);
-}
-
-.organ-risk-level.status-normal {
-    background: rgba(40, 167, 69, 0.1);
-    color: var(--success-color);
-}
-
-.organ-risk-score {
-    text-align: center;
-    font-size: 0.95rem;
-    color: var(--text-light);
-    margin-bottom: 20px;
-    font-weight: 500;
-}
-
-.organ-risk-details {
-    font-size: 0.9rem;
-    line-height: 1.7;
-}
-
-.organ-risk-details p {
-    margin: 10px 0;
-    color: var(--text-dark);
-}
-
-.organ-risk-details ul {
-    margin: 10px 0 15px 20px;
-    padding-left: 0;
-}
-
-.organ-risk-details li {
-    margin: 8px 0;
-    color: var(--text-light);
-}
-
-/* Chart Styles */
-.chart-container {
-    padding: 40px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-top: 3px solid var(--accent-color);
-    margin-top: 20px;
-}
-
-.chart-wrapper {
-    max-width: 700px;
-    margin: 0 auto;
-    text-align: center;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.chart-title {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    margin-bottom: 30px;
-    font-family: 'Playfair Display', serif;
-}
-
-#riskChart {
-    max-width: 100%;
-    height: auto !important;
-    margin: 0 auto;
-    touch-action: manipulation;
-}
-
-.chart-legend {
-    margin-top: 30px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    text-align: left;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background: var(--bg-light);
-    border-radius: 8px;
-    border-left: 4px solid;
-}
-
-.legend-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    margin-right: 10px;
-    flex-shrink: 0;
-}
-
-.legend-text {
-    flex: 1;
-}
-
-.legend-label {
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 3px;
-}
-
-.legend-value {
-    font-size: 0.9rem;
-    color: var(--text-light);
-}
-
-/* Footer */
-.footer {
-    background: var(--primary-color);
-    color: var(--bg-white);
-    padding: 50px 0 20px;
-    margin-top: 60px;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px;
-    margin-bottom: 30px;
-}
-
-.footer-section h3 {
-    color: var(--accent-color);
-    margin-bottom: 15px;
-    font-size: 1.3rem;
-}
-
-.footer-section p {
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.8;
-}
-
-.footer-section a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.footer-section a:hover {
-    color: var(--accent-light);
-}
-
-.footer-disclaimer {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-    margin-top: 30px;
-}
-
-.footer-disclaimer p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 20px;
-}
-
-.footer-bottom p {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.85rem;
-}
-
-/* Responsive Design */
-
-/* Tablet and below (768px and below) */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
-    }
-
-    .navbar .container {
-        padding: 1rem 15px;
-    }
-
-    .nav-brand h2 {
-        font-size: 1.3rem;
-    }
-
-    .nav-menu {
-        position: fixed;
-        left: -100%;
-        top: 70px;
-        flex-direction: column;
-        background: var(--bg-white);
-        width: 100%;
-        text-align: center;
-        transition: 0.3s;
-        box-shadow: var(--shadow-lg);
-        padding: 20px 0;
-        z-index: 999;
-    }
-
-    .nav-menu.active {
-        left: 0;
-    }
-
-    .nav-menu li {
-        margin: 10px 0;
-    }
-
-    .nav-toggle {
-        display: flex;
-    }
-
-
-    .hero-section {
-        padding: 120px 0 60px;
-        margin-top: 60px;
-    }
-
-    .hero-title {
-        font-size: 2rem;
-        line-height: 1.2;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-        padding: 0 10px;
-    }
-
-    .form-section {
-        padding: 40px 0;
-    }
-
-    .form-section-card {
-        padding: 25px 20px;
-        margin-bottom: 20px;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group input[type="text"],
-    .form-group input[type="number"],
-    .form-group input[type="email"],
-    .form-group input[type="date"],
-    .form-group select,
-    .form-group textarea {
-        padding: 14px 15px;
-        font-size: 16px; /* Prevents zoom on iOS */
-    }
-
-    .radio-group,
-    .checkbox-group {
-        gap: 10px;
-    }
-
-    .radio-label,
-    .checkbox-label {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-
-    .form-actions {
-        flex-direction: column;
-        gap: 15px;
-        padding: 30px 0;
-    }
-
-    .btn-submit,
-    .btn-reset {
-        width: 100%;
-        padding: 16px 30px;
-        font-size: 1rem;
-    }
-
-    .bmi-display {
-        padding: 15px;
-        margin-top: 15px;
-    }
-
-    .report-section {
-        padding: 80px 0 40px;
-    }
-
-    .report-header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 30px 20px;
-        gap: 15px;
-    }
-
-    .report-title {
-        font-size: 1.6rem;
-    }
-
-    .btn-print,
-    .btn-back {
-        width: 100%;
-        padding: 12px 20px;
-    }
-
-    .report-content {
-        padding: 25px 20px;
-    }
-
-    .report-section-item {
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-    }
-
-    .report-section-title {
-        font-size: 1.4rem;
-    }
-
-    .report-data-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .report-data-item {
-        padding: 12px;
-    }
-
-    .report-data-value {
-        font-size: 1.2rem;
-    }
-
-    .cta-section-report {
-        padding: 30px 20px;
-    }
-
-    .cta-title {
-        font-size: 1.3rem;
-    }
-
-    .cta-description {
-        font-size: 1rem;
-    }
-
-    .btn-register {
-        padding: 16px 40px;
-        font-size: 1.1rem;
-        width: 100%;
-    }
-
-    .chart-container {
-        padding: 25px 15px;
-    }
-
-    .chart-title {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-
-    .chart-legend {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin-top: 20px;
-    }
-
-    .legend-item {
-        padding: 12px;
-    }
-
-    .footer {
-        padding: 40px 0 15px;
-    }
-
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-
-    .footer-section h3 {
-        font-size: 1.2rem;
-    }
-}
-
-/* Small phones (480px and below) */
-@media (max-width: 480px) {
-    .container {
-        padding: 0 12px;
-    }
-
-    .navbar .container {
-        padding: 0.8rem 12px;
-    }
-
-    .nav-brand h2 {
-        font-size: 1.1rem;
-    }
-
-    .hero-section {
-        padding: 100px 0 50px;
-        margin-top: 50px;
-    }
-
-    .hero-title {
-        font-size: 1.6rem;
-    }
-
-    .hero-subtitle {
-        font-size: 0.9rem;
-    }
-
-    .form-section-card {
-        padding: 20px 15px;
-    }
-
-    .section-title {
-        font-size: 1.3rem;
-        margin-bottom: 15px;
-    }
-
-    .form-group input[type="text"],
-    .form-group input[type="number"],
-    .form-group input[type="email"],
-    .form-group input[type="date"],
-    .form-group select,
-    .form-group textarea {
-        padding: 12px 12px;
-        font-size: 16px;
-    }
-
-    .form-hint {
-        font-size: 0.8rem;
-    }
-
-    .btn-submit,
-    .btn-reset {
-        padding: 14px 25px;
-        font-size: 0.95rem;
-    }
-
-    .report-header {
-        padding: 25px 15px;
-    }
-
-    .report-title {
-        font-size: 1.4rem;
-    }
-
-    .report-content {
-        padding: 20px 15px;
-    }
-
-    .report-section-title {
-        font-size: 1.2rem;
-    }
-
-    .report-data-value {
-        font-size: 1.1rem;
-    }
-
-    .report-status {
-        font-size: 0.8rem;
-        padding: 4px 12px;
-    }
-
-    .cta-section-report {
-        padding: 25px 15px;
-    }
-
-    .cta-title {
-        font-size: 1.2rem;
-    }
-
-    .cta-description {
-        font-size: 0.95rem;
-    }
-
-    .btn-register {
-        padding: 14px 30px;
-        font-size: 1rem;
-    }
-
-    .chart-container {
-        padding: 20px 12px;
-    }
-
-    .chart-title {
-        font-size: 1.3rem;
-    }
-
-}
-
-/* Large phones and small tablets (481px - 768px) */
-@media (min-width: 481px) and (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .report-data-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .chart-legend {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Tablets in landscape (769px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .report-data-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .chart-legend {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-    .btn-submit,
-    .btn-reset,
-    .btn-print,
-    .btn-back,
-    .lang-btn {
-        min-height: 44px; /* Minimum touch target size */
-        min-width: 44px;
-    }
-
-    .nav-menu a {
-        padding: 12px 0;
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .radio-label,
-    .checkbox-label {
-        min-height: 44px;
-        padding: 12px;
-    }
-
-    .radio-label input[type="radio"],
-    .checkbox-label input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        min-width: 20px;
-        min-height: 20px;
-    }
-
-    .form-group select {
-        min-height: 44px;
-    }
-}
-
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .hero-section {
-        padding: 80px 0 40px;
-    }
-
-    .hero-title {
-        font-size: 1.8rem;
-    }
-
-    .hero-subtitle {
-        font-size: 0.9rem;
-    }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .nav-toggle span {
-        height: 2px;
-    }
-}
-
-/* Prevent text size adjustment on iOS */
-@media screen and (max-width: 768px) {
-    html {
-        -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
-    }
-}
-
-/* Smooth scrolling for anchor links */
-@media (prefers-reduced-motion: no-preference) {
-    html {
-        scroll-behavior: smooth;
-    }
-}
-
-/* Print styles */
-@media print {
-    .navbar,
-    .form-section,
-    .footer,
-    .btn-print,
-    .btn-back,
-    .nav-toggle {
-        display: none !important;
-    }
-
-    .report-section {
-        display: block !important;
-        padding: 0;
-        background: white;
-        margin-top: 0;
-    }
-
-    .report-container {
-        box-shadow: none;
-    }
-
-    .chart-container {
-        page-break-inside: avoid;
-    }
-}
-
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+:root {
+    --primary-color: #1a1a1a;
+    --primary-dark: #000000;
+    --primary-light: #333333;
+    --accent-color: #d4af37;
+    --accent-light: #f4d03f;
+    --text-dark: #1a1a1a;
+    --text-light: #666666;
+    --text-lighter: #999999;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --bg-dark: #1a1a1a;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 20px;
+}
+
+.nav-brand h2 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-color);
+    transition: var(--transition);
+}
+
+.nav-menu a:hover::after {
+    width: 100%;
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--primary-color);
+    margin: 3px 0;
+    transition: var(--transition);
+}
+
+/* Language switcher removed - using bilingual display */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+    padding: 150px 0 80px;
+    text-align: center;
+    margin-top: 70px;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--bg-white);
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+}
+
+/* Form Section */
+.form-section {
+    padding: 60px 0;
+}
+
+.cgm-form {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-section-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-section-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 15px;
+}
+
+.section-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    margin-top: 20px;
+    color: var(--primary-color);
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.required {
+    color: var(--danger-color);
+    margin-left: 3px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: var(--transition);
+    background: var(--bg-white);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-style: italic;
+}
+
+/* Dual Unit Input Styles */
+.dual-unit-input {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.unit-input-group {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.unit-input-group input {
+    flex: 1;
+    min-width: 0;
+}
+
+.unit-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.unit-separator {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Patient Type Selection Page */
+.patient-type-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.patient-type-card {
+    background: var(--bg-white);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    cursor: pointer;
+    border: 3px solid transparent;
+    text-align: center;
+}
+
+.patient-type-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-color);
+}
+
+.patient-type-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.patient-type-title {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+}
+
+.patient-type-description {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+.patient-type-features {
+    text-align: left;
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.patient-type-features p {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.patient-type-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.patient-type-features li {
+    padding: 8px 0;
+    color: var(--text-dark);
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.patient-type-features li:last-child {
+    border-bottom: none;
+}
+
+.patient-type-features li::before {
+    content: "âœ“ ";
+    color: var(--success-color);
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.btn-select-type {
+    width: 100%;
+    padding: 18px 30px;
+    background: var(--primary-color);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-select-type:hover {
+    background: var(--primary-dark);
+    transform: scale(1.02);
+}
+
+.btn-select-type:active {
+    transform: scale(0.98);
+}
+
+/* Conditional Fields */
+.conditional-field {
+    display: none;
+}
+
+.conditional-field.show {
+    display: block;
+}
+
+/* Radio and Checkbox Groups */
+.radio-group,
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.radio-label,
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.radio-label:hover,
+.checkbox-label:hover {
+    background: var(--bg-light);
+}
+
+.radio-label input[type="radio"],
+.checkbox-label input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+.radio-label span,
+.checkbox-label span {
+    font-weight: 400;
+    color: var(--text-dark);
+}
+
+/* BMI Display */
+.bmi-display {
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.bmi-display p {
+    margin: 5px 0;
+    font-size: 1.1rem;
+}
+
+#bmiValue {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--primary-color);
+}
+
+.bmi-category {
+    font-weight: 600;
+    margin-top: 10px !important;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    padding: 40px 0;
+}
+
+.btn-submit,
+.btn-reset {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-submit {
+    background: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.btn-submit:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-reset {
+    background: var(--text-light);
+    color: var(--bg-white);
+}
+
+.btn-reset:hover {
+    background: var(--text-dark);
+    transform: translateY(-2px);
+}
+
+/* Report Section */
+.report-section {
+    padding: 100px 0 60px;
+    background: var(--bg-light);
+}
+
+/* A4 Page Size */
+@page {
+    size: A4;
+    margin: 0;
+}
+
+/* Print layout: force true A4 pages and consistent pagination */
+@media print {
+    html, body {
+        width: 210mm;
+        height: auto;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Print ONLY the report (hide landing/form/footer content) */
+    .navbar,
+    .hero-section,
+    #form,
+    .footer {
+        display: none !important;
+    }
+
+    #report {
+        display: block !important;
+    }
+
+    /* Remove screen-only framing */
+    .report-section {
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    /* Hide UI controls in print */
+    .report-header,
+    .btn-print,
+    .btn-back {
+        display: none !important;
+    }
+
+    .report-container {
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        width: 210mm !important;
+        max-width: 210mm !important;
+    }
+
+    .report-content {
+        width: 210mm !important;
+        max-width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    /* Every report block prints as exactly one A4 page */
+    .report-cover-page,
+    .report-content > .report-section-item,
+    .report-section-with-bg {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-inside: avoid !important;
+        page-break-after: always !important;
+        overflow: hidden !important;
+    }
+
+    /* Chart page prints as A4 too */
+    #chartContainer.chart-container {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-after: always !important;
+        overflow: hidden !important;
+        background-size: 100% 100% !important;
+        background-position: left 10px top !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* CTA page prints with natural height (no forced A4 blank space) */
+    #ctaPage.chart-container {
+        /* Keep printed report at 6 pages: CTA is screen-only */
+        display: none !important;
+    }
+
+    /* Ensure background pages keep the background image aligned to A4 */
+    .report-section-with-bg {
+        background-size: 100% 100% !important;
+        background-position: left 10px top !important;
+        background-attachment: local !important;
+    }
+
+    /* Disable screen-only page separators */
+    .report-content > .report-section-item {
+        border-top: none !important;
+    }
+
+    /* Organ risk page: force "original" absolute-position card layout in print */
+    .organ-risk-page .human-body-visualization-layout {
+        position: relative !important;
+        padding: 40px 20px !important;
+        min-height: 700px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .organ-risk-page .body-silhouette-container {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        margin: 0 !important;
+    }
+
+    .organ-risk-page .organ-card-positioned {
+        position: absolute !important;
+        width: 200px !important;
+        margin: 0 !important;
+        padding: 12px !important;
+    }
+
+    .organ-risk-page .organ-card-top-left { 
+        top: 15% !important; 
+        left: -6% !important; 
+        right: auto !important; 
+        bottom: auto !important; 
+        position: absolute !important;
+        transform: none !important;
+    }
+    .organ-risk-page .organ-card-top-right { 
+        top: 6% !important; 
+        right: -9% !important; 
+        left: auto !important; 
+        bottom: auto !important; 
+        position: absolute !important;
+        transform: none !important;
+    }
+    .organ-risk-page .organ-card-middle-left { 
+        top: 46% !important; 
+        left: -6% !important; 
+        right: auto !important; 
+        bottom: auto !important; 
+        position: absolute !important;
+        transform: none !important;
+    }
+    .organ-risk-page .organ-card-middle-right { 
+        top: 51% !important; 
+        right: -9% !important; 
+        left: auto !important; 
+        bottom: auto !important; 
+        position: absolute !important;
+        transform: translateY(-50%) !important; 
+    }
+    .organ-risk-page .organ-card-bottom-left { 
+        bottom: 5% !important; 
+        left: -6% !important; 
+        right: auto !important; 
+        top: auto !important; 
+        position: absolute !important;
+        transform: none !important;
+    }
+    .organ-risk-page .organ-card-bottom-right { 
+        bottom: 6% !important; 
+        right: -9% !important; 
+        left: auto !important; 
+        top: auto !important; 
+        position: absolute !important;
+        transform: none !important;
+    }
+
+    .organ-risk-page .connection-lines {
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1 !important;
+    }
+}
+
+/* Report Cover Page - A4 Size */
+.report-cover-page {
+    width: 100%;
+    max-width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    margin: 0 auto 30px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15mm 12mm;
+    page-break-after: always;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.report-cover-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.report-cover-title-section {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+}
+
+.report-cover-cgm {
+    font-size: 72px;
+    font-weight: 900;
+    color: #000;
+    margin-bottom: 20px;
+    letter-spacing: 4px;
+}
+
+.report-cover-title-chinese {
+    font-size: 36px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.report-cover-title-english {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 2px;
+}
+
+.report-cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: auto;
+    padding-top: 20px;
+    flex-shrink: 0;
+    gap: 30px;
+}
+
+.report-cover-info-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.report-cover-info-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.report-cover-info-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9C27B0;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.report-cover-info-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+.report-cover-info-item {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    display: flex;
+    align-items: baseline;
+}
+
+.report-cover-info-label {
+    font-weight: 500;
+    margin-right: 8px;
+    min-width: 80px;
+    flex-shrink: 0;
+}
+
+.report-cover-info-value {
+    color: #000;
+    flex: 1;
+}
+
+.report-cover-divider {
+    width: 1px;
+    background: #999;
+    margin: 0 20px;
+    align-self: stretch;
+    min-height: 120px;
+    flex-shrink: 0;
+}
+
+/* Report Content Background */
+.report-content {
+    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    padding: 0;
+    position: relative;
+}
+
+.report-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 0;
+}
+
+.report-content > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Organ Risk Page - Separate A4 page without background */
+.organ-risk-page {
+    min-height: 297mm;
+    height: 297mm;
+    padding: 0;
+    page-break-after: always;
+    page-break-before: always;
+    background: #fafafa !important;
+    border-bottom: none;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto 30px;
+    box-sizing: border-box;
+}
+
+.organ-risk-page .human-body-visualization-layout {
+    background: transparent;
+    padding: 0;
+    margin: -20mm auto 0;
+    width: 100%;
+    height: 100%;
+    min-height: 297mm;
+}
+
+/* Print Styles for Report - A4 Size */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .report-section {
+        padding: 0;
+        background: transparent;
+    }
+    
+    .report-container {
+        max-width: 210mm;
+        width: 210mm;
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    
+    .report-header {
+        padding: 10mm 15mm;
+    }
+    
+    .report-cover-page {
+        width: 210mm;
+        height: 297mm;
+        min-height: 297mm;
+        max-width: 210mm;
+        margin: 0;
+        padding: 40px 30px;
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+    
+    .report-content {
+        width: 210mm;
+        max-width: 210mm;
+        padding: 0;
+        background-attachment: scroll;
+        background-image: none;
+        min-height: auto;
+    }
+    
+    .report-content::before {
+        display: none;
+    }
+    
+    .report-section-item {
+        page-break-inside: avoid;
+        margin-bottom: 0;
+        padding: 20mm 15mm;
+        page-break-after: always;
+    }
+    
+    .organ-risk-page {
+        width: 210mm;
+        height: 297mm;
+        min-height: 297mm;
+        padding: 0mm 15mm 20mm 15mm;
+        page-break-after: always;
+        page-break-before: always;
+        background: #fafafa !important;
+        background-image: none !important;
+    }
+    
+    .organ-risk-page .human-body-visualization-layout {
+        width: 100%;
+        max-width: 210mm;
+        min-height: 297mm;
+        height: 297mm;
+        padding: 0;
+        margin-top: 0 !important;
+        page-break-inside: avoid;
+    }
+    
+    .organ-risk-page .body-silhouette-container {
+        top: 45% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+    
+    .organ-risk-page .human-body-image {
+        width: 100%;
+        max-width: 210mm;
+        height: 100%;
+        max-height: 297mm;
+        object-fit: contain;
+    }
+    
+    .btn-print,
+    .btn-back {
+        display: none;
+    }
+    
+    .navbar,
+    .footer {
+        display: none;
+    }
+}
+
+.report-container {
+    max-width: 210mm;
+    width: 210mm;
+    margin: 0 auto;
+    background: var(--bg-white);
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+.report-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.report-title {
+    font-size: 2.2rem;
+    color: var(--bg-white);
+    margin: 0;
+}
+
+.btn-print,
+.btn-back {
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid var(--bg-white);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    color: var(--bg-white);
+}
+
+.btn-print:hover,
+.btn-back:hover {
+    background: var(--bg-white);
+    color: var(--primary-color);
+}
+
+.report-content {
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 0;
+    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
+    min-height: 297mm;
+    box-sizing: border-box;
+}
+
+.report-content .report-section-item:first-child {
+    padding: 15mm 12mm;
+}
+
+.report-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.92);
+    z-index: 0;
+}
+
+.report-content > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* A4 Size adjustments for screen view */
+@media screen {
+    .report-section {
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .report-container {
+        box-shadow: var(--shadow-lg);
+        border-radius: 12px;
+        margin: 20px auto;
+        width: 210mm;
+        max-width: 210mm;
+    }
+    
+    .report-cover-page {
+        box-shadow: var(--shadow-lg);
+        border-radius: 12px;
+        margin: 0 auto 30px;
+        width: 100%;
+        max-width: 210mm;
+        height: 297mm;
+    }
+    
+    .report-content {
+        width: 100%;
+        max-width: 210mm;
+        margin: 0 auto;
+    }
+    
+    .report-content > .report-cover-page {
+        margin: 0 auto 30px;
+    }
+
+    /* Visual page separator lines (screen preview only) */
+    .report-content > .report-section-item {
+        border-top: 2px solid var(--accent-color);
+        margin-top: 22px;
+        box-shadow: var(--shadow-lg);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .report-content > .report-section-item:first-of-type {
+        border-top: none;
+        margin-top: 0;
+    }
+
+    /* Keep background pages showing their background image */
+    .report-content > .report-section-item.report-section-with-bg {
+        background-color: transparent;
+    }
+
+    /* Non-background pages get a white paper background */
+    .report-content > .report-section-item:not(.report-section-with-bg) {
+        background: var(--bg-white);
+    }
+}
+
+.report-section-item {
+    margin-bottom: 0;
+    padding: 15mm 12mm;
+    border-bottom: 1px solid var(--bg-light);
+    page-break-inside: avoid;
+    width: 100%;
+    max-width: 210mm;
+    box-sizing: border-box;
+}
+
+.report-section-item:last-child {
+    border-bottom: none;
+}
+
+.report-section-with-bg {
+    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
+    /* Use a fixed, page-filling background so every page looks identical */
+    background-size: 100% 100%;
+    /* Anchor logo to a fixed spot so it won't "move" when scrollbar appears/disappears */
+    background-position: left 10px top;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    position: relative;
+    min-height: 297mm;
+    max-height: 297mm;
+    /* Tighter padding so content fits within one A4 page */
+    padding: 16mm 12mm 14mm 12mm;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto 30px;
+    page-break-after: always;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Risk Assessment Chart: match report background page style */
+#chartContainer.chart-container {
+    background-image: url('https://drec.pages.dev/chang%20pic/reportbackground.jpg');
+    background-size: 100% 100%;
+    background-position: left 10px top;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    width: 100%;
+    max-width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    margin: 0 auto 30px;
+    padding: 16mm 12mm 14mm 12mm;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Make chart card sit on top of background */
+#chartContainer .chart-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* Chart page title: push away from top-left logo */
+#chartContainer .chart-page-title {
+    margin-top: 22mm;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    color: #000;
+    line-height: 1.05;
+    margin-bottom: 18px;
+}
+
+#chartContainer .chart-page-title-cn {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+#chartContainer .chart-page-title-en {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+/* CTA page: same background/A4 sizing as chart page */
+#ctaPage.chart-container {
+    background: #fff;
+    width: 100%;
+    max-width: 210mm;
+    height: auto;
+    min-height: 0;
+    margin: 0 auto 30px;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+#ctaPage .chart-wrapper {
+    position: relative;
+    z-index: 1;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+#ctaPage .cta-section-report {
+    width: 100%;
+    max-width: 700px;
+}
+
+.report-section-with-bg:not(.bmi-page-section)::before {
+    content: "患者健康评估报告\A Patient Health assessment\A report";
+    position: absolute;
+    top: 12mm;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: pre-line;
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    line-height: 1.05;
+    color: #000;
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.risk-assessment-section {
+    /* Reduce top padding so sections like Blood Pressure & Heart Health don't get clipped */
+    padding-top: 45mm;
+}
+
+
+.bmi-page-section {
+    /* Move BMI titles upward without affecting other risk assessment pages */
+    padding-top: 15mm;
+}
+
+/* BMI page only: make the BMI gauge block a bit smaller so it doesn't crowd the logo area */
+.bmi-page-section .bmi-gauge-container {
+    padding: 28px 22px;
+    margin: 12px 0;
+}
+
+.bmi-page-section .bmi-gauge-header h4 {
+    margin-bottom: 18px;
+    font-size: 1.25rem;
+}
+
+.bmi-page-section .bmi-gauge-wrapper {
+    height: 240px;
+    margin-bottom: 18px;
+}
+
+.bmi-page-section .bmi-gauge-info {
+    padding: 16px;
+    margin-top: 14px;
+}
+
+.lifestyle-section {
+    /* More compact so Lifestyle Analysis fits within one A4 page */
+    padding-top: 42mm;
+}
+
+/* Lifestyle page: compact cards + analysis block to avoid clipping */
+.lifestyle-section .report-data-grid {
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Push the risk assessment block (inserted above Lifestyle Information) slightly downward */
+.lifestyle-section > .report-section-title:first-child {
+    margin-top: 6mm;
+}
+
+.lifestyle-section .report-data-item {
+    padding: 10px;
+}
+
+.lifestyle-section .report-data-label {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.lifestyle-section .report-data-value {
+    font-size: 1.1rem;
+    gap: 8px;
+}
+
+.lifestyle-section .report-analysis {
+    padding: 14px;
+    margin-top: 12px;
+}
+
+.lifestyle-section .report-analysis h4 {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+}
+
+.lifestyle-section .report-analysis p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.report-section-title {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-color);
+    page-break-after: avoid;
+}
+
+.report-data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+    page-break-inside: avoid;
+}
+
+.report-data-item {
+    background: var(--bg-light);
+    padding: 12px;
+    border-radius: 6px;
+    page-break-inside: avoid;
+}
+
+.report-data-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.report-data-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.report-status {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 0;
+}
+
+.status-normal {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+}
+
+.status-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+}
+
+.status-danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.status-info {
+    background: rgba(23, 162, 184, 0.1);
+    color: var(--info-color);
+}
+
+.report-analysis {
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.report-analysis h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.report-analysis p {
+    color: var(--text-dark);
+    line-height: 1.8;
+}
+
+.report-recommendations {
+    background: #e8f5e9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid var(--success-color);
+}
+
+.report-recommendations h4 {
+    color: var(--success-color);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.report-recommendations ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.report-recommendations li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+    color: var(--text-dark);
+}
+
+.report-recommendations li::before {
+    content: 'âœ“';
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+/* BMI Gauge Styles - Redesigned */
+.bmi-gauge-container {
+    background: var(--bg-white);
+    padding: 40px 30px;
+    border-radius: 12px;
+    margin: 20px 0;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.bmi-gauge-header h4 {
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+
+.bmi-gauge-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    height: 300px;
+}
+
+.bmi-gauge {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Linear scale for low BMI values */
+.bmi-linear-scale {
+    margin: 20px auto;
+    max-width: 400px;
+    padding: 0 20px;
+}
+
+.linear-scale-line {
+    position: relative;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+
+.scale-segment {
+    position: absolute;
+    height: 100%;
+    border-radius: 4px;
+    left: 0;
+}
+
+.red-segment {
+    background: #ff6b6b;
+    width: 60%;
+}
+
+.scale-marker {
+    position: absolute;
+    top: -25px;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: #666;
+    font-weight: 500;
+}
+
+.scale-marker.red-dot {
+    top: -8px;
+    width: 12px;
+    height: 12px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+
+.scale-marker.red-dot::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: #666;
+    content: '18.5';
+    white-space: nowrap;
+}
+
+.bmi-gauge-info {
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.bmi-gauge-info p {
+    margin: 10px 0;
+    color: var(--text-dark);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .bmi-gauge-wrapper {
+        height: 250px;
+        max-width: 100%;
+    }
+    
+    .bmi-gauge-header h4 {
+        font-size: 1.2rem;
+    }
+    
+    .bmi-linear-scale {
+        max-width: 100%;
+    }
+    
+    .organ-risk-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .organ-risk-card {
+        padding: 20px;
+    }
+    
+    .organ-icon {
+        font-size: 2.5rem;
+    }
+    
+    .organ-name {
+        font-size: 1.2rem;
+    }
+    
+    .human-body-visualization-layout {
+        padding: 40px 20px;
+        min-height: 700px;
+    }
+    
+    .organ-card-positioned {
+        width: 240px;
+        padding: 15px;
+        position: relative !important;
+        margin-bottom: 20px;
+    }
+    
+    .organ-card-top-left,
+    .organ-card-top-right,
+    .organ-card-bottom-left,
+    .organ-card-bottom-right {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        margin: 0 auto 20px;
+    }
+    
+    .body-silhouette-container {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        margin: 20px auto;
+    }
+    
+    .human-body-silhouette {
+        width: 200px;
+    }
+    
+    .connection-lines {
+        display: none;
+    }
+}
+
+/* CTA Section in Report */
+.cta-section-report {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 20px;
+    box-shadow: var(--shadow-lg);
+}
+
+.cta-title {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.cta-description {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+.btn-register {
+    display: inline-block;
+    padding: 18px 50px;
+    background: var(--primary-color);
+    color: var(--bg-white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: var(--shadow);
+}
+
+.btn-register:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-register:active {
+    transform: translateY(-1px);
+}
+
+/* Human Body Visualization Layout - A4 Page */
+.human-body-visualization-layout {
+    position: relative;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+    min-height: 240mm;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+}
+
+.body-silhouette-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 210mm;
+    height: 297mm;
+    max-width: 210mm;
+    max-height: 297mm;
+}
+
+.human-body-silhouette,
+.human-body-image {
+    width: 100%;
+    max-width: 210mm;
+    height: 100%;
+    max-height: 297mm;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+    object-fit: contain;
+    display: block;
+}
+
+.connection-point {
+    pointer-events: none;
+}
+
+/* Organ Cards Positioned Around Body */
+.organ-cards-layout {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 297mm;
+}
+
+.organ-card-positioned {
+    position: absolute;
+    width: 200px;
+    background: var(--bg-white);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: var(--shadow-lg);
+    z-index: 2;
+    border: 2px solid #e0e0e0;
+}
+
+.organ-card-top-left {
+    top: 15%;
+    left: -6%;
+}
+
+.organ-card-top-right {
+    top: 10%;
+    right: -6%;
+}
+
+.organ-card-middle-left {
+    top: 49%;
+    left: -6%;
+}
+
+.organ-card-middle-right {
+    top: 57%;
+    right: -6%;
+    transform: translateY(-50%);
+}
+
+.organ-card-bottom-left {
+    bottom: 0%;
+    left: -6%;
+}
+
+.organ-card-bottom-right {
+    bottom: 0%;
+    right: -6%;
+}
+
+.organ-card-icon {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.organ-card-title {
+    font-size: 1rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 8px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+}
+
+.organ-card-status {
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+.organ-card-status.status-normal {
+    background: rgba(40, 167, 69, 0.15);
+    color: var(--success-color);
+}
+
+.organ-card-status.status-info {
+    background: rgba(23, 162, 184, 0.15);
+    color: var(--info-color);
+}
+
+.organ-card-status.status-warning {
+    background: rgba(255, 193, 7, 0.15);
+    color: #856404;
+}
+
+.organ-card-status.status-danger {
+    background: rgba(220, 53, 69, 0.15);
+    color: var(--danger-color);
+}
+
+.organ-card-score {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.organ-card-factors,
+.organ-card-recommendations {
+    font-size: 0.7rem;
+    line-height: 1.4;
+    margin-top: 8px;
+}
+
+.organ-card-factors p,
+.organ-card-recommendations p {
+    margin: 5px 0;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.organ-card-factors ul {
+    margin: 8px 0 8px 20px;
+    padding: 0;
+    list-style: disc;
+}
+
+.organ-card-factors li {
+    margin: 5px 0;
+    color: var(--text-light);
+}
+
+.organ-card-recommendations p:last-child {
+    font-weight: 400;
+    color: var(--text-dark);
+    margin-top: 5px;
+}
+
+/* Connection Lines */
+.connection-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.connection-line {
+    stroke: #666;
+    stroke-width: 2;
+    stroke-dasharray: 5, 5;
+}
+
+.risk-legend {
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.risk-legend h4 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Organ Risk Assessment Styles */
+.organ-risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.organ-risk-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border-top: 4px solid var(--accent-color);
+}
+
+.organ-risk-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.organ-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.organ-name {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.organ-risk-level {
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.organ-risk-level.status-danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.organ-risk-level.status-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: #856404;
+}
+
+.organ-risk-level.status-info {
+    background: rgba(23, 162, 184, 0.1);
+    color: var(--info-color);
+}
+
+.organ-risk-level.status-normal {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+}
+
+.organ-risk-score {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.organ-risk-details {
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.organ-risk-details p {
+    margin: 10px 0;
+    color: var(--text-dark);
+}
+
+.organ-risk-details ul {
+    margin: 10px 0 15px 20px;
+    padding-left: 0;
+}
+
+.organ-risk-details li {
+    margin: 8px 0;
+    color: var(--text-light);
+}
+
+/* Chart Styles */
+.chart-container {
+    padding: 40px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-top: 3px solid var(--accent-color);
+    margin-top: 20px;
+}
+
+.chart-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.chart-title {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-family: 'Playfair Display', serif;
+}
+
+#riskChart {
+    max-width: 100%;
+    height: auto !important;
+    margin: 0 auto;
+    touch-action: manipulation;
+}
+
+.chart-legend {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    text-align: left;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: var(--bg-light);
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.legend-text {
+    flex: 1;
+}
+
+.legend-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 3px;
+}
+
+.legend-value {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* Footer */
+.footer {
+    background: var(--primary-color);
+    color: var(--bg-white);
+    padding: 50px 0 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.8;
+}
+
+.footer-section a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-section a:hover {
+    color: var(--accent-light);
+}
+
+.footer-disclaimer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    margin-top: 30px;
+}
+
+.footer-disclaimer p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
+}
+
+.footer-bottom p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+/* Responsive Design */
+
+/* Tablet and below (768px and below) */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .navbar .container {
+        padding: 1rem 15px;
+    }
+
+    .nav-brand h2 {
+        font-size: 1.3rem;
+    }
+
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background: var(--bg-white);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: var(--shadow-lg);
+        padding: 20px 0;
+        z-index: 999;
+    }
+
+    .nav-menu.active {
+        left: 0;
+    }
+
+    .nav-menu li {
+        margin: 10px 0;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+
+    .hero-section {
+        padding: 120px 0 60px;
+        margin-top: 60px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    .form-section {
+        padding: 40px 0;
+    }
+
+    .form-section-card {
+        padding: 25px 20px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="email"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+        padding: 14px 15px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    .radio-group,
+    .checkbox-group {
+        gap: 10px;
+    }
+
+    .radio-label,
+    .checkbox-label {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 15px;
+        padding: 30px 0;
+    }
+
+    .btn-submit,
+    .btn-reset {
+        width: 100%;
+        padding: 16px 30px;
+        font-size: 1rem;
+    }
+
+    .bmi-display {
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .report-section {
+        padding: 80px 0 40px;
+    }
+
+    .report-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 30px 20px;
+        gap: 15px;
+    }
+
+    .report-title {
+        font-size: 1.6rem;
+    }
+
+    .btn-print,
+    .btn-back {
+        width: 100%;
+        padding: 12px 20px;
+    }
+
+    .report-content {
+        padding: 25px 20px;
+    }
+
+    .report-section-item {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+    }
+
+    .report-section-title {
+        font-size: 1.4rem;
+    }
+
+    .report-data-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .report-data-item {
+        padding: 12px;
+    }
+
+    .report-data-value {
+        font-size: 1.2rem;
+    }
+
+    .cta-section-report {
+        padding: 30px 20px;
+    }
+
+    .cta-title {
+        font-size: 1.3rem;
+    }
+
+    .cta-description {
+        font-size: 1rem;
+    }
+
+    .btn-register {
+        padding: 16px 40px;
+        font-size: 1.1rem;
+        width: 100%;
+    }
+
+    .chart-container {
+        padding: 25px 15px;
+    }
+
+    .chart-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .chart-legend {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .legend-item {
+        padding: 12px;
+    }
+
+    .footer {
+        padding: 40px 0 15px;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .footer-section h3 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Small phones (480px and below) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    .navbar .container {
+        padding: 0.8rem 12px;
+    }
+
+    .nav-brand h2 {
+        font-size: 1.1rem;
+    }
+
+    .hero-section {
+        padding: 100px 0 50px;
+        margin-top: 50px;
+    }
+
+    .hero-title {
+        font-size: 1.6rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .form-section-card {
+        padding: 20px 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="email"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+        padding: 12px 12px;
+        font-size: 16px;
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+    }
+
+    .btn-submit,
+    .btn-reset {
+        padding: 14px 25px;
+        font-size: 0.95rem;
+    }
+
+    .report-header {
+        padding: 25px 15px;
+    }
+
+    .report-title {
+        font-size: 1.4rem;
+    }
+
+    .report-content {
+        padding: 20px 15px;
+    }
+
+    .report-section-title {
+        font-size: 1.2rem;
+    }
+
+    .report-data-value {
+        font-size: 1.1rem;
+    }
+
+    .report-status {
+        font-size: 0.8rem;
+        padding: 4px 12px;
+    }
+
+    .cta-section-report {
+        padding: 25px 15px;
+    }
+
+    .cta-title {
+        font-size: 1.2rem;
+    }
+
+    .cta-description {
+        font-size: 0.95rem;
+    }
+
+    .btn-register {
+        padding: 14px 30px;
+        font-size: 1rem;
+    }
+
+    .chart-container {
+        padding: 20px 12px;
+    }
+
+    .chart-title {
+        font-size: 1.3rem;
+    }
+
+}
+
+/* Large phones and small tablets (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .report-data-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-legend {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablets in landscape (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .report-data-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-legend {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .btn-submit,
+    .btn-reset,
+    .btn-print,
+    .btn-back,
+    .lang-btn {
+        min-height: 44px; /* Minimum touch target size */
+        min-width: 44px;
+    }
+
+    .nav-menu a {
+        padding: 12px 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .radio-label,
+    .checkbox-label {
+        min-height: 44px;
+        padding: 12px;
+    }
+
+    .radio-label input[type="radio"],
+    .checkbox-label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+    }
+
+    .form-group select {
+        min-height: 44px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero-section {
+        padding: 80px 0 40px;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .nav-toggle span {
+        height: 2px;
+    }
+}
+
+/* Prevent text size adjustment on iOS */
+@media screen and (max-width: 768px) {
+    html {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+    }
+}
+
+/* Smooth scrolling for anchor links */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .form-section,
+    .footer,
+    .btn-print,
+    .btn-back,
+    .nav-toggle {
+        display: none !important;
+    }
+
+    .report-section {
+        display: block !important;
+        padding: 0;
+        background: white;
+        margin-top: 0;
+    }
+
+    .report-container {
+        box-shadow: none;
+    }
+
+    .chart-container {
+        page-break-inside: avoid;
+    }
+}
+
