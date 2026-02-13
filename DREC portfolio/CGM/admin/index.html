@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGM 后台管理 | Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div id="loginScreen" class="screen login-screen">
+        <div class="login-bg"></div>
+        <div class="login-card">
+            <div class="login-brand">
+                <span class="login-logo">CGM</span>
+                <span class="login-title">后台管理 / Admin</span>
+            </div>
+            <p class="login-hint">请登录以管理患者数据 / Sign in to manage patient submissions</p>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginUsername">用户名 / Username</label>
+                    <input type="text" id="loginUsername" value="admin" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密码 / Password</label>
+                    <input type="password" id="loginPassword" placeholder="默认 admin123" required autocomplete="current-password">
+                </div>
+                <p id="loginError" class="login-error"></p>
+                <button type="submit" class="btn btn-login">登录 / Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="adminScreen" class="screen admin-screen hidden">
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-logo">CGM</span>
+                <span class="sidebar-title">管理后台</span>
+            </div>
+            <div class="sidebar-footer">
+                <button type="button" id="changePasswordBtn" class="btn btn-change-pw">更改密码</button>
+                <button type="button" id="logoutBtn" class="btn btn-logout">登出</button>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>患者数据 / Patient Submissions</h1>
+                <div class="header-actions">
+                    <button type="button" id="logoutBtnHeader" class="btn btn-outline">登出 / Logout</button>
+                </div>
+            </header>
+
+            <section class="filters-card">
+                <h2 class="filters-title">筛选 / Filter</h2>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterPatientType">患者类型</label>
+                        <select id="filterPatientType">
+                            <option value="">全部 / All</option>
+                            <option value="diabetic">糖尿病 / Diabetic</option>
+                            <option value="prediabetic">前期 / Prediabetic</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterName">姓名/联系方式</label>
+                        <input type="text" id="filterName" placeholder="搜索...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterEmail">邮箱</label>
+                        <input type="text" id="filterEmail" placeholder="搜索...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterDateFrom">日期起</label>
+                        <input type="date" id="filterDateFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterDateTo">日期止</label>
+                        <input type="date" id="filterDateTo">
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-card">
+                <div class="results-header">
+                    <p class="results-count">共 <strong id="totalCount">0</strong> 条记录 / Total <strong id="totalCountEn">0</strong> records</p>
+                    <p class="results-hint">若「风险评估」显示 —：请用浏览器打开一次 <code>api/setup_risk_columns.php</code> 添加栏位。</p>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>提交时间</th>
+                                <th>类型</th>
+                                <th>姓名</th>
+                                <th>联系方式</th>
+                                <th>邮箱</th>
+                                <th>年龄</th>
+                                <th>BMI</th>
+                                <th>风险评估</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Change password modal -->
+        <div id="changePasswordModal" class="modal hidden">
+            <div class="modal-backdrop change-pw-close"></div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>更改密码 / Change Password</h2>
+                        <button type="button" class="modal-close change-pw-close" aria-label="关闭">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="changePasswordForm" class="change-pw-form">
+                            <div class="form-group">
+                                <label for="currentPassword">当前密码 / Current password</label>
+                                <input type="password" id="currentPassword" required autocomplete="current-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">新密码 / New password（至少 6 位）</label>
+                                <input type="password" id="newPassword" required minlength="6" autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">确认新密码 / Confirm new password</label>
+                                <input type="password" id="confirmPassword" required minlength="6" autocomplete="new-password">
+                            </div>
+                            <p id="changePasswordError" class="change-pw-error"></p>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-outline change-pw-close">取消</button>
+                                <button type="submit" class="btn btn-primary">确认更改</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="detailModal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>患者详情 — #<span id="detailId"></span></h2>
+                        <button type="button" class="modal-close" id="detailClose" aria-label="关闭">&times;</button>
+                    </div>
+                    <div class="modal-body" id="detailBody">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

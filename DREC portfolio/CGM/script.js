@@ -185,8 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
             field.classList.remove('show');
             field.style.display = 'none'; // Force hide
         });
-        // Update question numbers for prediabetic (7-11)
-        updateQuestionNumbers(['mealsPerDay', 'sleepQuality', 'stressLevel', 'smoking', 'alcohol'], 7);
+        // Update question numbers for prediabetic (7-9: hypertension/cholesterol, smoking, alcohol)
+        const prediabeticBlock = document.querySelector('.conditional-prediabetic');
+        updateQuestionNumbers(['prediabetic_hypertension_cholesterol', 'smoking', 'alcohol'], 7, prediabeticBlock);
     } else if (patientType === 'diabetic') {
         diabeticFields.forEach(field => {
             field.classList.add('show');
@@ -196,8 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
             field.classList.remove('show');
             field.style.display = 'none'; // Force hide
         });
-        // Update question numbers for diabetic (16-20)
-        updateQuestionNumbers(['mealsPerDay', 'sleepQuality', 'stressLevel', 'smoking', 'alcohol'], 16);
+        // Update question numbers for diabetic (12-13: smoking, alcohol only) — scope to diabetic block only
+        const diabeticBlock = document.querySelector('.conditional-diabetic');
+        updateQuestionNumbers(['smoking', 'alcohol'], 12, diabeticBlock);
     }
     
     // Close mobile menu when clicking outside
@@ -237,10 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormSubmission();
 });
 
-// Update question numbers dynamically
-function updateQuestionNumbers(fieldNames, startNumber) {
+// Update question numbers dynamically (scope = optional container to search within, e.g. .conditional-diabetic)
+function updateQuestionNumbers(fieldNames, startNumber, scope) {
+    const root = scope || document;
     fieldNames.forEach((fieldName, index) => {
-        const field = document.querySelector(`input[name="${fieldName}"], select[name="${fieldName}"]`);
+        const field = root.querySelector(`input[name="${fieldName}"], select[name="${fieldName}"]`);
         if (field) {
             const formGroup = field.closest('.form-group');
             if (formGroup) {
@@ -268,10 +271,60 @@ function setupFormSubmission() {
     
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
+        var declarationAgree = document.getElementById('declarationAgree');
+        var declarationError = document.getElementById('declarationError');
+        if (declarationError) declarationError.textContent = '';
+        if (!declarationAgree || !declarationAgree.checked) {
+            if (declarationError) declarationError.textContent = '请先勾选上方声明后再提交。Please check the declaration above to continue.';
+            if (declarationAgree) declarationAgree.focus();
+            return;
+        }
+
         // All fields are optional - no validation needed
         // Collect form data
         const formData = collectFormData();
+        
+        // 糖尿病前期/糖尿病患者风险评估 — 写入后台列表
+        if (formData.patientType === 'prediabetic') {
+            formData.riskScore = calculatePrediabeticRiskScore(formData);
+            formData.riskLevel = getPrediabeticRiskLevel(formData.riskScore).text;
+        } else if (formData.patientType === 'diabetic') {
+            formData.riskScore = calculateDiabeticRiskScore(formData);
+            formData.riskLevel = getDiabeticRiskLevel(formData.riskScore).text;
+        }
+        
+        // Save to backend (XAMPP database) — only when opened via http(s), not file://
+        var apiBase = (function() {
+            var loc = window.location;
+            if (loc.protocol === 'file:') return null;
+            return loc.origin + loc.pathname.replace(/\/[^/]*$/, '/');
+        })();
+        if (apiBase) {
+            fetch(apiBase + 'api/save_submission.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+                .then(function(r) {
+                    return r.text().then(function(text) {
+                        var j = {};
+                        try { j = JSON.parse(text); } catch (e) { j = { error: 'Invalid response', message: text.slice(0, 200) }; }
+                        return { ok: r.ok, status: r.status, json: j };
+                    });
+                })
+                .then(function(result) {
+                    if (!result.ok && window.console && console.warn) {
+                        console.warn('CGM save_submission:', result.status, result.json);
+                        if (result.json && result.json.message) {
+                            console.warn('CGM save_submission error message:', result.json.message);
+                        }
+                    }
+                })
+                .catch(function(err) {
+                    if (window.console && console.warn) console.warn('CGM save_submission network/parse error:', err);
+                });
+        }
         
         // Generate report
         generateReport(formData);
@@ -381,6 +434,7 @@ function collectFormData() {
     data.regular_exercise_150min = formData.get('regular_exercise_150min');
     data.recent_glucose_level = formData.get('recent_glucose_level');
     data.prediabetic_fear_complications = formData.getAll('prediabetic_fear_complications');
+    data.prediabetic_hypertension_cholesterol = formData.get('prediabetic_hypertension_cholesterol');
     
     // Diabetic patient specific fields
     data.diabetic_blurred_vision = formData.get('diabetic_blurred_vision');
@@ -390,7 +444,6 @@ function collectFormData() {
     data.diabetic_frequent_urination = formData.get('diabetic_frequent_urination');
     data.diabetic_edema = formData.get('diabetic_edema');
     data.diabetic_numbness = formData.get('diabetic_numbness');
-    data.diabetic_decreased_sensation = formData.get('diabetic_decreased_sensation');
     data.diabetic_shortness_breath = formData.get('diabetic_shortness_breath');
     data.diabetic_foot_pain = formData.get('diabetic_foot_pain');
     data.diabetic_cardiovascular_history = formData.get('diabetic_cardiovascular_history');
@@ -405,6 +458,25 @@ function collectFormData() {
     data.stressLevel = formData.get('stressLevel');
     data.smoking = formData.get('smoking');
     data.alcohol = formData.get('alcohol');
+    
+    // Additional health metrics (if available in form)
+    data.cholesterol = formData.get('cholesterol');
+    data.waistCircumference = formData.get('waistCircumference');
+    data.bodyFat = formData.get('bodyFat');
+    data.exerciseFrequency = formData.get('exerciseFrequency');
+    
+    // Map waist_exceeded to waistCircumference if actual value not provided
+    if (!data.waistCircumference && data.waist_exceeded) {
+        // Use estimated values based on gender if waist exceeded
+        if (data.waist_exceeded === 'yes' || data.waist_exceeded === 'unsure') {
+            data.waistCircumference = data.patientGender === 'male' ? '95' : '85'; // Slightly above threshold
+        }
+    }
+    
+    // Map regular_exercise_150min to exerciseFrequency if not provided
+    if (!data.exerciseFrequency && data.regular_exercise_150min) {
+        data.exerciseFrequency = data.regular_exercise_150min === 'yes' ? 'moderate' : 'none';
+    }
     
     return data;
 }
@@ -516,17 +588,12 @@ function calculateDiabeticRiskScore(data) {
         score += 1;
     }
     
-    // 7. 是否有手脚麻痹或者刺痛？
+    // 4. 是否有手脚麻痹或者刺痛？
     if (data.diabetic_numbness === 'yes') {
         score += 1;
     }
     
-    // 8. 是否感觉迟钝，容易被烫伤或受伤却不觉得疼？
-    if (data.diabetic_decreased_sensation === 'yes') {
-        score += 1;
-    }
-    
-    // 9. 是否容易气喘、胸口闷痛？
+    // 5. 是否容易气喘、胸口闷痛？
     if (data.diabetic_shortness_breath === 'yes') {
         score += 1;
     }
@@ -614,159 +681,135 @@ function getDiabeticRiskLevel(score) {
     };
 }
 
-// Calculate organ-specific risks
+// Get effective HbA1c numeric value (for diabetic form: diabetic_recent_hba1c → approximate %)
+function getEffectiveHba1c(data) {
+    if (data.hba1c) return parseFloat(data.hba1c);
+    if (data.patientType === 'diabetic' && data.diabetic_recent_hba1c) {
+        const map = { normal: 6, moderate: 6.65, high: 7.5 };
+        return map[data.diabetic_recent_hba1c] || 6;
+    }
+    return null;
+}
+
+// Calculate organ-specific risks (diabetic complications: 眼睛, 心脏, 肾脏, 中风, 神经)
 function calculateOrganRisks(data) {
     const risks = {
-        eyes: 0,      // 眼睛 / Eyes (Retinopathy)
-        kidneys: 0,   // 肾脏 / Kidneys (Nephropathy)
-        nerves: 0,    // 神经 / Nerves (Neuropathy)
-        heart: 0,     // 心脏 / Heart (Cardiovascular)
-        handsFeet: 0  // 手脚 / Hands & Feet (Peripheral Neuropathy/Amputation Risk)
+        eyes: 0,      // 眼睛 / Eyes (Retinopathy) — 血糖, 血压, 年龄, 眼睛相关
+        kidneys: 0,   // 肾脏 / Kidneys (Nephropathy) — 年龄, 血糖, 血压, 吸烟, BMI, 尿, 水肿
+        stroke: 0,    // 中风 / Stroke — 年龄(女), BMI, 血糖, 血压, 喘, 吸烟喝酒, 手脚麻痹
+        heart: 0,     // 心脏 / Heart — 年龄(男), BMI, 血糖, 血压, 喘, 吸烟喝酒, 脚酸痛, 心脏病史, 水肿
+        nerves: 0     // 神经 / Nerves (Neuropathy) — 年龄, 血糖, BMI, 吸烟, 手脚麻痹
     };
     
-    // Get glucose value (convert from mmol/L to mg/dL for calculations)
     let fastingGlucose = null;
-    if (data.fastingGlucoseMmol) {
-        fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-    } else if (data.fastingGlucose) {
-        fastingGlucose = parseFloat(data.fastingGlucose);
-    }
+    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
+    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
     
-    let postprandialGlucose = null;
-    if (data.postprandialGlucoseMmol) {
-        postprandialGlucose = parseFloat(data.postprandialGlucoseMmol) * 18.0182;
-    } else if (data.postprandialGlucose) {
-        postprandialGlucose = parseFloat(data.postprandialGlucose);
-    }
+    const hba1c = getEffectiveHba1c(data);
+    const age = parseInt(data.patientAge, 10) || 50;
+    const isMale = data.patientGender === 'male';
+    const systolic = data.systolicBP ? parseFloat(data.systolicBP) : null;
+    const diastolic = data.diastolicBP ? parseFloat(data.diastolicBP) : null;
+    const bmi = data.bmi ? parseFloat(data.bmi) : null;
     
-    // Eyes (Retinopathy) Risk - based on glucose control and duration
+    // —— 眼睛 Eyes: 血糖, 血压, 年龄, 眼睛相关 ——
     let eyesScore = 0;
-    if (fastingGlucose) {
-        if (fastingGlucose >= 200) eyesScore += 40;
-        else if (fastingGlucose >= 140) eyesScore += 30;
-        else if (fastingGlucose >= 126) eyesScore += 20;
-        else if (fastingGlucose >= 100) eyesScore += 10;
-    }
-    if (data.hba1c) {
-        const hba1c = parseFloat(data.hba1c);
-        if (hba1c >= 8.0) eyesScore += 35;
+    if (hba1c) {
+        if (hba1c >= 7.5) eyesScore += 35;
         else if (hba1c >= 7.0) eyesScore += 25;
         else if (hba1c >= 6.5) eyesScore += 15;
     }
-    if (data.patientType === 'diabetic') {
-        eyesScore += 20; // Diabetic patients have higher baseline risk
+    if (fastingGlucose) {
+        if (fastingGlucose >= 200) eyesScore += 30;
+        else if (fastingGlucose >= 140) eyesScore += 20;
+        else if (fastingGlucose >= 126) eyesScore += 10;
     }
-    if (data.systolicBP && parseFloat(data.systolicBP) >= 140) {
-        eyesScore += 15; // Hypertension increases retinopathy risk
+    if (systolic >= 140) eyesScore += 20;
+    if (diastolic >= 90) eyesScore += 15;
+    if (age >= 60) eyesScore += 15;
+    else if (age >= 50) eyesScore += 10;
+    else if (age >= 40) eyesScore += 5;
+    if (data.patientType === 'diabetic') {
+        if (data.diabetic_blurred_vision === 'yes' || data.diabetic_night_vision === 'yes' || data.diabetic_visual_spots === 'yes') eyesScore += 25;
     }
     risks.eyes = Math.min(eyesScore, 100);
     
-    // Kidneys (Nephropathy) Risk - based on glucose, BP, and protein markers
-    let kidneysScore = 0;
-    if (fastingGlucose) {
-        if (fastingGlucose >= 200) kidneysScore += 35;
-        else if (fastingGlucose >= 140) kidneysScore += 25;
-        else if (fastingGlucose >= 126) kidneysScore += 15;
-    }
-    if (data.hba1c) {
-        const hba1c = parseFloat(data.hba1c);
-        if (hba1c >= 8.0) kidneysScore += 30;
-        else if (hba1c >= 7.0) kidneysScore += 20;
-    }
-    if (data.systolicBP && parseFloat(data.systolicBP) >= 140) {
-        kidneysScore += 25; // High BP is major risk for kidney disease
-    }
-    if (data.diastolicBP && parseFloat(data.diastolicBP) >= 90) {
-        kidneysScore += 20;
-    }
-    if (data.patientType === 'diabetic') {
-        kidneysScore += 20;
-    }
-    risks.kidneys = Math.min(kidneysScore, 100);
-    
-    // Nerves (Neuropathy) Risk - based on glucose control
-    let nervesScore = 0;
-    if (fastingGlucose) {
-        if (fastingGlucose >= 200) nervesScore += 40;
-        else if (fastingGlucose >= 140) nervesScore += 30;
-        else if (fastingGlucose >= 126) nervesScore += 20;
-    }
-    if (data.hba1c) {
-        const hba1c = parseFloat(data.hba1c);
-        if (hba1c >= 8.0) nervesScore += 35;
-        else if (hba1c >= 7.0) nervesScore += 25;
-        else if (hba1c >= 6.5) nervesScore += 15;
-    }
-    if (data.patientType === 'diabetic') {
-        nervesScore += 25;
-    }
-    // Check if patient reported neuropathy symptoms
-    if (data.diabetic_complications && Array.isArray(data.diabetic_complications) && data.diabetic_complications.includes('neuropathy')) {
-        nervesScore += 30;
-    }
-    risks.nerves = Math.min(nervesScore, 100);
-    
-    // Heart (Cardiovascular) Risk - based on multiple factors
+    // —— 心脏 Heart: 年龄(男), BMI, 血糖, 血压, 喘, 吸烟喝酒, 脚酸痛, 心脏病史, 水肿 ——
     let heartScore = 0;
-    if (data.systolicBP) {
-        const systolic = parseFloat(data.systolicBP);
-        if (systolic >= 140) heartScore += 30;
-        else if (systolic >= 130) heartScore += 20;
-        else if (systolic >= 120) heartScore += 10;
+    if (isMale) {
+        if (age >= 60) heartScore += 15;
+        else if (age >= 50) heartScore += 10;
+        else if (age >= 40) heartScore += 5;
     }
-    if (data.diastolicBP) {
-        const diastolic = parseFloat(data.diastolicBP);
-        if (diastolic >= 90) heartScore += 25;
-        else if (diastolic >= 80) heartScore += 15;
+    if (bmi) {
+        if (bmi >= 30) heartScore += 18;
+        else if (bmi >= 25) heartScore += 10;
     }
-    if (data.bmi) {
-        const bmi = parseFloat(data.bmi);
-        if (bmi >= 30) heartScore += 20;
-        else {
-            const ageNum = parseInt(data.patientAge) || 25;
-            const ranges = getBMIRangesByAge(ageNum);
-            if (bmi >= ranges.normal) heartScore += 10;
-        }
-    }
-    if (data.smoking === 'regular') {
-        heartScore += 25;
-    } else if (data.smoking === 'occasional') {
-        heartScore += 15;
-    }
-    if (fastingGlucose && fastingGlucose >= 126) {
-        heartScore += 20; // Diabetes increases cardiovascular risk
-    }
-    if (data.patientType === 'diabetic') {
-        heartScore += 15;
-    }
+    if (hba1c && hba1c >= 7.0) heartScore += 15;
+    if (fastingGlucose && fastingGlucose >= 126) heartScore += 12;
+    if (systolic >= 140) heartScore += 20;
+    else if (systolic >= 130) heartScore += 12;
+    if (diastolic >= 90) heartScore += 15;
+    else if (diastolic >= 80) heartScore += 8;
+    if (data.diabetic_shortness_breath === 'yes') heartScore += 15;
+    if (data.smoking === 'regular') heartScore += 20;
+    else if (data.smoking === 'occasional') heartScore += 10;
+    if (data.alcohol === 'frequent' || data.alcohol === 'regular') heartScore += 10;
+    else if (data.alcohol === 'moderate') heartScore += 5;
+    if (data.diabetic_foot_pain === 'yes') heartScore += 12;
+    if (data.diabetic_cardiovascular_history === 'yes') heartScore += 25;
+    if (data.diabetic_edema === 'yes') heartScore += 12;
     risks.heart = Math.min(heartScore, 100);
     
-    // Hands & Feet (Peripheral Neuropathy/Amputation Risk) - based on glucose control and neuropathy symptoms
-    let handsFeetScore = 0;
-    if (fastingGlucose) {
-        if (fastingGlucose >= 200) handsFeetScore += 45;
-        else if (fastingGlucose >= 140) handsFeetScore += 35;
-        else if (fastingGlucose >= 126) handsFeetScore += 25;
+    // —— 肾脏 Kidneys: 年龄, 血糖, 血压, 吸烟, BMI, 尿, 水肿 ——
+    let kidneysScore = 0;
+    if (age >= 60) kidneysScore += 12;
+    else if (age >= 50) kidneysScore += 6;
+    if (hba1c && hba1c >= 7.0) kidneysScore += 18;
+    if (fastingGlucose && fastingGlucose >= 126) kidneysScore += 10;
+    if (systolic >= 140) kidneysScore += 20;
+    if (diastolic >= 90) kidneysScore += 15;
+    if (data.smoking === 'regular') kidneysScore += 15;
+    else if (data.smoking === 'occasional') kidneysScore += 8;
+    if (bmi && bmi >= 30) kidneysScore += 10;
+    if (data.diabetic_foamy_urine === 'yes' || data.diabetic_frequent_urination === 'yes') kidneysScore += 20;
+    if (data.diabetic_edema === 'yes') kidneysScore += 15;
+    risks.kidneys = Math.min(kidneysScore, 100);
+    
+    // —— 中风 Stroke: 年龄(女), BMI, 血糖, 血压, 喘, 吸烟喝酒, 手脚麻痹 ——
+    let strokeScore = 0;
+    if (!isMale) {
+        if (age >= 60) strokeScore += 15;
+        else if (age >= 50) strokeScore += 10;
+        else if (age >= 40) strokeScore += 5;
     }
-    if (data.hba1c) {
-        const hba1c = parseFloat(data.hba1c);
-        if (hba1c >= 8.0) handsFeetScore += 40;
-        else if (hba1c >= 7.0) handsFeetScore += 30;
-        else if (hba1c >= 6.5) handsFeetScore += 20;
-    }
-    if (data.patientType === 'diabetic') {
-        handsFeetScore += 30; // Diabetic patients have higher risk
-    }
-    // Check for neuropathy symptoms (numbness, tingling, loss of sensation)
-    if (data.diabetic_complications && Array.isArray(data.diabetic_complications)) {
-        if (data.diabetic_complications.includes('neuropathy')) {
-            handsFeetScore += 35;
-        }
-        if (data.diabetic_complications.includes('amputation')) {
-            handsFeetScore += 50;
-        }
-    }
-    risks.handsFeet = Math.min(handsFeetScore, 100);
+    if (bmi && bmi >= 30) strokeScore += 15;
+    else if (bmi && bmi >= 25) strokeScore += 8;
+    if (hba1c && hba1c >= 7.0) strokeScore += 15;
+    if (fastingGlucose && fastingGlucose >= 126) strokeScore += 10;
+    if (systolic >= 140) strokeScore += 20;
+    if (diastolic >= 90) strokeScore += 12;
+    if (data.diabetic_shortness_breath === 'yes') strokeScore += 15;
+    if (data.smoking === 'regular') strokeScore += 18;
+    else if (data.smoking === 'occasional') strokeScore += 10;
+    if (data.alcohol === 'frequent' || data.alcohol === 'regular') strokeScore += 10;
+    else if (data.alcohol === 'moderate') strokeScore += 5;
+    if (data.diabetic_numbness === 'yes') strokeScore += 20;
+    risks.stroke = Math.min(strokeScore, 100);
+    
+    // —— 神经 Nerves (Neuropathy): 年龄, 血糖, BMI, 吸烟, 手脚麻痹 ——
+    let nervesScore = 0;
+    if (age >= 60) nervesScore += 12;
+    else if (age >= 50) nervesScore += 6;
+    if (hba1c && hba1c >= 7.5) nervesScore += 25;
+    else if (hba1c && hba1c >= 7.0) nervesScore += 18;
+    else if (hba1c && hba1c >= 6.5) nervesScore += 10;
+    if (fastingGlucose && fastingGlucose >= 140) nervesScore += 15;
+    if (bmi && bmi >= 30) nervesScore += 10;
+    if (data.smoking === 'regular') nervesScore += 15;
+    else if (data.smoking === 'occasional') nervesScore += 8;
+    if (data.diabetic_numbness === 'yes') nervesScore += 30;
+    risks.nerves = Math.min(nervesScore, 100);
     
     return risks;
 }
@@ -792,9 +835,9 @@ function generateReport(data) {
         day: 'numeric'
     });
     
-    // Calculate organ-specific risks
+    // Calculate organ-specific risks (眼睛, 心脏, 肾脏, 中风, 神经)
     const organRisks = calculateOrganRisks(data);
-    const highestRisk = Math.max(organRisks.eyes, organRisks.kidneys, organRisks.nerves, organRisks.heart, organRisks.handsFeet);
+    const highestRisk = Math.max(organRisks.eyes, organRisks.kidneys, organRisks.stroke, organRisks.heart, organRisks.nerves);
     
     // Calculate risk score based on patient type
     let riskScore = null;
@@ -868,6 +911,21 @@ function generateReport(data) {
             </div>
         </div>
         
+        <!-- Risk Assessment Chart - Page 2 -->
+        <div class="chart-container" id="chartContainer" style="display: block;">
+            <div class="chart-wrapper">
+                <div class="chart-page-title">
+                    <div class="chart-page-title-cn">健康风险评估图表</div>
+                    <div class="chart-page-title-en">Health Risk Assessment Chart</div>
+                </div>
+                <!-- Main content with risk cards -->
+                <div class="chart-main-content">
+                    <!-- Risk info cards -->
+                    <div class="chart-legend" id="chartLegend"></div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Report Content -->
         
         <!-- Organ-Specific Risk Assessment - Separate A4 Page -->
@@ -880,176 +938,61 @@ function generateReport(data) {
                     <!-- Connection Points for Cards (invisible markers positioned on body image) -->
                     <!-- These points should align with the organs on the body.jpg image -->
                     <div class="connection-point" data-organ="eyes" style="position: absolute; top: 8%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
-                    <div class="connection-point" data-organ="nerves" style="position: absolute; top: 12%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
+                    <div class="connection-point" data-organ="stroke" style="position: absolute; top: 12%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
                     <div class="connection-point" data-organ="heart" style="position: absolute; top: 38%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
                     <div class="connection-point" data-organ="kidneys" style="position: absolute; top: 63%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
-                    <div class="connection-point" data-organ="handsFeet" style="position: absolute; top: 85%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
+                    <div class="connection-point" data-organ="nerves" style="position: absolute; top: 85%; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; opacity: 0; pointer-events: none;"></div>
                 </div>
                 
                 <!-- Organ Cards Around Body -->
                 <div class="organ-cards-layout">
                     <!-- Eyes Card (Top Left) -->
                     <div class="organ-card-positioned organ-card-top-left" data-organ="eyes">
+                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.eyes}%</div>
                         <div class="organ-card-icon">👁️</div>
                         <h4 class="organ-card-title">眼睛 / Eyes</h4>
                         <div class="organ-card-status ${getRiskLevel(organRisks.eyes).class}">
                             ${getRiskLevel(organRisks.eyes).text}
                         </div>
-                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.eyes}%</div>
-                        <div class="organ-card-factors">
-                            <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
-                            <ul>
-                                ${(() => {
-                                    let fastingGlucose = null;
-                                    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-                                    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
-                                    return fastingGlucose && fastingGlucose >= 200 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
-                                })()}
-                                ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
-                                ${data.systolicBP && parseFloat(data.systolicBP) >= 140 ? '<li>高血压 / Hypertension</li>' : ''}
-                                ${data.patientType === 'diabetic' ? '<li>糖尿病患者 / Diabetic patient</li>' : ''}
-                            </ul>
-                        </div>
-                        <div class="organ-card-recommendations">
-                            <p><strong>建议 / Recommendations:</strong></p>
-                            <p>${organRisks.eyes >= 70 ? '建议立即咨询眼科医生进行详细检查 / Recommend immediate ophthalmologist consultation' : organRisks.eyes >= 40 ? '建议定期进行眼科检查 / Recommend regular eye examinations' : '保持良好血糖控制，定期检查 / Maintain good glucose control and regular checkups'}</p>
+                    </div>
+                    
+                    <!-- Stroke Card (Top Right) — 年龄(女), BMI, 血糖, 血压, 喘, 吸烟喝酒, 手脚麻痹 -->
+                    <div class="organ-card-positioned organ-card-top-right" data-organ="stroke">
+                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.stroke}%</div>
+                        <div class="organ-card-icon">🫀</div>
+                        <h4 class="organ-card-title">中风 / Stroke</h4>
+                        <div class="organ-card-status ${getRiskLevel(organRisks.stroke).class}">
+                            ${getRiskLevel(organRisks.stroke).text}
                         </div>
                     </div>
                     
-                    <!-- Nerves Card (Top Right) -->
-                    <div class="organ-card-positioned organ-card-top-right" data-organ="nerves">
-                        <div class="organ-card-icon">🧠</div>
-                        <h4 class="organ-card-title">神经 / Nerves</h4>
-                        <div class="organ-card-status ${getRiskLevel(organRisks.nerves).class}">
-                            ${getRiskLevel(organRisks.nerves).text}
-                        </div>
-                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.nerves}%</div>
-                        <div class="organ-card-factors">
-                            <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
-                            <ul>
-                                ${(() => {
-                                    let fastingGlucose = null;
-                                    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-                                    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
-                                    return fastingGlucose && fastingGlucose >= 200 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
-                                })()}
-                                ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
-                                ${data.patientType === 'diabetic' ? '<li>糖尿病患者 / Diabetic patient</li>' : ''}
-                            </ul>
-                        </div>
-                        <div class="organ-card-recommendations">
-                            <p><strong>建议 / Recommendations:</strong></p>
-                            <p>${organRisks.nerves >= 70 ? '建议立即咨询神经科医生 / Recommend immediate neurologist consultation' : organRisks.nerves >= 40 ? '建议定期进行神经功能检查 / Recommend regular neurological examinations' : '保持良好血糖控制 / Maintain good glucose control'}</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Heart Card (Middle Right) -->
+                    <!-- Heart Card (Middle Right) — 年龄(男), BMI, 血糖, 血压, 喘, 吸烟喝酒, 脚酸痛, 心脏病史, 水肿 -->
                     <div class="organ-card-positioned organ-card-middle-right" data-organ="heart">
+                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.heart}%</div>
                         <div class="organ-card-icon">❤️</div>
                         <h4 class="organ-card-title">心脏 / Heart</h4>
                         <div class="organ-card-status ${getRiskLevel(organRisks.heart).class}">
                             ${getRiskLevel(organRisks.heart).text}
                         </div>
-                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.heart}%</div>
-                        <div class="organ-card-factors">
-                            <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
-                            <ul>
-                                ${data.systolicBP && parseFloat(data.systolicBP) >= 140 ? '<li>高血压 / Hypertension</li>' : ''}
-                                ${data.smoking === 'regular' ? '<li>吸烟 / Smoking</li>' : ''}
-                                ${(() => {
-                                    let fastingGlucose = null;
-                                    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-                                    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
-                                    return fastingGlucose && fastingGlucose >= 126 ? '<li>糖尿病 / Diabetes</li>' : '';
-                                })()}
-                            </ul>
-                        </div>
-                        <div class="organ-card-recommendations">
-                            <p><strong>建议 / Recommendations:</strong></p>
-                            <p>${organRisks.heart >= 70 ? '建议立即咨询心脏科医生 / Recommend immediate cardiologist consultation' : organRisks.heart >= 40 ? '建议定期进行心脏健康检查 / Recommend regular cardiovascular health checkups' : '保持健康生活方式，定期监测 / Maintain healthy lifestyle and regular monitoring'}</p>
-                        </div>
                     </div>
                     
-                    <!-- Kidneys Card (Middle Left) -->
+                    <!-- Kidneys Card (Middle Left) — 年龄, 血糖, 血压, 吸烟, BMI, 尿, 水肿 -->
                     <div class="organ-card-positioned organ-card-middle-left" data-organ="kidneys">
+                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.kidneys}%</div>
                         <div class="organ-card-icon">🫘</div>
                         <h4 class="organ-card-title">肾脏 / Kidneys</h4>
                         <div class="organ-card-status ${getRiskLevel(organRisks.kidneys).class}">
                             ${getRiskLevel(organRisks.kidneys).text}
                         </div>
-                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.kidneys}%</div>
-                        <div class="organ-card-factors">
-                            <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
-                            <ul>
-                                ${(() => {
-                                    let fastingGlucose = null;
-                                    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-                                    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
-                                    return fastingGlucose && fastingGlucose >= 140 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
-                                })()}
-                                ${data.systolicBP && parseFloat(data.systolicBP) >= 140 ? '<li>高血压 / Hypertension</li>' : ''}
-                                ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
-                            </ul>
-                        </div>
-                        <div class="organ-card-recommendations">
-                            <p><strong>建议 / Recommendations:</strong></p>
-                            <p>${organRisks.kidneys >= 70 ? '建议立即进行肾功能检查 / Recommend immediate kidney function tests' : organRisks.kidneys >= 40 ? '建议定期监测肾功能 / Recommend regular kidney function monitoring' : '控制血糖和血压，定期检查 / Control glucose and blood pressure, regular checkups'}</p>
-                        </div>
                     </div>
                     
-                    <!-- Hands & Feet Card (Bottom Right) -->
-                    <div class="organ-card-positioned organ-card-bottom-right" data-organ="handsFeet">
-                        <div class="organ-card-icon">🦶</div>
-                        <h4 class="organ-card-title">手脚 / Hands & Feet</h4>
-                        <div class="organ-card-status ${getRiskLevel(organRisks.handsFeet).class}">
-                            ${getRiskLevel(organRisks.handsFeet).text}
-                        </div>
-                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.handsFeet}%</div>
-                        <div class="organ-card-factors">
-                            <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
-                            <ul>
-                                ${(() => {
-                                    let fastingGlucose = null;
-                                    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-                                    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
-                                    return fastingGlucose && fastingGlucose >= 200 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
-                                })()}
-                                ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
-                                ${data.diabetic_complications && Array.isArray(data.diabetic_complications) && data.diabetic_complications.includes('neuropathy') ? '<li>神经病变 / Neuropathy</li>' : ''}
-                                ${data.patientType === 'diabetic' ? '<li>糖尿病患者 / Diabetic patient</li>' : ''}
-                            </ul>
-                        </div>
-                        <div class="organ-card-recommendations">
-                            <p><strong>建议 / Recommendations:</strong></p>
-                            <p>${organRisks.handsFeet >= 70 ? '建议立即咨询医生 / Recommend immediate doctor consultation' : organRisks.handsFeet >= 40 ? '建议定期进行足部检查 / Recommend regular foot examinations' : '保持良好血糖控制，注意足部护理 / Maintain good glucose control and foot care'}</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Hands & Feet Card (Bottom Right) -->
-                    <div class="organ-card-positioned organ-card-bottom-right" data-organ="handsFeet">
-                        <div class="organ-card-icon">🦶</div>
-                        <h4 class="organ-card-title">手脚 / Hands & Feet</h4>
-                        <div class="organ-card-status ${getRiskLevel(organRisks.handsFeet).class}">
-                            ${getRiskLevel(organRisks.handsFeet).text}
-                        </div>
-                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.handsFeet}%</div>
-                        <div class="organ-card-factors">
-                            <p><strong>主要风险因素 / Main Risk Factors:</strong></p>
-                            <ul>
-                                ${(() => {
-                                    let fastingGlucose = null;
-                                    if (data.fastingGlucoseMmol) fastingGlucose = parseFloat(data.fastingGlucoseMmol) * 18.0182;
-                                    else if (data.fastingGlucose) fastingGlucose = parseFloat(data.fastingGlucose);
-                                    return fastingGlucose && fastingGlucose >= 200 ? '<li>血糖控制不佳 / Poor glucose control</li>' : '';
-                                })()}
-                                ${data.hba1c && parseFloat(data.hba1c) >= 7.0 ? '<li>HbA1c偏高 / Elevated HbA1c</li>' : ''}
-                                ${data.diabetic_complications && Array.isArray(data.diabetic_complications) && data.diabetic_complications.includes('neuropathy') ? '<li>神经病变 / Neuropathy</li>' : ''}
-                                ${data.patientType === 'diabetic' ? '<li>糖尿病患者 / Diabetic patient</li>' : ''}
-                            </ul>
-                        </div>
-                        <div class="organ-card-recommendations">
-                            <p><strong>建议 / Recommendations:</strong></p>
-                            <p>${organRisks.handsFeet >= 70 ? '建议立即咨询医生 / Recommend immediate doctor consultation' : organRisks.handsFeet >= 40 ? '建议定期进行足部检查 / Recommend regular foot examinations' : '保持良好血糖控制，注意足部护理 / Maintain good glucose control and foot care'}</p>
+                    <!-- Nerves Card (Bottom Right) — 年龄, 血糖, BMI, 吸烟, 手脚麻痹 -->
+                    <div class="organ-card-positioned organ-card-bottom-right" data-organ="nerves">
+                        <div class="organ-card-score">风险评分 / Risk Score: ${organRisks.nerves}%</div>
+                        <div class="organ-card-icon">🧠</div>
+                        <h4 class="organ-card-title">神经 / Nerves</h4>
+                        <div class="organ-card-status ${getRiskLevel(organRisks.nerves).class}">
+                            ${getRiskLevel(organRisks.nerves).text}
                         </div>
                     </div>
                 </div>
@@ -1101,7 +1044,18 @@ function generateReport(data) {
                     <div class="report-data-label">空腹血糖 / Fasting Glucose</div>
                     <div class="report-data-value">
                         ${data.fastingGlucoseMmol ? `${data.fastingGlucoseMmol} mmol/L` : notFilled}
-                        ${data.fastingGlucose ? getGlucoseStatus(data.fastingGlucose, 'fasting') : ''}
+                        ${(() => {
+                            // Check both mmol/L and mg/dL values to ensure low glucose is detected
+                            if (data.fastingGlucoseMmol) {
+                                const glucoseMmol = parseFloat(data.fastingGlucoseMmol);
+                                // Convert to mg/dL for status check, or check mmol/L directly (3.9 mmol/L = 70 mg/dL)
+                                const glucoseMgdl = glucoseMmol * 18.0182;
+                                return getGlucoseStatus(glucoseMgdl, 'fasting');
+                            } else if (data.fastingGlucose) {
+                                return getGlucoseStatus(data.fastingGlucose, 'fasting');
+                            }
+                            return '';
+                        })()}
                     </div>
                 </div>
                 ${data.postprandialGlucoseMmol ? `
@@ -1109,7 +1063,17 @@ function generateReport(data) {
                     <div class="report-data-label">餐后血糖 / Postprandial Glucose</div>
                     <div class="report-data-value">
                         ${data.postprandialGlucoseMmol} mmol/L
-                        ${data.postprandialGlucose ? getGlucoseStatus(data.postprandialGlucose, 'postprandial') : ''}
+                        ${(() => {
+                            // Check mmol/L value and convert for status check
+                            if (data.postprandialGlucoseMmol) {
+                                const glucoseMmol = parseFloat(data.postprandialGlucoseMmol);
+                                const glucoseMgdl = glucoseMmol * 18.0182;
+                                return getGlucoseStatus(glucoseMgdl, 'postprandial');
+                            } else if (data.postprandialGlucose) {
+                                return getGlucoseStatus(data.postprandialGlucose, 'postprandial');
+                            }
+                            return '';
+                        })()}
                     </div>
                 </div>
                 ` : ''}
@@ -1154,16 +1118,45 @@ function generateReport(data) {
         <div class="report-section-item report-section-with-bg lifestyle-section">
             ${riskScore !== null ? `
             <h3 class="report-section-title">${data.patientType === 'prediabetic' ? '糖尿病前期风险评估 / Prediabetic Risk Assessment' : '糖尿病患者风险评估 / Diabetic Patient Risk Assessment'}</h3>
+            ${data.patientType === 'diabetic' ? `
+            <div class="risk-index-widget">
+                <div class="risk-index-header">
+                    <span class="risk-index-header-label">Current Assessment:</span>
+                    <span class="risk-index-current risk-index-${riskLevel.level}">${(riskLevel.text || '').split(' / ')[1] || riskLevel.text}</span>
+                    <div class="risk-index-current-cn">${(riskLevel.text || '').split(' / ')[0] || ''}</div>
+                </div>
+                <div class="risk-index-bar" aria-label="Risk index bar">
+                    <div class="risk-index-seg risk-index-seg-low"></div>
+                    <div class="risk-index-seg risk-index-seg-moderate"></div>
+                    <div class="risk-index-seg risk-index-seg-high"></div>
+                    <div class="risk-index-seg risk-index-seg-very-high"></div>
+                    <div class="risk-index-marker" style="left: ${(() => {
+                        const map = { low: 12.5, moderate: 37.5, high: 62.5, 'very-high': 87.5 };
+                        return map[riskLevel.level] ?? 37.5;
+                    })()}%;" title="${riskLevel.text || ''}">
+                        <div class="risk-index-marker-badge">↑ 指向：${(riskLevel.text || '').split(' / ')[0] || riskLevel.level}（${(riskLevel.text || '').split(' / ')[1] || riskLevel.level}）</div>
+                        <div class="risk-index-marker-triangle"></div>
+                    </div>
+                </div>
+                <div class="risk-index-legend">
+                    <div class="risk-index-legend-item"><span class="dot dot-low"></span>Low</div>
+                    <div class="risk-index-legend-item"><span class="dot dot-moderate"></span>Moderate</div>
+                    <div class="risk-index-legend-item"><span class="dot dot-high"></span>High</div>
+                    <div class="risk-index-legend-item"><span class="dot dot-very-high"></span>Very High</div>
+                </div>
+            </div>
+            ` : `
             <div class="report-data-grid">
                 <div class="report-data-item" style="grid-column: 1 / -1; text-align: center; padding: 18px;">
                     <div style="font-size: 30px; font-weight: bold; color: var(--primary-color); margin-bottom: 10px;">
-                        ${riskScore} 分 / ${data.patientType === 'prediabetic' ? 12 : 20} Points
+                        ${riskScore} 分 / ${data.patientType === 'prediabetic' ? 12 : 19} Points
                     </div>
                     <div class="report-status ${riskLevel.class}" style="font-size: 16px; padding: 10px 18px; display: inline-block;">
                         ${riskLevel.text}
                     </div>
                 </div>
             </div>
+            `}
             ` : ''}
             <h3 class="report-section-title">生活习惯信息 / Lifestyle Information</h3>
             <div class="report-data-grid">
@@ -1215,6 +1208,48 @@ function generateReport(data) {
                     <div class="report-data-value">${getAlcoholText(data.alcohol)}</div>
                 </div>
                 ` : ''}
+                ${data.family_diabetes ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">家族糖尿病史 / Family Diabetes History</div>
+                    <div class="report-data-value">${data.family_diabetes === 'yes' ? '有 / Yes' : '没有 / No'}</div>
+            </div>
+                ` : ''}
+                ${data.sugary_foods ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">含糖食物/饮料摄入 / Sugary Foods/Drinks Consumption</div>
+                    <div class="report-data-value">${getSugaryFoodsText(data.sugary_foods)}</div>
+                </div>
+                ` : ''}
+                ${data.waist_exceeded ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">腰围是否超标 / Waist Circumference Exceeded</div>
+                    <div class="report-data-value">${getWaistExceededText(data.waist_exceeded)}</div>
+                </div>
+                ` : ''}
+                ${data.waistCircumference ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">腰围 / Waist Circumference</div>
+                    <div class="report-data-value">${data.waistCircumference} cm</div>
+                </div>
+                ` : ''}
+                ${data.regular_exercise_150min ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">每周规律运动 ≥150分钟 / Regular Exercise ≥150 min/week</div>
+                    <div class="report-data-value">${data.regular_exercise_150min === 'yes' ? '是 / Yes' : '否 / No'}</div>
+                </div>
+                ` : ''}
+                ${data.bodyFat ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">体脂率 / Body Fat Percentage</div>
+                    <div class="report-data-value">${data.bodyFat}%</div>
+                </div>
+                ` : ''}
+                ${data.cholesterol ? `
+                <div class="report-data-item">
+                    <div class="report-data-label">总胆固醇 / Total Cholesterol</div>
+                    <div class="report-data-value">${data.cholesterol} mg/dL</div>
+                </div>
+                ` : ''}
             </div>
             ${(!data.exerciseFrequency && (!data.exerciseType || data.exerciseType.length === 0) && !data.dietType && !data.mealsPerDay && !data.sleepQuality && !data.stressLevel && !data.smoking && !data.alcohol) ? `
             <div class="report-analysis">
@@ -1241,6 +1276,11 @@ function generateReport(data) {
     setTimeout(() => {
         drawConnectionLines();
     }, 100);
+    
+    // Generate chart immediately after report is generated (chart is now page 2)
+    setTimeout(() => {
+        generateRiskChart(data);
+    }, 200);
 }
 
 // Draw dashed connection lines from cards to body organs
@@ -1251,12 +1291,12 @@ function drawConnectionLines() {
     const svg = layout.querySelector('.connection-lines');
     if (!svg) return;
     
-    // Get card positions
+    // Get card positions (眼睛, 中风, 心脏, 肾脏, 神经)
     const eyesCard = layout.querySelector('[data-organ="eyes"]');
-    const nervesCard = layout.querySelector('[data-organ="nerves"]');
+    const strokeCard = layout.querySelector('[data-organ="stroke"]');
     const heartCard = layout.querySelector('[data-organ="heart"]');
     const kidneysCard = layout.querySelector('[data-organ="kidneys"]');
-    const handsFeetCard = layout.querySelector('[data-organ="handsFeet"]');
+    const nervesCard = layout.querySelector('[data-organ="nerves"]');
     
     // Get layout dimensions
     const layoutRect = layout.getBoundingClientRect();
@@ -1292,10 +1332,10 @@ function drawConnectionLines() {
     // Ensure all 5 organ cards are connected to their corresponding body parts
     const organs = [
         { card: eyesCard, organ: 'eyes', name: 'Eyes' },
-        { card: nervesCard, organ: 'nerves', name: 'Nerves' },
+        { card: strokeCard, organ: 'stroke', name: 'Stroke' },
         { card: heartCard, organ: 'heart', name: 'Heart' },
         { card: kidneysCard, organ: 'kidneys', name: 'Kidneys' },
-        { card: handsFeetCard, organ: 'handsFeet', name: 'Hands & Feet' }
+        { card: nervesCard, organ: 'nerves', name: 'Nerves' }
     ];
     
     organs.forEach(({ card, organ, name }) => {
@@ -1340,11 +1380,13 @@ function getBMIStatus(bmi, age) {
 function getGlucoseStatus(value, type) {
     const glucose = parseFloat(value);
     if (type === 'fasting') {
-        if (glucose < 70) return `<span class="report-status status-warning">偏低 / Low</span>`;
+        if (glucose < 70) return `<span class="report-status status-warning">血糖低 / Low Blood Glucose (Hypoglycemia)</span>`;
         if (glucose <= 100) return `<span class="report-status status-normal">正常 / Normal</span>`;
         if (glucose <= 125) return `<span class="report-status status-warning">偏高 (糖尿病前期) / High (Prediabetes)</span>`;
         return `<span class="report-status status-danger">高 (可能糖尿病) / High (Possible Diabetes)</span>`;
     } else {
+        // Postprandial glucose (2-hour after meal)
+        if (glucose < 80) return `<span class="report-status status-warning">血糖低 / Low Blood Glucose (Hypoglycemia)</span>`;
         if (glucose < 140) return `<span class="report-status status-normal">正常 / Normal</span>`;
         if (glucose < 200) return `<span class="report-status status-warning">偏高 / High</span>`;
         return `<span class="report-status status-danger">高 / High</span>`;
@@ -1492,182 +1534,142 @@ function getAlcoholText(alcohol) {
     return map[alcohol] || '未填写 / Not filled';
 }
 
+function getSugaryFoodsText(sugaryFoods) {
+    const map = {
+        'almost_daily': '几乎每天都喝 / Almost daily',
+        'occasional': '偶尔喝 / Occasional',
+        'rarely': '几乎不喝 / Rarely'
+    };
+    return map[sugaryFoods] || '未填写 / Not filled';
+}
+
+function getWaistExceededText(waistExceeded) {
+    const map = {
+        'yes': '有 / Yes',
+        'no': '没有 / No',
+        'unsure': '不清楚，可能有 / Unsure, possibly'
+    };
+    return map[waistExceeded] || '未填写 / Not filled';
+}
+
 // Generate BMI Gauge Visualization - Redesigned
 function generateBMIGauge(bmi, age) {
     if (!bmi) return '';
     const bmiNum = parseFloat(bmi);
-    const ageNum = parseInt(age) || 25;
-    const ranges = getBMIRangesByAge(ageNum);
     
-    // Determine category and color
+    // BMI ranges matching the image:
+    // Underweight: < 18.5 (blue)
+    // Normal: 18.5 – 24.9 (green)
+    // Overweight: 25.0 – 29.9 (yellow)
+    // Obese: 30.0 – 34.9 (orange)
+    // Extremely Obese: ≥ 35.0 (red)
+    
+    // Determine category
     let category = '';
     let categoryEn = '';
-    let gaugeColor = '#ff6b6b';
-    
-    if (bmiNum < ranges.underweight) {
+    let categoryColor = '#F44336';
+    if (bmiNum < 18.5) {
         category = '体重过轻';
         categoryEn = 'Underweight';
-        gaugeColor = '#ff6b6b';
-    } else if (bmiNum < ranges.normal) {
-        category = '正常范围';
+        categoryColor = '#2196F3';
+    } else if (bmiNum < 25.0) {
+        category = '正常';
         categoryEn = 'Normal';
-        gaugeColor = '#51cf66';
-    } else if (bmiNum < ranges.overweight) {
+        categoryColor = '#4CAF50';
+    } else if (bmiNum < 30.0) {
         category = '体重过重';
         categoryEn = 'Overweight';
-        gaugeColor = '#ffd43b';
-    } else {
+        categoryColor = '#FFC107';
+    } else if (bmiNum < 35.0) {
         category = '肥胖';
-        categoryEn = 'Obesity';
-        gaugeColor = '#ff6b6b';
+        categoryEn = 'Obese';
+        categoryColor = '#FF9800';
+    } else {
+        category = '极度肥胖';
+        categoryEn = 'Extremely Obese';
+        categoryColor = '#F44336';
     }
     
-    // Calculate needle position (0-180 degrees for semicircle)
-    // BMI range: 16-40, map to 0-180 degrees
-    const minBMI = 16;
-    const maxBMI = 40;
+    // Calculate position on horizontal bar (BMI range: 15-45)
+    const minBMI = 15;
+    const maxBMI = 45;
     const normalizedBMI = Math.max(minBMI, Math.min(maxBMI, bmiNum));
-    const needleAngle = ((normalizedBMI - minBMI) / (maxBMI - minBMI)) * 180;
+    const positionPercent = ((normalizedBMI - minBMI) / (maxBMI - minBMI)) * 100;
     
-    // Convert angle to radians for SVG
-    const needleRad = (needleAngle - 90) * Math.PI / 180;
-    const centerX = 200;
-    const centerY = 200;
-    const radius = 150;
+    // Calculate segment widths (based on BMI ranges)
+    const segment1Width = ((18.5 - minBMI) / (maxBMI - minBMI)) * 100; // Underweight
+    const segment2Width = ((25.0 - 18.5) / (maxBMI - minBMI)) * 100; // Normal
+    const segment3Width = ((30.0 - 25.0) / (maxBMI - minBMI)) * 100; // Overweight
+    const segment4Width = ((35.0 - 30.0) / (maxBMI - minBMI)) * 100; // Obese
+    const segment5Width = ((maxBMI - 35.0) / (maxBMI - minBMI)) * 100; // Extremely Obese
     
-    // Calculate needle end point
-    const needleX = centerX + radius * Math.cos(needleRad);
-    const needleY = centerY + radius * Math.sin(needleRad);
     
-    // Calculate segment breakpoints
-    function bmiToAngle(bmiValue) {
-        return ((Math.max(minBMI, Math.min(maxBMI, bmiValue)) - minBMI) / (maxBMI - minBMI)) * 180;
-    }
-    
-    function angleToPoint(angle, r) {
-        const rad = (angle - 90) * Math.PI / 180;
-        return {
-            x: centerX + r * Math.cos(rad),
-            y: centerY + r * Math.sin(rad)
-        };
-    }
-    
-    const angle18_5 = bmiToAngle(18.5);
-    const angle25 = bmiToAngle(25);
-    const angle30 = bmiToAngle(30);
-    const angle35 = bmiToAngle(35);
-    const angle40 = bmiToAngle(40);
-    
-    const p0 = angleToPoint(0, radius);
-    const p18_5 = angleToPoint(angle18_5, radius);
-    const p25 = angleToPoint(angle25, radius);
-    const p30 = angleToPoint(angle30, radius);
-    const p35 = angleToPoint(angle35, radius);
-    const p40 = angleToPoint(angle40, radius);
-    const p180 = angleToPoint(180, radius);
-    
-    // Label positions
-    const labelRadius = radius + 25;
-    const label16 = angleToPoint(bmiToAngle(16), labelRadius);
-    const label17 = angleToPoint(bmiToAngle(17), labelRadius);
-    const label18_5 = angleToPoint(angle18_5, labelRadius);
-    const label25 = angleToPoint(angle25, labelRadius);
-    const label30 = angleToPoint(angle30, labelRadius);
-    const label35 = angleToPoint(angle35, labelRadius);
-    const label40 = angleToPoint(angle40, labelRadius);
-    
-    // Create gauge HTML with SVG
+    // Create horizontal bar gauge HTML matching the image design
     const gaugeHTML = `
-        <div class="bmi-gauge-container">
-            <div class="bmi-gauge-header">
-                <h4>BMI = ${bmiNum} kg/m² (${category} / ${categoryEn})</h4>
+        <div class="bmi-gauge-container" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div class="bmi-gauge-header" style="margin-bottom: 20px;">
+                <div style="font-size: 0.95rem; color: #666; margin-bottom: 15px;">
+                    <span>Current Assessment:</span>
+                    <span style="font-size: 2rem; font-weight: 700; color: ${categoryColor}; margin-left: 10px;">${categoryEn}</span>
             </div>
-            <div class="bmi-gauge-wrapper">
-                <svg class="bmi-gauge" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Main semicircle arc background -->
-                    <path d="M ${p0.x} ${p0.y} A ${radius} ${radius} 0 0 1 ${p180.x} ${p180.y}" 
-                          fill="none" 
-                          stroke="#e9ecef" 
-                          stroke-width="20" 
-                          stroke-linecap="round"/>
-                    
-                    <!-- Red segment: Underweight (16-18.5) -->
-                    <path d="M ${p0.x} ${p0.y} A ${radius} ${radius} 0 0 1 ${p18_5.x} ${p18_5.y}" 
-                          fill="none" 
-                          stroke="#ff6b6b" 
-                          stroke-width="20" 
-                          stroke-linecap="round"/>
-                    
-                    <!-- Green segment: Normal (18.5 to normal range, but show up to 25 for visual) -->
-                    <path d="M ${p18_5.x} ${p18_5.y} A ${radius} ${radius} 0 0 1 ${p25.x} ${p25.y}" 
-                          fill="none" 
-                          stroke="#51cf66" 
-                          stroke-width="20" 
-                          stroke-linecap="round"/>
-                    
-                    <!-- Extended green to show normal range (25 to adjusted normal) -->
-                    ${ranges.normal > 25 ? `
-                    <path d="M ${p25.x} ${p25.y} A ${radius} ${radius} 0 0 1 ${angleToPoint(bmiToAngle(ranges.normal), radius).x} ${angleToPoint(bmiToAngle(ranges.normal), radius).y}" 
-                          fill="none" 
-                          stroke="#51cf66" 
-                          stroke-width="20" 
-                          stroke-linecap="round"/>
-                    ` : ''}
-                    
-                    <!-- Yellow segment: Overweight (normal range to 30) -->
-                    <path d="M ${angleToPoint(bmiToAngle(ranges.normal), radius).x} ${angleToPoint(bmiToAngle(ranges.normal), radius).y} A ${radius} ${radius} 0 0 1 ${p30.x} ${p30.y}" 
-                          fill="none" 
-                          stroke="#ffd43b" 
-                          stroke-width="20" 
-                          stroke-linecap="round"/>
-                    
-                    <!-- Red segment: Obesity (30-40) -->
-                    <path d="M ${p30.x} ${p30.y} A ${radius} ${radius} 0 0 1 ${p180.x} ${p180.y}" 
-                          fill="none" 
-                          stroke="#ff6b6b" 
-                          stroke-width="20" 
-                          stroke-linecap="round"/>
-                    
-                    <!-- Needle -->
-                    <line x1="${centerX}" y1="${centerY}" 
-                          x2="${needleX}" y2="${needleY}" 
-                          stroke="${gaugeColor}" 
-                          stroke-width="4" 
-                          stroke-linecap="round"/>
-                    <circle cx="${centerX}" cy="${centerY}" r="6" fill="${gaugeColor}"/>
-                    
-                    <!-- BMI value in center -->
-                    <text x="${centerX}" y="${centerY + 10}" 
-                          font-size="48" 
-                          font-weight="700" 
-                          fill="#1a1a1a" 
-                          text-anchor="middle" 
-                          font-family="Arial, sans-serif">${bmiNum}</text>
-                    
-                    <!-- Labels on arc -->
-                    <text x="${label16.x}" y="${label16.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">16</text>
-                    <text x="${label17.x}" y="${label17.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">17</text>
-                    <text x="${label18_5.x}" y="${label18_5.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">18.5</text>
-                    <text x="${label25.x}" y="${label25.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">25</text>
-                    <text x="${label30.x}" y="${label30.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">30</text>
-                    <text x="${label35.x}" y="${label35.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">35</text>
-                    <text x="${label40.x}" y="${label40.y + 5}" font-size="12" fill="#666" text-anchor="middle" font-weight="500">40</text>
-                </svg>
             </div>
             
-            <!-- Linear scale for low BMI values (16-18.5) -->
-            <div class="bmi-linear-scale">
-                <div class="linear-scale-line">
-                    <div class="scale-segment red-segment" style="width: 60%;"></div>
-                    <div class="scale-marker" style="left: 0%;">16</div>
-                    <div class="scale-marker" style="left: 20%;">17</div>
-                    <div class="scale-marker red-dot" style="left: 60%;">18.5</div>
+            <div class="bmi-bar-container" style="position: relative; margin: 40px 0 60px 0;">
+                <!-- Horizontal bar with 5 segments -->
+                <div style="display: flex; width: 100%; height: 50px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                    <!-- Segment 1: Underweight (Blue) -->
+                    <div style="width: ${segment1Width}%; background: #2196F3; height: 100%;"></div>
+                    <!-- Segment 2: Normal (Green) -->
+                    <div style="width: ${segment2Width}%; background: #4CAF50; height: 100%;"></div>
+                    <!-- Segment 3: Overweight (Yellow) -->
+                    <div style="width: ${segment3Width}%; background: #FFC107; height: 100%;"></div>
+                    <!-- Segment 4: Obese (Orange) -->
+                    <div style="width: ${segment4Width}%; background: #FF9800; height: 100%;"></div>
+                    <!-- Segment 5: Extremely Obese (Red) -->
+                    <div style="width: ${segment5Width}%; background: #F44336; height: 100%;"></div>
+                </div>
+                
+                <!-- Position indicator (您的位置) -->
+                <div style="position: absolute; top: -35px; left: ${positionPercent}%; transform: translateX(-50%); text-align: center;">
+                    <div style="background: #000; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; margin-bottom: 4px;">
+                        您的位置
+                    </div>
+                    <div style="width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid ${categoryColor}; margin: 0 auto;"></div>
                 </div>
             </div>
             
-            <div class="bmi-gauge-info">
-                <p><strong>健康BMI范围 / Healthy BMI Range:</strong> ${ranges.underweight} kg/m² - ${ranges.normal} kg/m²</p>
-                <p><strong>根据您的年龄 / Based on your age:</strong> ${ageNum} 岁 / years old</p>
+            <!-- Category labels with colored dots -->
+            <div class="bmi-category-labels" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="width: 12px; height: 12px; background: #2196F3; border-radius: 50%; margin: 0 auto 6px;"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px;">Underweight</div>
+                    <div style="font-size: 0.75rem; color: #666;">&lt; 18.5</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 12px; height: 12px; background: #4CAF50; border-radius: 50%; margin: 0 auto 6px;"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px;">Normal</div>
+                    <div style="font-size: 0.75rem; color: #666;">18.5 - 24.9</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 12px; height: 12px; background: #FFC107; border-radius: 50%; margin: 0 auto 6px;"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px;">Overweight</div>
+                    <div style="font-size: 0.75rem; color: #666;">25 - 29.9</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 12px; height: 12px; background: #FF9800; border-radius: 50%; margin: 0 auto 6px;"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px;">Obese</div>
+                    <div style="font-size: 0.75rem; color: #666;">30 - 34.9</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 12px; height: 12px; background: #F44336; border-radius: 50%; margin: 0 auto 6px;"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px;">Extremely Obese</div>
+                    <div style="font-size: 0.75rem; color: #666;">&gt; 35.0</div>
+                </div>
+            </div>
+            
+            <div class="bmi-gauge-info" style="margin-top: 25px; text-align: center; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 1.1rem; margin: 5px 0;"><strong>BMI = ${bmiNum.toFixed(1)} kg/m²</strong></p>
+                <p style="font-size: 0.95rem; color: #666; margin: 5px 0;">${category} / ${categoryEn}</p>
             </div>
         </div>
     `;
@@ -1871,7 +1873,8 @@ function showForm() {
         window.riskChartInstance.destroy();
         window.riskChartInstance = null;
     }
-    document.getElementById('chartContainer').style.display = 'none';
+    // Chart container is now inside reportContent, will be hidden when reportContent is hidden
+    // document.getElementById('chartContainer').style.display = 'none';
 }
 
 // Calculate health risks
@@ -1882,154 +1885,484 @@ function calculateHealthRisks(data) {
         cardiovascular: 0,
         obesity: 0,
         metabolic: 0,
-        healthy: 0
+        lowValues: 0,
+        healthy: 0,
+        bmiStatus: null
     };
     
-    // Diabetes Risk Calculation
+    // Get age once for use throughout the function
+    const ageNum = parseInt(data.patientAge) || 25;
+    
+    // Diabetes Risk Calculation - based on actual form data
     let diabetesScore = 0;
+    
+    // Fasting Glucose (primary indicator)
     if (data.fastingGlucose) {
         const glucose = parseFloat(data.fastingGlucose);
-        if (glucose >= 126) diabetesScore += 40;
-        else if (glucose >= 100) diabetesScore += 25;
-        else if (glucose < 70) diabetesScore += 10;
+        if (glucose >= 126) diabetesScore += 40; // Diabetes threshold (7.0 mmol/L)
+        else if (glucose >= 100) diabetesScore += 25; // Prediabetes threshold (5.6 mmol/L)
+        else if (glucose < 70) diabetesScore += 15; // Hypoglycemia risk (increased from 10)
     }
+    
+    // HbA1c (glycated hemoglobin - 3-month average)
     if (data.hba1c) {
         const hba1c = parseFloat(data.hba1c);
-        if (hba1c >= 6.5) diabetesScore += 30;
-        else if (hba1c >= 5.7) diabetesScore += 20;
+        if (hba1c >= 6.5) diabetesScore += 30; // Diabetes threshold
+        else if (hba1c >= 5.7) diabetesScore += 20; // Prediabetes threshold
     }
+    
+    // Postprandial Glucose (2-hour after meal)
     if (data.postprandialGlucose) {
         const pp = parseFloat(data.postprandialGlucose);
-        if (pp >= 200) diabetesScore += 20;
-        else if (pp >= 140) diabetesScore += 15;
+        if (pp >= 200) diabetesScore += 20; // Diabetes threshold (11.1 mmol/L)
+        else if (pp >= 140) diabetesScore += 15; // Prediabetes threshold (7.8 mmol/L)
     }
+    
+    // BMI (obesity increases diabetes risk)
     if (data.bmi) {
         const bmi = parseFloat(data.bmi);
-        const ageNum = parseInt(data.patientAge) || 25;
         const ranges = getBMIRangesByAge(ageNum);
         
-        if (bmi >= 30) diabetesScore += 15;
-        else if (bmi >= ranges.normal) diabetesScore += 10;
+        if (bmi >= 30) diabetesScore += 15; // Obesity
+        else if (bmi >= ranges.normal) diabetesScore += 10; // Overweight
     }
+    
+    // Exercise frequency (sedentary lifestyle increases risk)
     if (data.exerciseFrequency === 'none' || data.exerciseFrequency === 'light') {
         diabetesScore += 10;
+    } else if (data.regular_exercise_150min === 'no') {
+        diabetesScore += 10; // Use alternative field if exerciseFrequency not available
     }
+    
+    // Stress level (chronic stress affects glucose metabolism)
     if (data.stressLevel === 'high' || data.stressLevel === 'very-high') {
         diabetesScore += 5;
     }
+    
+    // Family history (if available)
+    if (data.family_diabetes === 'yes') {
+        diabetesScore += 5;
+    }
+    
+    // Sugary foods consumption (increases diabetes risk)
+    if (data.sugary_foods === 'almost_daily') {
+        diabetesScore += 10; // Almost daily consumption
+    } else if (data.sugary_foods === 'occasional') {
+        diabetesScore += 5; // Occasional consumption
+    }
+    
+    // Meals per day (irregular eating patterns affect glucose control)
+    if (data.mealsPerDay === '1-2') {
+        diabetesScore += 5; // Too few meals can cause glucose spikes
+    } else if (data.mealsPerDay === '6+') {
+        diabetesScore += 3; // Too many meals may indicate poor portion control
+    }
+    
+    // Sleep quality (poor sleep affects glucose metabolism)
+    if (data.sleepQuality === 'poor') {
+        diabetesScore += 8; // Poor sleep significantly affects glucose
+    } else if (data.sleepQuality === 'fair') {
+        diabetesScore += 4; // Fair sleep has moderate impact
+    }
+    
+    // Alcohol consumption (excessive alcohol affects glucose)
+    if (data.alcohol === 'frequent') {
+        diabetesScore += 5; // Frequent alcohol consumption
+    } else if (data.alcohol === 'moderate') {
+        diabetesScore += 2; // Moderate consumption
+    }
+    
     risks.diabetes = Math.min(diabetesScore, 100);
     
-    // Hypertension Risk Calculation
+    // Hypertension Risk Calculation - based on actual form data
     let hypertensionScore = 0;
+    
+    // Systolic Blood Pressure (primary indicator)
     if (data.systolicBP) {
         const systolic = parseFloat(data.systolicBP);
-        if (systolic >= 140) hypertensionScore += 40;
-        else if (systolic >= 130) hypertensionScore += 25;
-        else if (systolic >= 120) hypertensionScore += 15;
+        if (systolic >= 140) hypertensionScore += 40; // Stage 2 Hypertension
+        else if (systolic >= 130) hypertensionScore += 25; // Stage 1 Hypertension
+        else if (systolic >= 120) hypertensionScore += 15; // Elevated BP
+        else if (systolic < 90) hypertensionScore += 10; // Low blood pressure (hypotension)
     }
+    
+    // Diastolic Blood Pressure (primary indicator)
     if (data.diastolicBP) {
         const diastolic = parseFloat(data.diastolicBP);
-        if (diastolic >= 90) hypertensionScore += 30;
-        else if (diastolic >= 80) hypertensionScore += 20;
+        if (diastolic >= 90) hypertensionScore += 30; // Stage 2 Hypertension
+        else if (diastolic >= 80) hypertensionScore += 20; // Stage 1 Hypertension
+        else if (diastolic < 60) hypertensionScore += 10; // Low blood pressure (hypotension)
     }
+    
+    // BMI (obesity increases hypertension risk, underweight also a concern)
     if (data.bmi) {
         const bmi = parseFloat(data.bmi);
-        const ageNum = parseInt(data.patientAge) || 25;
         const ranges = getBMIRangesByAge(ageNum);
         if (bmi >= ranges.normal) {
-            hypertensionScore += 15;
+            hypertensionScore += 15; // Overweight/obesity
+        } else if (bmi < ranges.underweight) {
+            hypertensionScore += 5; // Underweight may indicate nutritional issues
         }
     }
+    
+    // Smoking (increases blood pressure)
     if (data.smoking === 'regular' || data.smoking === 'occasional') {
         hypertensionScore += 10;
     }
+    
+    // Stress level (chronic stress increases BP)
     if (data.stressLevel === 'high' || data.stressLevel === 'very-high') {
         hypertensionScore += 10;
     }
+    
+    // Sleep quality (poor sleep increases blood pressure)
+    if (data.sleepQuality === 'poor') {
+        hypertensionScore += 8; // Poor sleep significantly affects BP
+    } else if (data.sleepQuality === 'fair') {
+        hypertensionScore += 4; // Fair sleep has moderate impact
+    }
+    
+    // Alcohol consumption (excessive alcohol increases BP)
+    if (data.alcohol === 'frequent') {
+        hypertensionScore += 8; // Frequent alcohol consumption
+    } else if (data.alcohol === 'moderate') {
+        hypertensionScore += 4; // Moderate consumption
+    }
+    
+    // Age (older age increases risk, but we use patientAge if available)
+    if (ageNum >= 65) {
+        hypertensionScore += 5;
+    } else if (ageNum >= 45) {
+        hypertensionScore += 3;
+    }
+    
     risks.hypertension = Math.min(hypertensionScore, 100);
     
-    // Cardiovascular Risk Calculation
+    // Cardiovascular Risk Calculation - based on actual form data
     let cardiovascularScore = 0;
+    
+    // High Blood Pressure (major risk factor)
     if (data.systolicBP && parseFloat(data.systolicBP) >= 140) {
         cardiovascularScore += 25;
+    } else if (data.systolicBP && parseFloat(data.systolicBP) >= 130) {
+        cardiovascularScore += 15;
+    } else if (data.systolicBP && parseFloat(data.systolicBP) < 90) {
+        cardiovascularScore += 8; // Low blood pressure may indicate heart issues
     }
+    if (data.diastolicBP && parseFloat(data.diastolicBP) >= 90) {
+        cardiovascularScore += 15;
+    } else if (data.diastolicBP && parseFloat(data.diastolicBP) < 60) {
+        cardiovascularScore += 8; // Low diastolic BP
+    }
+    
+    // High Cholesterol (if available)
     if (data.cholesterol) {
         const chol = parseFloat(data.cholesterol);
-        if (chol >= 240) cardiovascularScore += 25;
-        else if (chol >= 200) cardiovascularScore += 15;
+        if (chol >= 240) cardiovascularScore += 25; // High cholesterol
+        else if (chol >= 200) cardiovascularScore += 15; // Borderline high
+        else if (chol < 120) cardiovascularScore += 3; // Very low cholesterol (rare, but may need attention)
     }
+    
+    // BMI/Obesity (increases cardiovascular risk)
     if (data.bmi) {
         const bmi = parseFloat(data.bmi);
         if (bmi >= 30) {
-            cardiovascularScore += 20;
+            cardiovascularScore += 20; // Obesity
         } else {
-            const ageNum = parseInt(data.patientAge) || 25;
             const ranges = getBMIRangesByAge(ageNum);
             if (bmi >= ranges.normal) {
-                cardiovascularScore += 10;
+                cardiovascularScore += 10; // Overweight
             }
         }
     }
+    
+    // Smoking (major risk factor)
     if (data.smoking === 'regular') {
         cardiovascularScore += 20;
+    } else if (data.smoking === 'occasional') {
+        cardiovascularScore += 10;
     }
+    
+    // Sedentary lifestyle
     if (data.exerciseFrequency === 'none') {
         cardiovascularScore += 15;
+    } else if (data.regular_exercise_150min === 'no') {
+        cardiovascularScore += 15; // Use alternative field
     }
-    if (data.diabetes && risks.diabetes >= 50) {
+    
+    // Diabetes (if present, increases cardiovascular risk)
+    if (risks.diabetes >= 50) {
         cardiovascularScore += 15;
     }
+    
+    // Age (older age increases risk)
+    if (ageNum >= 65) {
+        cardiovascularScore += 10;
+    } else if (ageNum >= 45) {
+        cardiovascularScore += 5;
+    }
+    
+    // Male gender (higher CVD risk)
+    if (data.patientGender === 'male') {
+        cardiovascularScore += 8;
+    }
+    
+    // Blood glucose (prediabetic/diabetic: fasting glucose or HbA1c)
+    if (data.fastingGlucose) {
+        const glucose = parseFloat(data.fastingGlucose);
+        if (glucose >= 126) cardiovascularScore += 12;
+        else if (glucose >= 100) cardiovascularScore += 8;
+    }
+    if (data.hba1c) {
+        const hba1c = parseFloat(data.hba1c);
+        if (hba1c >= 6.5) cardiovascularScore += 10;
+        else if (hba1c >= 5.7) cardiovascularScore += 6;
+    }
+    
+    // Cardiovascular history (if diabetic patient has history)
+    if (data.diabetic_cardiovascular_history === 'yes') {
+        cardiovascularScore += 20;
+    }
+    
+    // Sleep quality (poor sleep increases cardiovascular risk)
+    if (data.sleepQuality === 'poor') {
+        cardiovascularScore += 10; // Poor sleep significantly affects heart health
+    } else if (data.sleepQuality === 'fair') {
+        cardiovascularScore += 5; // Fair sleep has moderate impact
+    }
+    
+    // Alcohol consumption (excessive alcohol increases cardiovascular risk)
+    if (data.alcohol === 'frequent') {
+        cardiovascularScore += 10; // Frequent alcohol consumption
+    } else if (data.alcohol === 'moderate') {
+        cardiovascularScore += 5; // Moderate consumption (some studies show benefit, but excessive is harmful)
+    }
+    
     risks.cardiovascular = Math.min(cardiovascularScore, 100);
     
-    // Obesity Risk Calculation (age-adjusted)
+    // Obesity Risk Calculation (age-adjusted) - based on actual form data
     let obesityScore = 0;
+    let bmiStatus = null; // Track BMI status: 'underweight', 'normal', 'overweight', 'obese'
+    
+    // BMI (primary indicator, age-adjusted)
     if (data.bmi) {
         const bmi = parseFloat(data.bmi);
-        const ageNum = parseInt(data.patientAge) || 25;
         const ranges = getBMIRangesByAge(ageNum);
         
-        if (bmi >= 30) obesityScore += 40;
-        else if (bmi >= ranges.normal) obesityScore += 25;
-        else if (bmi >= ranges.overweight) obesityScore += 15;
+        if (bmi >= 30) {
+            obesityScore += 40; // Obesity
+            bmiStatus = 'obese';
+        } else if (bmi >= ranges.normal) {
+            obesityScore += 25; // Overweight
+            bmiStatus = 'overweight';
+        } else if (bmi >= ranges.overweight) {
+            obesityScore += 15; // Slightly overweight
+            bmiStatus = 'overweight';
+        } else if (bmi < ranges.underweight) {
+            // Underweight is not an obesity risk, but we track it for health assessment
+            bmiStatus = 'underweight';
+            obesityScore = 0; // No obesity risk, but will still display in chart
+        } else {
+            // Normal weight
+            bmiStatus = 'normal';
+            obesityScore = 0; // No obesity risk, but will still display in chart
+        }
     }
+    
+    // Waist Circumference (abdominal obesity indicator)
     if (data.waistCircumference) {
         const waist = parseFloat(data.waistCircumference);
         const gender = data.patientGender;
         if ((gender === 'male' && waist > 90) || (gender === 'female' && waist > 80)) {
-            obesityScore += 25;
+            obesityScore += 25; // Abdominal obesity
         }
+    } else if (data.waist_exceeded === 'yes' || data.waist_exceeded === 'unsure') {
+        obesityScore += 20; // Use alternative field if waistCircumference not available
     }
+    
+    // Body Fat Percentage (if available)
     if (data.bodyFat) {
         const bodyFat = parseFloat(data.bodyFat);
         const gender = data.patientGender;
         if ((gender === 'male' && bodyFat > 25) || (gender === 'female' && bodyFat > 32)) {
-            obesityScore += 20;
+            obesityScore += 20; // High body fat
         }
     }
+    
+    // Sedentary lifestyle
     if (data.exerciseFrequency === 'none') {
         obesityScore += 15;
+    } else if (data.regular_exercise_150min === 'no') {
+        obesityScore += 15; // Use alternative field
     }
-    risks.obesity = Math.min(obesityScore, 100);
     
-    // Metabolic Syndrome Risk
+    // Meals per day (eating patterns affect weight)
+    if (data.mealsPerDay === '1-2') {
+        obesityScore += 5; // Too few meals can lead to overeating later
+    } else if (data.mealsPerDay === '6+') {
+        obesityScore += 8; // Too many meals may indicate poor portion control
+    }
+    
+    // Sugary foods consumption (increases obesity risk)
+    if (data.sugary_foods === 'almost_daily') {
+        obesityScore += 10; // Almost daily consumption
+    } else if (data.sugary_foods === 'occasional') {
+        obesityScore += 5; // Occasional consumption
+    }
+    
+    // Sleep quality (poor sleep affects metabolism and weight)
+    if (data.sleepQuality === 'poor') {
+        obesityScore += 8; // Poor sleep affects hormones that control appetite
+    } else if (data.sleepQuality === 'fair') {
+        obesityScore += 4; // Fair sleep has moderate impact
+    }
+    
+    // Alcohol consumption (alcohol has calories and affects metabolism)
+    if (data.alcohol === 'frequent') {
+        obesityScore += 8; // Frequent alcohol consumption adds calories
+    } else if (data.alcohol === 'moderate') {
+        obesityScore += 4; // Moderate consumption
+    }
+    
+    risks.obesity = Math.min(obesityScore, 100);
+    risks.bmiStatus = bmiStatus; // Store BMI status for chart display
+    
+    // Metabolic Syndrome Risk - based on actual form data
+    // Metabolic syndrome requires 3+ of: high BP, high glucose, high waist, high cholesterol, low HDL
     let metabolicScore = 0;
+    
+    // Diabetes/Prediabetes (high glucose)
     if (risks.diabetes >= 30) metabolicScore += 25;
+    
+    // Hypertension (high blood pressure)
     if (risks.hypertension >= 30) metabolicScore += 20;
+    
+    // Obesity (high waist circumference or BMI)
     if (risks.obesity >= 30) metabolicScore += 25;
+    
+    // Waist Circumference (abdominal obesity - key component)
     if (data.waistCircumference) {
         const waist = parseFloat(data.waistCircumference);
         const gender = data.patientGender;
         if ((gender === 'male' && waist > 90) || (gender === 'female' && waist > 80)) {
             metabolicScore += 20;
         }
+    } else if (data.waist_exceeded === 'yes' || data.waist_exceeded === 'unsure') {
+        metabolicScore += 15; // Use alternative field
     }
+    
+    // High Cholesterol (dyslipidemia)
     if (data.cholesterol && parseFloat(data.cholesterol) >= 200) {
         metabolicScore += 10;
     }
+    
+    // Age (increases risk)
+    if (ageNum >= 50) {
+        metabolicScore += 5;
+    }
+    
+    // Sleep quality (poor sleep affects metabolic health)
+    if (data.sleepQuality === 'poor') {
+        metabolicScore += 5; // Poor sleep affects metabolic hormones
+    }
+    
+    // Sugary foods consumption (affects metabolic health)
+    if (data.sugary_foods === 'almost_daily') {
+        metabolicScore += 5; // Almost daily consumption
+    }
+    
+    // Alcohol consumption (excessive alcohol affects metabolism)
+    if (data.alcohol === 'frequent') {
+        metabolicScore += 5; // Frequent alcohol consumption
+    }
+    
     risks.metabolic = Math.min(metabolicScore, 100);
     
+    // Diabetic: metabolic by criteria count (腰围, BMI Overweight+1/Obese+2, 血压, 血糖) — 3+ → 严重
+    if (data.patientType === 'diabetic') {
+        let criteriaCount = 0;
+        const gender = data.patientGender;
+        const waist = data.waistCircumference ? parseFloat(data.waistCircumference) : null;
+        const waistExceeded = (gender === 'male' && waist > 90) || (gender === 'female' && waist > 80) || data.waist_exceeded === 'yes' || data.waist_exceeded === 'unsure';
+        if (waistExceeded) criteriaCount += 1;
+        if (data.bmi) {
+            const bmi = parseFloat(data.bmi);
+            const ranges = getBMIRangesByAge(ageNum);
+            if (bmi >= 30) criteriaCount += 2;  // Obese +2
+            else if (bmi >= ranges.normal) criteriaCount += 1;  // Overweight +1
+        }
+        const bpHigh = (data.systolicBP && parseFloat(data.systolicBP) >= 130) || (data.diastolicBP && parseFloat(data.diastolicBP) >= 85);
+        if (bpHigh) criteriaCount += 1;
+        const glucose = data.fastingGlucose ? parseFloat(data.fastingGlucose) : null;
+        const hba1cVal = data.hba1c ? parseFloat(data.hba1c) : null;
+        const glucoseHigh = (glucose && glucose >= 100) || (hba1cVal && hba1cVal >= 5.7) || (data.diabetic_recent_hba1c && (data.diabetic_recent_hba1c === 'moderate' || data.diabetic_recent_hba1c === 'high'));
+        if (glucoseHigh) criteriaCount += 1;
+        risks.metabolicCriteriaCount = criteriaCount;
+        risks.metabolicSeverity = criteriaCount >= 3 ? '严重' : criteriaCount >= 2 ? '中等' : criteriaCount >= 1 ? '轻微' : '正常';
+        risks.metabolic = criteriaCount >= 3 ? 100 : criteriaCount >= 2 ? 66 : criteriaCount >= 1 ? 33 : 0;
+    }
+    
+    // Low Values Risk Calculation - detects values below normal range
+    let lowValuesScore = 0;
+    
+    // Low Blood Glucose (Hypoglycemia)
+    if (data.fastingGlucose) {
+        const glucose = parseFloat(data.fastingGlucose);
+        if (glucose < 70) {
+            lowValuesScore += 30; // Significant hypoglycemia risk
+        } else if (glucose < 80) {
+            lowValuesScore += 15; // Mildly low
+        }
+    }
+    
+    // Low Blood Pressure (Hypotension)
+    if (data.systolicBP) {
+        const systolic = parseFloat(data.systolicBP);
+        if (systolic < 90) {
+            lowValuesScore += 25; // Hypotension
+        }
+    }
+    if (data.diastolicBP) {
+        const diastolic = parseFloat(data.diastolicBP);
+        if (diastolic < 60) {
+            lowValuesScore += 20; // Low diastolic pressure
+        }
+    }
+    
+    // Underweight (Low BMI)
+    if (data.bmi) {
+        const bmi = parseFloat(data.bmi);
+        const ranges = getBMIRangesByAge(ageNum);
+        if (bmi < ranges.underweight) {
+            lowValuesScore += 20; // Underweight
+        }
+    }
+    
+    // Very Low Cholesterol (rare, but may indicate nutritional issues)
+    if (data.cholesterol) {
+        const chol = parseFloat(data.cholesterol);
+        if (chol < 120) {
+            lowValuesScore += 5; // Very low cholesterol
+        }
+    }
+    
+    risks.lowValues = Math.min(lowValuesScore, 100);
+    
     // Calculate healthy percentage (inverse of average risk)
-    const totalRisk = risks.diabetes + risks.hypertension + risks.cardiovascular + risks.obesity + risks.metabolic;
+    // Adjust obesity risk based on BMI status to ensure underweight/overweight affects health status
+    let adjustedObesityRisk = risks.obesity;
+    if (risks.bmiStatus === 'underweight') {
+        // Underweight should affect health status (set to at least 20% risk)
+        adjustedObesityRisk = Math.max(risks.obesity, 20);
+    } else if (risks.bmiStatus === 'overweight' || risks.bmiStatus === 'obese') {
+        // Overweight/obese already have risk scores, use them
+        adjustedObesityRisk = risks.obesity;
+    } else if (risks.bmiStatus === 'normal') {
+        // Normal weight has no risk
+        adjustedObesityRisk = 0;
+    }
+    
+    const totalRisk = risks.diabetes + risks.hypertension + risks.cardiovascular + adjustedObesityRisk + risks.metabolic;
     const avgRisk = totalRisk / 5;
     risks.healthy = Math.max(0, 100 - avgRisk);
     
@@ -2040,135 +2373,379 @@ function calculateHealthRisks(data) {
 function generateRiskChart(data) {
     const risks = calculateHealthRisks(data);
     const chartContainer = document.getElementById('chartContainer');
-    const chartCanvas = document.getElementById('riskChart');
     const chartLegend = document.getElementById('chartLegend');
     
-    if (!chartContainer || !chartCanvas) return;
+    if (!chartContainer || !chartLegend) return;
     
-    // Show chart container and ensure it's visible
-    chartContainer.style.display = 'block';
-
     // Show CTA page (next page after chart)
     const ctaPage = document.getElementById('ctaPage');
     if (ctaPage) ctaPage.style.display = 'block';
     
-    // Scroll chart into view smoothly
-    setTimeout(() => {
-        chartContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 500);
-    
-    // Destroy existing chart if any
-    if (window.riskChartInstance) {
-        window.riskChartInstance.destroy();
-    }
-    
-    // Prepare chart data
+    // Prepare chart data (for diabetic: show 轻微/中等/严重 etc. instead of %)
     const chartData = [];
     const chartLabels = [];
     const chartColors = [];
     const chartDescriptions = [];
+    const chartDisplayText = []; // When set, show this instead of value% (diabetic only)
+    const isDiabetic = data.patientType === 'diabetic';
     
-    // Add risks to chart (only if risk > 0)
-    if (risks.diabetes > 0) {
-        chartData.push(risks.diabetes);
-        chartLabels.push('糖尿病风险 / Diabetes Risk');
-        chartColors.push('#dc3545'); // Red
-        chartDescriptions.push(getRiskDescription(risks.diabetes, '糖尿病 / Diabetes'));
+    // Diabetes Risk — diabetic: 轻微/中等/严重 (no %); prediabetic: 3年内会患上糖尿病% (no generic %)
+    if (risks.diabetes > 0 || isDiabetic || data.patientType === 'prediabetic') {
+        if (isDiabetic) {
+            const dLevel = risks.diabetes >= 60 ? '严重' : risks.diabetes >= 30 ? '中等' : '轻微';
+            chartData.push(risks.diabetes >= 60 ? 100 : risks.diabetes >= 30 ? 66 : 33); // for circle fill
+            chartDisplayText.push(dLevel);
+            chartLabels.push('糖尿病风险 / Diabetes Risk');
+            chartColors.push(chartData[chartData.length - 1] >= 66 ? '#dc3545' : chartData[chartData.length - 1] >= 33 ? '#ffc107' : '#4CAF50');
+            chartDescriptions.push(`糖尿病风险等级 / Diabetes risk level: ${dLevel}`);
+        } else {
+            // Prediabetic: show 3-year diabetes risk % (5–35% range from internal score)
+            const threeYearRiskPct = Math.min(35, Math.round(5 + (risks.diabetes / 100) * 30));
+            chartData.push((threeYearRiskPct / 35) * 100); // for circle fill 0–100
+            chartDisplayText.push(`${threeYearRiskPct}%`);
+            chartLabels.push('3年内会患上糖尿病 / 3-Year Diabetes Risk');
+            chartColors.push(threeYearRiskPct >= 25 ? '#dc3545' : threeYearRiskPct >= 15 ? '#ffc107' : '#4CAF50');
+            chartDescriptions.push(`3年内罹患糖尿病概率约 ${threeYearRiskPct}% / ~${threeYearRiskPct}% probability of developing diabetes within 3 years`);
+        }
     }
     
-    if (risks.hypertension > 0) {
-        chartData.push(risks.hypertension);
+    // Hypertension Risk — diabetic & prediabetic: 高/正常/严重/轻微 (no %)
+    if (risks.hypertension > 0 || isDiabetic || data.patientType === 'prediabetic') {
+        const s = data.systolicBP ? parseFloat(data.systolicBP) : 0;
+        const d = data.diastolicBP ? parseFloat(data.diastolicBP) : 0;
+        let hLevel = '正常 / Normal';
+        if (s >= 140 || d >= 90) hLevel = '严重 / Stage 2';
+        else if (s >= 130 || d >= 85) hLevel = '高 / Stage 1';
+        else if (s >= 120 || d >= 80) hLevel = '轻微 / Elevated';
+        const fillVal = hLevel.includes('严重') ? 100 : hLevel.includes('高') ? 70 : hLevel.includes('轻微') ? 40 : 0;
+        chartData.push(fillVal);
+        chartDisplayText.push(hLevel);
         chartLabels.push('高血压风险 / Hypertension Risk');
-        chartColors.push('#ff6b6b'); // Light red
-        chartDescriptions.push(getRiskDescription(risks.hypertension, '高血压 / Hypertension'));
+        chartColors.push(hLevel.includes('严重') ? '#dc3545' : hLevel.includes('高') ? '#ff9800' : hLevel.includes('轻微') ? '#ffc107' : '#4CAF50');
+        chartDescriptions.push(`血压风险等级 / BP risk level: ${hLevel}`);
     }
     
     if (risks.cardiovascular > 0) {
         chartData.push(risks.cardiovascular);
+        chartDisplayText.push(null);
         chartLabels.push('心血管疾病风险 / Cardiovascular Disease Risk');
         chartColors.push('#ff9800'); // Orange
         chartDescriptions.push(getRiskDescription(risks.cardiovascular, '心血管疾病 / Cardiovascular Disease'));
     }
     
-    if (risks.obesity > 0) {
-        chartData.push(risks.obesity);
-        chartLabels.push('肥胖风险 / Obesity Risk');
-        chartColors.push('#ffc107'); // Yellow
-        chartDescriptions.push(getRiskDescription(risks.obesity, '肥胖 / Obesity'));
-    }
+    // Always show obesity/BMI risk card — diabetic: show Underweight/Normal weight/Overweight/Obese (no %)
+    let obesityLabel = '肥胖风险 / Obesity Risk';
+    let obesityDescription = '';
+    let obesityColor = '#ffc107'; // Default yellow/orange
+    let obesityDisplayValue = risks.obesity; // Value for circle
+    let obesityDisplayText = null; // diabetic: "Underweight" / "Normal weight" / "Overweight" / "Obese"
     
-    if (risks.metabolic > 0) {
-        chartData.push(risks.metabolic);
-        chartLabels.push('代谢症候群风险 / Metabolic Syndrome Risk');
-        chartColors.push('#f44336'); // Dark red
-        chartDescriptions.push(getRiskDescription(risks.metabolic, '代谢症候群 / Metabolic Syndrome'));
-    }
-    
-    if (risks.healthy > 0) {
-        chartData.push(risks.healthy);
-        chartLabels.push('健康状态 / Healthy Status');
-        chartColors.push('#28a745'); // Green
-        chartDescriptions.push('您的健康指标良好 / Your health indicators are good');
-    }
-    
-    // Create chart
-    const ctx = chartCanvas.getContext('2d');
-    
-    // Detect mobile device
-    const isMobile = window.innerWidth <= 768;
-    
-    window.riskChartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                data: chartData,
-                backgroundColor: chartColors,
-                borderColor: '#ffffff',
-                borderWidth: isMobile ? 1 : 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            aspectRatio: isMobile ? 1.2 : 1.5,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.parsed || 0;
-                            return `${label}: ${value.toFixed(1)}%`;
-                        }
-                    }
-                }
-            },
-            interaction: {
-                intersect: true
-            }
+    const isPrediabetic = data.patientType === 'prediabetic';
+    const showObesityAsCategory = isDiabetic || isPrediabetic; // both: show Overweight/Normal/Obese (no %)
+    if (risks.bmiStatus === 'underweight') {
+        obesityLabel = (isDiabetic || isPrediabetic) ? '体重状态 / Weight Status' : '体重风险 / Weight Risk';
+        obesityDescription = '体重过轻 - 需要关注！建议咨询医疗专业人员，增加健康体重，通过均衡营养和适当运动 / Underweight - Attention needed! Recommend consulting a medical professional to increase healthy weight through balanced nutrition and appropriate exercise';
+        obesityColor = '#ff9800';
+        obesityDisplayValue = showObesityAsCategory ? 20 : 20;
+        if (showObesityAsCategory) obesityDisplayText = 'Underweight';
+    } else if (risks.bmiStatus === 'normal') {
+        obesityLabel = '体重状态 / Weight Status';
+        obesityDescription = '正常体重 - 继续保持健康的生活习惯 / Normal Weight - Continue maintaining healthy lifestyle habits';
+        obesityColor = '#4CAF50';
+        obesityDisplayValue = 0;
+        if (showObesityAsCategory) obesityDisplayText = 'Normal weight';
+    } else if (risks.bmiStatus === 'overweight') {
+        obesityLabel = (isDiabetic || isPrediabetic) ? '体重状态 / Weight Status' : '肥胖风险 / Obesity Risk';
+        obesityDescription = '体重过重 - 建议通过饮食控制和规律运动来减重 / Overweight - Recommend losing weight through diet control and regular exercise';
+        obesityColor = '#ffc107';
+        obesityDisplayValue = showObesityAsCategory ? 50 : risks.obesity;
+        if (showObesityAsCategory) obesityDisplayText = 'Overweight';
+    } else if (risks.bmiStatus === 'obese') {
+        obesityLabel = (isDiabetic || isPrediabetic) ? '体重状态 / Weight Status' : '肥胖风险 / Obesity Risk';
+        obesityDescription = getRiskDescription(risks.obesity, '肥胖 / Obesity');
+        obesityColor = '#ff9800';
+        obesityDisplayValue = showObesityAsCategory ? 100 : risks.obesity;
+        if (showObesityAsCategory) obesityDisplayText = 'Obese';
+    } else {
+        if (risks.obesity > 0) {
+            obesityDescription = getRiskDescription(risks.obesity, '肥胖 / Obesity');
+            obesityDisplayValue = risks.obesity;
+        } else {
+            obesityDescription = '请提供BMI数据以评估体重状态 / Please provide BMI data to assess weight status';
+            obesityDisplayValue = 0;
         }
-    });
+        if (showObesityAsCategory) obesityDisplayText = '—'; // no BMI data
+    }
     
-    // Generate legend
-    let legendHTML = '';
+    chartData.push(obesityDisplayValue);
+    chartDisplayText.push(obesityDisplayText);
+    chartLabels.push(obesityLabel);
+    chartColors.push(obesityColor);
+    chartDescriptions.push(obesityDescription);
+    
+    // Metabolic — diabetic: new algorithm, display 严重/中等/轻微/正常 (no %)
+    if (risks.metabolic > 0 || (isDiabetic && risks.metabolicSeverity)) {
+        if (isDiabetic && risks.metabolicSeverity) {
+            chartData.push(risks.metabolic); // already 0/33/66/100 from criteria count
+            chartDisplayText.push(risks.metabolicSeverity);
+            chartLabels.push('代谢症候群风险 / Metabolic Syndrome Risk');
+            chartColors.push(risks.metabolicSeverity === '严重' ? '#f44336' : risks.metabolicSeverity === '中等' ? '#ff9800' : risks.metabolicSeverity === '轻微' ? '#ffc107' : '#4CAF50');
+            chartDescriptions.push(`代谢症候群等级（腰围、BMI、血压、血糖） / Metabolic level (waist, BMI, BP, glucose): ${risks.metabolicSeverity}`);
+        } else {
+            chartData.push(risks.metabolic);
+            chartDisplayText.push(null);
+            chartLabels.push('代谢症候群风险 / Metabolic Syndrome Risk');
+            chartColors.push('#f44336');
+            chartDescriptions.push(getRiskDescription(risks.metabolic, '代谢症候群 / Metabolic Syndrome'));
+        }
+    }
+    
+    // Add low values risk if present
+    if (risks.lowValues > 0) {
+        chartData.push(risks.lowValues);
+        chartDisplayText.push(null);
+        chartLabels.push('低值风险 / Low Values Risk');
+        chartColors.push('#2196F3'); // Blue (to distinguish from high value risks)
+        chartDescriptions.push(getRiskDescription(risks.lowValues, '低值风险 / Low Values Risk'));
+    }
+    
+    // Always add healthy status (even if 0, it should be displayed)
+        chartData.push(risks.healthy);
+        chartDisplayText.push(null);
+        chartLabels.push('健康状态 / Healthy Status');
+    // Color based on healthy percentage:
+    // 80%以上: 青色 (Cyan/Teal)
+    // 30%以上: 黄色 (Yellow)
+    // 29%以下: 红色 (Red)
+    let healthyColor;
+    if (risks.healthy >= 80) {
+        healthyColor = '#4CAF50'; // Green (青色)
+    } else if (risks.healthy >= 30) {
+        healthyColor = '#FFC107'; // Yellow (黄色)
+    } else {
+        healthyColor = '#F44336'; // Red (红色)
+    }
+    chartColors.push(healthyColor);
+        chartDescriptions.push('您的健康指标良好 / Your health indicators are good');
+    
+    // Find healthy status data for top center box
+    const healthyIndex = chartLabels.findIndex(label => label.includes('健康状态') || label.includes('Healthy Status'));
+    let healthyStatusHTML = '';
+    if (healthyIndex !== -1) {
+        const healthyValue = chartData[healthyIndex];
+        const healthyColor = chartColors[healthyIndex];
+        const healthyDesc = chartDescriptions[healthyIndex];
+        
+        // Determine border color based on healthy percentage
+        let borderColor = '#F44336'; // Red
+        if (healthyValue >= 80) {
+            borderColor = '#4CAF50'; // Green
+        } else if (healthyValue >= 30) {
+            borderColor = '#FFC107'; // Yellow
+        }
+        
+        healthyStatusHTML = `
+            <div class="healthy-status-wrapper">
+                <div class="healthy-status-percent-outside" style="color: ${borderColor};">
+                    ${healthyValue.toFixed(1)}%
+                </div>
+                <div class="healthy-status-box" style="border-color: ${borderColor}; background: ${borderColor};">
+                    <div class="healthy-status-label">健康状态 / Healthy Status</div>
+                    <div class="healthy-status-desc">${healthyDesc}</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Generate risk cards - matching image design
+    let legendHTML = healthyStatusHTML;
+    
+    // Map risk types to icons, SVG paths, and colors
+    const riskIconMap = {
+        '糖尿病风险': { 
+            icon: '🩸', 
+            class: 'card-diabetes',
+            svgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z'
+        },
+        'Diabetes Risk': { 
+            icon: '🩸', 
+            class: 'card-diabetes',
+            svgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z'
+        },
+        '3年内会患上糖尿病': { 
+            icon: '🩸', 
+            class: 'card-diabetes',
+            svgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z'
+        },
+        '高血压风险': { 
+            icon: '🩺', 
+            class: 'card-hypertension',
+            svgPath: 'M19 8h-1V6c0-2.76-2.24-5-5-5S8 3.24 8 6v2H7c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM10 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2h-6V6zm8 14H8V10h10v10z'
+        },
+        'Hypertension Risk': { 
+            icon: '🩺', 
+            class: 'card-hypertension',
+            svgPath: 'M19 8h-1V6c0-2.76-2.24-5-5-5S8 3.24 8 6v2H7c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM10 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2h-6V6zm8 14H8V10h10v10z'
+        },
+        '心血管疾病风险': { 
+            icon: '❤️', 
+            class: 'card-cardio',
+            svgPath: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
+        },
+        'Cardiovascular Disease Risk': { 
+            icon: '❤️', 
+            class: 'card-cardio',
+            svgPath: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
+        },
+        '肥胖风险': { 
+            icon: '👤', 
+            class: 'card-obesity',
+            svgPath: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'
+        },
+        'Obesity Risk': { 
+            icon: '👤', 
+            class: 'card-obesity',
+            svgPath: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'
+        },
+        '体重状态': { 
+            icon: '👤', 
+            class: 'card-obesity',
+            svgPath: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'
+        },
+        'Weight Status': { 
+            icon: '👤', 
+            class: 'card-obesity',
+            svgPath: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'
+        },
+        '代谢症候群风险': { 
+            icon: '🫀', 
+            class: 'card-metabolic',
+            svgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'
+        },
+        'Metabolic Syndrome Risk': { 
+            icon: '🫀', 
+            class: 'card-metabolic',
+            svgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'
+        },
+        '低值风险': { 
+            icon: '⚠️', 
+            class: 'card-low-values',
+            svgPath: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'
+        },
+        'Low Values Risk': { 
+            icon: '⚠️', 
+            class: 'card-low-values',
+            svgPath: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'
+        }
+    };
+    
+    // Function to generate circular progress chart SVG
+    function generateProgressChart(value, color, iconPath) {
+        const size = 68;
+        const strokeWidth = 6;
+        const radius = (size - strokeWidth) / 2;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (value / 100) * circumference;
+        
+        return `
+            <div class="risk-chart-circle">
+                <svg width="${size}" height="${size}" class="risk-chart-svg">
+                    <!-- Background circle (white) -->
+                    <circle
+                        cx="${size/2}"
+                        cy="${size/2}"
+                        r="${radius}"
+                        fill="none"
+                        stroke="#e0e0e0"
+                        stroke-width="${strokeWidth}"
+                    />
+                    <!-- Progress circle (red) -->
+                    <circle
+                        cx="${size/2}"
+                        cy="${size/2}"
+                        r="${radius}"
+                        fill="none"
+                        stroke="${color}"
+                        stroke-width="${strokeWidth}"
+                        stroke-dasharray="${circumference}"
+                        stroke-dashoffset="${offset}"
+                        stroke-linecap="round"
+                        transform="rotate(-90 ${size/2} ${size/2})"
+                    />
+                    <!-- Center icon -->
+                    <g transform="translate(${size/2}, ${size/2})">
+                        <path
+                            d="${iconPath}"
+                            fill="#000"
+                            transform="scale(0.8) translate(-12, -12)"
+                        />
+                    </g>
+                </svg>
+            </div>
+        `;
+    }
+    
     chartLabels.forEach((label, index) => {
         const value = chartData[index];
         const color = chartColors[index];
         const description = chartDescriptions[index];
+        const displayText = chartDisplayText[index]; // Diabetic: 轻微/中等/严重, Underweight, etc. (no %)
+        
+        // Skip healthy status - it's shown in the top center box
+        if (label.includes('健康状态') || label.includes('Healthy Status')) {
+            return;
+        }
+        
+        // Find icon, SVG path, and class for this risk type
+        let cardIcon = '📊';
+        let cardClass = 'card-risk';
+        let iconSvgPath = 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z';
+        for (const [key, info] of Object.entries(riskIconMap)) {
+            if (label.includes(key)) {
+                cardIcon = info.icon;
+                cardClass = info.class;
+                iconSvgPath = info.svgPath;
+                break;
+            }
+        }
+        
+        // Get marker color class based on risk color
+        let markerClass = 'marker-red';
+        if (color === '#4CAF50' || color === '#00BCD4') {
+            markerClass = 'marker-green';
+        } else if (color === '#ff9800' || color === '#fd7e14') {
+            markerClass = 'marker-orange';
+        } else if (color === '#ffc107' || color === '#FFC107') {
+            markerClass = 'marker-yellow';
+        } else if (color === '#dc3545' || color === '#f44336' || color === '#ff6b6b') {
+            markerClass = 'marker-red';
+        }
+        
+        // Generate circular progress chart (value 0-100 for ring fill)
+        const progressChart = generateProgressChart(value, color, iconSvgPath);
+        const topLabel = displayText != null ? displayText : `${value.toFixed(1)}%`;
+        
+        // Create card HTML matching image design with progress chart
         legendHTML += `
-            <div class="legend-item">
-                <div class="legend-color" style="background-color: ${color};"></div>
-                <div class="legend-text">
-                    <div class="legend-label">${label}</div>
-                    <div class="legend-value">${value.toFixed(1)}% - ${description}</div>
+            <div class="card ${cardClass}">
+                <div class="card-percentage-top">
+                    <span class="highlight-text">${topLabel}</span>
+                </div>
+                <div class="card-chart-container">
+                    ${progressChart}
+                </div>
+                <div class="card-content">
+                    <div class="card-title">
+                        <span class="card-marker ${markerClass}"></span>
+                        ${label}
+                    </div>
+                    <p>${description}</p>
                 </div>
             </div>
         `;
     });
+    
+    // Update cards
     chartLegend.innerHTML = legendHTML;
 }
 
