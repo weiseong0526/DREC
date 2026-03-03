@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Order Pending | Prince Paw</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>🌿 100% Natural Ingredients</span>
+            <span>✓ Vet Recommended</span>
+            <span>🚚 Free Shipping Over $50</span>
+            <span>💚 Cruelty Free</span>
+        </div>
+    </div>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="cart.html">🛒 Cart</a>
+                <a href="login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="checkout-page">
+        <div class="container">
+            <div id="checkoutContent">
+                <!-- Filled by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Premium pet care for your furry family.</p>
+                <div class="footer-links">
+                    <a href="my-orders.html">My Orders</a>
+                    <a href="wishlist.html">Wishlist</a>
+                    <a href="notifications.html">Notifications</a>
+                    <a href="terms.html">Terms & Conditions</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="delivery.html">Delivery Policy</a>
+                    <a href="return-refund.html">Return & Refund</a>
+                </div>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/cart.js"></script>
+    <script>
+        function renderCheckout() {
+            const buyNow = getBuyNow();
+            const cart = getCart();
+            const contentEl = document.getElementById('checkoutContent');
+
+            // Buy Now: single item from product page
+            let items = [];
+            if (buyNow) {
+                items = [buyNow];
+            } else if (cart.length > 0) {
+                items = cart;
+            }
+
+            if (items.length === 0) {
+                contentEl.innerHTML = `
+                    <div class="pending-card">
+                        <p>No items in your order.</p>
+                        <a href="shop.html" class="btn-primary">Continue Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let total = 0;
+            let itemsHtml = '';
+            items.forEach(item => {
+                const subtotal = item.price * (item.qty || 1);
+                total += subtotal;
+                itemsHtml += `
+                    <div class="pending-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div>
+                            <strong>${item.name}</strong>
+                            <span>${item.qty || 1} × $${item.price.toFixed(2)} = $${subtotal.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentEl.innerHTML = `
+                <div class="pending-card">
+                    <div class="pending-status">
+                        <span class="pending-badge">⏳ Pending</span>
+                        <h1>Order Confirmation</h1>
+                        <p>Thank you for your order! Your order is being processed.</p>
+                    </div>
+                    <div class="pending-items">
+                        <h2>Order Summary</h2>
+                        ${itemsHtml}
+                        <div class="pending-total">
+                            <strong>Total: $${total.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                    <div class="pending-note">
+                        <p>You will receive an email confirmation shortly. We'll notify you when your order ships.</p>
+                        <a href="shop.html" class="btn-primary">Continue Shopping</a>
+                    </div>
+                </div>
+            `;
+
+            clearBuyNow();
+        }
+
+        renderCheckout();
+    </script>
+</body>
+</html>

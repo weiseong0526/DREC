@@ -7,9 +7,18 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Trust Bar -->
+    <div class="trust-bar">
+        <div class="container">
+            <span>🌿 100% Natural Ingredients</span>
+            <span>✓ Vet Recommended</span>
+            <span>🚚 Free Shipping Over $50</span>
+            <span>💚 Cruelty Free</span>
+        </div>
+    </div>
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
@@ -18,85 +27,335 @@
             </a>
             <nav class="nav">
                 <a href="index.html">Home</a>
-                <a href="#products">Shop</a>
+                <a href="shop.html">Shop</a>
+                <a href="cart.html">🛒 Cart</a>
+                <a href="login.html">Login</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-image">
-                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80" alt="Happy dog enjoying bath time with Prince Paw shampoo">
-                <div class="hero-overlay"></div>
-                <div class="hero-content">
-                    <h1>Premium Care for Your Furry Royalty</h1>
-                    <p>Natural dog & cat shampoos crafted for every need</p>
-                </div>
+        <!-- Main Hero - Photo & Title Only -->
+        <section class="main-hero">
+            <img src="images/hero-main.png" alt="Premium Care for Your Furry Royalty">
+            <div class="main-hero-overlay"></div>
+            <div class="main-hero-content">
+                <h1>Premium Care for Your Furry Royalty</h1>
+                <p>Natural dog & cat shampoos crafted for every need</p>
             </div>
         </section>
 
-        <!-- Filter Buttons Section -->
+        <!-- Browse by Concern (Filter) -->
         <section class="filter-section" id="products">
             <div class="container">
-                <h2>Find the Perfect Shampoo for Your Pet</h2>
-                <p class="filter-subtitle">Choose a category that matches your pet's needs</p>
+                <div class="section-header">
+                    <span class="section-label">Browse by Concern</span>
+                    <h2>Find the Perfect Shampoo for Your Pet</h2>
+                </div>
                 <div class="filter-buttons">
                     <a href="products/odour-control.html" class="filter-btn">
-                        <span class="filter-icon">🌸</span>
+                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80" alt="Smelly / Odour"></div>
                         <span class="filter-label">Smelly / Odour</span>
-                        <span class="filter-desc">Fresh scent that lasts</span>
                     </a>
                     <a href="products/shedding.html" class="filter-btn">
-                        <span class="filter-icon">✨</span>
+                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80" alt="Shedding"></div>
                         <span class="filter-label">Shedding</span>
-                        <span class="filter-desc">Reduce loose fur</span>
                     </a>
                     <a href="products/sensitive-skin.html" class="filter-btn">
-                        <span class="filter-icon">💚</span>
+                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="Sensitive Skin"></div>
                         <span class="filter-label">Sensitive / Itchy Skin</span>
-                        <span class="filter-desc">Gentle & soothing</span>
                     </a>
                     <a href="products/dandruff-infection.html" class="filter-btn">
-                        <span class="filter-icon">🌿</span>
+                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" alt="Dandruff"></div>
                         <span class="filter-label">Dandruff / Infection</span>
-                        <span class="filter-desc">Medicated relief</span>
                     </a>
                     <a href="products/flea-tick.html" class="filter-btn">
-                        <span class="filter-icon">🛡️</span>
+                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="Flea & Tick"></div>
                         <span class="filter-label">Flea & Tick Control</span>
-                        <span class="filter-desc">Protection & prevention</span>
                     </a>
                 </div>
             </div>
         </section>
 
-        <!-- Featured Products Preview -->
-        <section class="featured-preview">
+        <!-- Hero Carousel (NanoVe style) -->
+        <section class="hero-carousel">
+            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80');">
+                <span class="hero-badge">NEW!</span>
+                <div class="hero-slide-content">
+                    <div class="hero-features">
+                        <div class="hero-feature-circle">
+                            <span class="hero-feature-icon">🌸</span>
+                            <span>Odour Removal</span>
+                        </div>
+                        <div class="hero-feature-circle">
+                            <span class="hero-feature-icon">💚</span>
+                            <span>Sensitive Skin</span>
+                        </div>
+                    </div>
+                    <div class="hero-product-block">
+                        <div class="hero-product-img">
+                            <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" alt="Fresh Scent Shampoo">
+                        </div>
+                        <h2>Fresh Scent Shampoo</h2>
+                        <p>Making bath time a breeze for pet parents.</p>
+                        <a href="products/odour-control.html" class="hero-cta">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=1920&q=80');">
+                <span class="hero-badge">BEST SELLER</span>
+                <div class="hero-slide-content">
+                    <div class="hero-features">
+                        <div class="hero-feature-circle">
+                            <span class="hero-feature-icon">✨</span>
+                            <span>Reduce Shedding</span>
+                        </div>
+                        <div class="hero-feature-circle">
+                            <span class="hero-feature-icon">🛡️</span>
+                            <span>Flea & Tick</span>
+                        </div>
+                    </div>
+                    <div class="hero-product-block">
+                        <div class="hero-product-img">
+                            <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="Soothing Oatmeal Shampoo">
+                        </div>
+                        <h2>Soothing Oatmeal Shampoo</h2>
+                        <p>Gentle care for sensitive & itchy skin.</p>
+                        <a href="products/sensitive-skin.html" class="hero-cta">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-prev" aria-label="Previous">‹</button>
+            <button class="carousel-next" aria-label="Next">›</button>
+            <div class="carousel-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+            </div>
+        </section>
+
+        <!-- Looking for a solution? -->
+        <section class="solution-section">
             <div class="container">
-                <h2>Best Sellers</h2>
-                <div class="product-grid">
-                    <a href="products/odour-control.html" class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" alt="Odour Control Shampoo">
+                <h2 class="solution-heading">Looking for a solution?</h2>
+                <div class="solution-carousel">
+                    <button class="solution-prev" aria-label="Previous">‹</button>
+                    <div class="solution-slides">
+                        <div class="solution-slide active">
+                            <div class="solution-content">
+                                <div class="solution-image">
+                                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80" alt="Dog bath">
+                                </div>
+                                <div class="solution-text">
+                                    <p>Does your pet have a strong odour?</p>
+                                    <p>Need a fresh, long-lasting scent?</p>
+                                    <div class="solution-kit-box">
+                                        <span class="solution-icon">🌸</span>
+                                        <span>Fresh Scent Shampoo</span>
+                                    </div>
+                                    <a href="products/odour-control.html" class="btn-solution">Click here</a>
+                                </div>
+                            </div>
                         </div>
-                        <h3>Fresh Scent Shampoo</h3>
-                        <p>Smelly / Odour</p>
-                    </a>
-                    <a href="products/shedding.html" class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80" alt="Shedding Control Shampoo">
+                        <div class="solution-slide">
+                            <div class="solution-content">
+                                <div class="solution-image">
+                                    <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=600&q=80" alt="Dog grooming">
+                                </div>
+                                <div class="solution-text">
+                                    <p>Too much loose fur around the house?</p>
+                                    <p>Need to reduce shedding?</p>
+                                    <div class="solution-kit-box">
+                                        <span class="solution-icon">✨</span>
+                                        <span>Anti-Shed Formula</span>
+                                    </div>
+                                    <a href="products/shedding.html" class="btn-solution">Click here</a>
+                                </div>
+                            </div>
                         </div>
-                        <h3>Anti-Shed Formula</h3>
-                        <p>Shedding</p>
-                    </a>
-                    <a href="products/flea-tick.html" class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="Flea & Tick Shampoo">
+                        <div class="solution-slide">
+                            <div class="solution-content">
+                                <div class="solution-image">
+                                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&q=80" alt="Dog and cat">
+                                </div>
+                                <div class="solution-text">
+                                    <p>Does your pet scratch constantly?</p>
+                                    <p>Need gentle relief for sensitive skin?</p>
+                                    <div class="solution-kit-box">
+                                        <span class="solution-icon">💚</span>
+                                        <span>Soothing Oatmeal Shampoo</span>
+                                    </div>
+                                    <a href="products/sensitive-skin.html" class="btn-solution">Click here</a>
+                                </div>
+                            </div>
                         </div>
-                        <h3>Flea & Tick Defense</h3>
-                        <p>Flea & Tick Control</p>
-                    </a>
+                        <div class="solution-slide">
+                            <div class="solution-content">
+                                <div class="solution-image">
+                                    <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80" alt="Pet care">
+                                </div>
+                                <div class="solution-text">
+                                    <p>Flaky skin or dandruff?</p>
+                                    <p>Need medicated relief?</p>
+                                    <div class="solution-kit-box">
+                                        <span class="solution-icon">🌿</span>
+                                        <span>Medicated Relief Shampoo</span>
+                                    </div>
+                                    <a href="products/dandruff-infection.html" class="btn-solution">Click here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="solution-slide">
+                            <div class="solution-content">
+                                <div class="solution-image">
+                                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80" alt="Dog outdoors">
+                                </div>
+                                <div class="solution-text">
+                                    <p>Fleas or ticks bothering your pet?</p>
+                                    <p>Need protection & prevention?</p>
+                                    <div class="solution-kit-box">
+                                        <span class="solution-icon">🛡️</span>
+                                        <span>Flea & Tick Defense</span>
+                                    </div>
+                                    <a href="products/flea-tick.html" class="btn-solution">Click here</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="solution-next" aria-label="Next">›</button>
+                </div>
+                <div class="solution-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                    <span class="dot" data-slide="3"></span>
+                    <span class="dot" data-slide="4"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promotion -->
+        <section class="promotion-section">
+            <div class="container">
+                <div class="promotion-header">
+                    <h2>PROMOTION</h2>
+                    <a href="shop.html" class="see-all">SEE ALL ›</a>
+                </div>
+                <div class="kit-carousel">
+                    <button class="kit-prev" aria-label="Previous">‹</button>
+                    <div class="kit-cards">
+                        <a href="products/odour-control.html" class="kit-card promo-card">
+                            <div class="kit-card-header promo-b1f1">B1F1</div>
+                            <div class="kit-card-img">
+                                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" alt="Fresh Scent Shampoo">
+                            </div>
+                            <p class="kit-card-title">Buy 1 Get 1 Free — Fresh Scent Shampoo</p>
+                            <p class="kit-card-price">$24.99 <span class="promo-save">(Save $24.99)</span></p>
+                        </a>
+                        <a href="products/shedding.html" class="kit-card promo-card">
+                            <div class="kit-card-header promo-b2f2">B2F2</div>
+                            <div class="kit-card-img">
+                                <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80" alt="Anti-Shed Formula">
+                            </div>
+                            <p class="kit-card-title">Buy 2 Get 2 Free — Anti-Shed Formula</p>
+                            <p class="kit-card-price">$57.98 <span class="promo-save">(Save $57.98)</span></p>
+                        </a>
+                        <a href="products/sensitive-skin.html" class="kit-card promo-card">
+                            <div class="kit-card-header promo-bundle">20% OFF</div>
+                            <div class="kit-card-img">
+                                <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="Soothing Oatmeal Shampoo">
+                            </div>
+                            <p class="kit-card-title">Soothing Oatmeal Shampoo - Skin Care</p>
+                            <p class="kit-card-price">$21.59 <span class="promo-save">(Was $26.99)</span></p>
+                        </a>
+                        <a href="products/flea-tick.html" class="kit-card promo-card">
+                            <div class="kit-card-header promo-bundle">15% OFF</div>
+                            <div class="kit-card-img">
+                                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="Flea & Tick Defense">
+                            </div>
+                            <p class="kit-card-title">Flea & Tick Defense</p>
+                            <p class="kit-card-price">$25.49 <span class="promo-save">(Was $29.99)</span></p>
+                        </a>
+                        <a href="shop.html" class="kit-card promo-card">
+                            <div class="kit-card-header promo-bundle">BUNDLE DEAL</div>
+                            <div class="kit-card-img">
+                                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80" alt="Essentials Kit">
+                            </div>
+                            <p class="kit-card-title">New Pet Parent Essential Kit</p>
+                            <p class="kit-card-price">$79.99 <span class="promo-save">(Was $89.99)</span></p>
+                        </a>
+                    </div>
+                    <button class="kit-next" aria-label="Next">›</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Icons -->
+        <section class="feature-icons-section">
+            <div class="container">
+                <div class="feature-icons">
+                    <div class="feature-icon-item">
+                        <div class="feature-icon-circle">
+                            <span>🌿</span>
+                        </div>
+                        <span>Natural Ingredients</span>
+                    </div>
+                    <div class="feature-icon-item">
+                        <div class="feature-icon-circle">
+                            <span>📦</span>
+                        </div>
+                        <span>Ready Stock</span>
+                    </div>
+                    <div class="feature-icon-item">
+                        <div class="feature-icon-circle">
+                            <span>💬</span>
+                        </div>
+                        <span>Excellent Customer Service</span>
+                    </div>
+                    <div class="feature-icon-item">
+                        <div class="feature-icon-circle">
+                            <span>🚚</span>
+                        </div>
+                        <span>Fast Delivery</span>
+                    </div>
+                    <div class="feature-icon-item">
+                        <div class="feature-icon-circle">
+                            <span>🐾</span>
+                        </div>
+                        <span>Safe For Pets</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials-section">
+            <div class="container">
+                <h2>What Pet Parents Say</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <span class="testimonial-quote">"</span>
+                        <div class="testimonial-product">
+                            <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=120&q=80" alt="Fresh Scent Shampoo">
+                        </div>
+                        <p>I've been using Prince Paw Fresh Scent Shampoo for over a month and my dog's coat is shiny and smells amazing. No more odour after playtime. Highly recommended!</p>
+                        <span class="testimonial-author">Sarah - From California</span>
+                    </div>
+                    <div class="testimonial-card">
+                        <span class="testimonial-quote">"</span>
+                        <div class="testimonial-product">
+                            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=120&q=80" alt="Flea & Tick">
+                        </div>
+                        <p>Prince Paw Flea & Tick Defense worked like magic on my dog! No more scratching, easy to apply, and I feel good knowing it's safe. Highly recommended!</p>
+                        <span class="testimonial-author">Mike - From Texas</span>
+                    </div>
+                    <div class="testimonial-card">
+                        <span class="testimonial-quote">"</span>
+                        <div class="testimonial-product">
+                            <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=120&q=80" alt="Soothing Oatmeal">
+                        </div>
+                        <p>I love Prince Paw Soothing Oatmeal Shampoo! It cleans well, smells great, and my dog's coat is shiny. No more itchy skin. Will be purchasing again!</p>
+                        <span class="testimonial-author">Emma - From New York</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -104,8 +363,73 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Prince Paw. Premium pet care for your furry family.</p>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Premium pet care for your furry family.</p>
+                <div class="footer-links">
+                    <a href="my-orders.html">My Orders</a>
+                    <a href="wishlist.html">Wishlist</a>
+                    <a href="notifications.html">Notifications</a>
+                    <a href="terms.html">Terms & Conditions</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="delivery.html">Delivery Policy</a>
+                    <a href="return-refund.html">Return & Refund</a>
+                </div>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        // Hero Carousel
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDots = document.querySelectorAll('.hero-carousel .dot');
+        let heroIndex = 0;
+
+        function showHeroSlide(i) {
+            heroSlides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+            heroDots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+            heroIndex = i;
+        }
+
+        document.querySelector('.carousel-prev').addEventListener('click', () => {
+            showHeroSlide((heroIndex - 1 + heroSlides.length) % heroSlides.length);
+        });
+        document.querySelector('.carousel-next').addEventListener('click', () => {
+            showHeroSlide((heroIndex + 1) % heroSlides.length);
+        });
+        heroDots.forEach((d, i) => d.addEventListener('click', () => showHeroSlide(i)));
+
+        // Kit Carousel scroll
+        const kitCards = document.querySelector('.kit-cards');
+        document.querySelector('.kit-prev')?.addEventListener('click', () => {
+            kitCards.scrollBy({ left: -320, behavior: 'smooth' });
+        });
+        document.querySelector('.kit-next')?.addEventListener('click', () => {
+            kitCards.scrollBy({ left: 320, behavior: 'smooth' });
+        });
+
+        // Solution Carousel
+        const solutionSlides = document.querySelectorAll('.solution-slide');
+        const solutionDots = document.querySelectorAll('.solution-section .dot');
+        let solutionIndex = 0;
+
+        function showSolutionSlide(i) {
+            solutionIndex = ((i % solutionSlides.length) + solutionSlides.length) % solutionSlides.length;
+            solutionSlides.forEach((s, idx) => s.classList.toggle('active', idx === solutionIndex));
+            solutionDots.forEach((d, idx) => d.classList.toggle('active', idx === solutionIndex));
+        }
+
+        document.querySelector('.solution-prev')?.addEventListener('click', () => {
+            showSolutionSlide(solutionIndex - 1);
+        });
+        document.querySelector('.solution-next')?.addEventListener('click', () => {
+            showSolutionSlide(solutionIndex + 1);
+        });
+        solutionDots.forEach((d, i) => d.addEventListener('click', () => showSolutionSlide(i)));
+    </script>
 </body>
 </html>

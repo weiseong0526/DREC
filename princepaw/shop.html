@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All Products | Prince Paw</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>🌿 100% Natural Ingredients</span>
+            <span>✓ Vet Recommended</span>
+            <span>🚚 Free Shipping Over $50</span>
+            <span>💚 Cruelty Free</span>
+        </div>
+    </div>
+
+    <!-- Shop Header with Search -->
+    <header class="shop-header">
+        <div class="container">
+            <a href="index.html" class="logo logo-dark">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw</span>
+            </a>
+            <div class="shop-search">
+                <input type="text" placeholder="Search" id="shopSearch">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="shop-header-icons">
+                <a href="login.html" class="header-icon" title="Account">👤</a>
+                <a href="wishlist.html" class="header-icon" title="Wishlist">❤️</a>
+                <a href="cart.html" class="header-icon" title="Cart">🛒</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Nav Bar -->
+    <nav class="shop-nav">
+        <div class="container">
+            <a href="shop.html" class="shop-nav-link active">Shop</a>
+            <a href="index.html#promotion" class="shop-nav-link">Promotion</a>
+            <a href="index.html" class="shop-nav-link">About Us</a>
+            <a href="index.html" class="shop-nav-link">Contact Us</a>
+        </div>
+    </nav>
+
+    <main class="shop-page shop-layout">
+        <div class="container">
+            <!-- Breadcrumbs -->
+            <div class="shop-breadcrumb">
+                <a href="index.html">Home</a>
+                <span>›</span>
+                <span>All Products</span>
+            </div>
+
+            <div class="shop-main">
+                <!-- Filter Sidebar -->
+                <aside class="shop-sidebar">
+                    <div class="filter-header">
+                        <h3>Filter By</h3>
+                        <a href="shop.html" class="filter-clear">Clear All</a>
+                    </div>
+                    <div class="filter-section">
+                        <h4 class="filter-title">Collections</h4>
+                        <label class="filter-option">
+                            <input type="checkbox" data-filter="odour">
+                            <span>Smelly / Odour</span>
+                            <span class="filter-count">(1)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" data-filter="shedding">
+                            <span>Shedding</span>
+                            <span class="filter-count">(1)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" data-filter="sensitive">
+                            <span>Sensitive / Itchy Skin</span>
+                            <span class="filter-count">(1)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" data-filter="dandruff">
+                            <span>Dandruff / Infection</span>
+                            <span class="filter-count">(1)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" data-filter="flea">
+                            <span>Flea & Tick Control</span>
+                            <span class="filter-count">(1)</span>
+                        </label>
+                    </div>
+                </aside>
+
+                <!-- Product Grid -->
+                <div class="shop-content">
+                    <div class="shop-toolbar">
+                        <h2>All Products</h2>
+                        <p class="shop-count">5 items found</p>
+                        <div class="shop-controls">
+                            <select class="shop-sort">
+                                <option>Default</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                            </select>
+                            <select class="shop-per-page">
+                                <option>12 / page</option>
+                                <option>24 / page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="shop-grid shop-grid-3" id="shopGrid">
+                        <div class="shop-product-card promo" data-filter="odour">
+                            <button type="button" class="product-favourite" data-id="odour" data-name="Fresh Scent Shampoo" data-price="19.99" data-image="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" data-url="products/odour-control.html" title="Add to wishlist">♡</button>
+                            <a href="products/odour-control.html" class="shop-product-link">
+                                <span class="product-badge new">NEW</span>
+                                <span class="product-store">Prince Paw Official</span>
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" alt="Fresh Scent Shampoo">
+                                </div>
+                                <h3>Fresh Scent Shampoo</h3>
+                                <p class="product-subtitle">Odour Control</p>
+                                <div class="product-price">
+                                    <span class="price-current">$19.99</span>
+                                    <span class="price-old">$24.99</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="shop-product-card" data-filter="shedding">
+                            <button type="button" class="product-favourite" data-id="shedding" data-name="Anti-Shed Formula" data-price="28.99" data-image="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80" data-url="products/shedding.html" title="Add to wishlist">♡</button>
+                            <a href="products/shedding.html" class="shop-product-link">
+                                <span class="product-store">Prince Paw Official</span>
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80" alt="Anti-Shed Formula">
+                                </div>
+                                <h3>Anti-Shed Formula</h3>
+                                <p class="product-subtitle">Reduce Shedding</p>
+                                <div class="product-price">
+                                    <span class="price-current">$28.99</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="shop-product-card promo" data-filter="sensitive">
+                            <button type="button" class="product-favourite" data-id="sensitive" data-name="Soothing Oatmeal Shampoo" data-price="26.99" data-image="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" data-url="products/sensitive-skin.html" title="Add to wishlist">♡</button>
+                            <a href="products/sensitive-skin.html" class="shop-product-link">
+                                <span class="product-badge bestseller">Best Seller</span>
+                                <span class="product-store">Prince Paw Official</span>
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="Soothing Oatmeal Shampoo">
+                                </div>
+                                <h3>Soothing Oatmeal Shampoo</h3>
+                                <p class="product-subtitle">Sensitive Skin Care</p>
+                                <div class="product-price">
+                                    <span class="price-current">$26.99</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="shop-product-card" data-filter="dandruff">
+                            <button type="button" class="product-favourite" data-id="dandruff" data-name="Medicated Relief Shampoo" data-price="32.99" data-image="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" data-url="products/dandruff-infection.html" title="Add to wishlist">♡</button>
+                            <a href="products/dandruff-infection.html" class="shop-product-link">
+                                <span class="product-store">Prince Paw Official</span>
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="Medicated Relief Shampoo">
+                                </div>
+                                <h3>Medicated Relief Shampoo</h3>
+                                <p class="product-subtitle">Dandruff & Infection</p>
+                                <div class="product-price">
+                                    <span class="price-current">$32.99</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="shop-product-card promo" data-filter="flea">
+                            <button type="button" class="product-favourite" data-id="flea" data-name="Flea & Tick Defense" data-price="25.49" data-image="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" data-url="products/flea-tick.html" title="Add to wishlist">♡</button>
+                            <a href="products/flea-tick.html" class="shop-product-link">
+                                <span class="product-badge new">15% OFF</span>
+                                <span class="product-store">Prince Paw Official</span>
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="Flea & Tick Defense">
+                                </div>
+                                <h3>Flea & Tick Defense</h3>
+                                <p class="product-subtitle">Protection & Prevention</p>
+                                <div class="product-price">
+                                    <span class="price-current">$25.49</span>
+                                    <span class="price-old">$29.99</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Premium pet care for your furry family.</p>
+                <div class="footer-links">
+                    <a href="my-orders.html">My Orders</a>
+                    <a href="wishlist.html">Wishlist</a>
+                    <a href="notifications.html">Notifications</a>
+                    <a href="terms.html">Terms & Conditions</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="delivery.html">Delivery Policy</a>
+                    <a href="return-refund.html">Return & Refund</a>
+                </div>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script>
+        // Favourite buttons
+        document.querySelectorAll('.product-favourite').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var id = this.getAttribute('data-id');
+                var name = this.getAttribute('data-name');
+                var price = this.getAttribute('data-price');
+                var image = this.getAttribute('data-image');
+                var url = this.getAttribute('data-url');
+                if (typeof addToWishlist === 'function') {
+                    addToWishlist({ id: id, name: name, price: price, image: image, url: url });
+                    this.classList.toggle('active');
+                    this.textContent = this.classList.contains('active') ? '♥' : '♡';
+                    this.title = this.classList.contains('active') ? 'Remove from wishlist' : 'Add to wishlist';
+                }
+            });
+            // Restore favourite state on load
+            var id = btn.getAttribute('data-id');
+            if (id && typeof isInWishlist === 'function' && isInWishlist(id)) {
+                btn.classList.add('active');
+                btn.textContent = '♥';
+                btn.title = 'Remove from wishlist';
+            }
+        });
+
+        // Filter by checkboxes
+        document.querySelectorAll('.filter-section input[type="checkbox"]').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                var filters = [];
+                document.querySelectorAll('.filter-section input[type="checkbox"]:checked').forEach(function(c) {
+                    filters.push(c.getAttribute('data-filter'));
+                });
+                document.querySelectorAll('.shop-product-card').forEach(function(card) {
+                    var f = card.getAttribute('data-filter');
+                    card.style.display = (!filters.length || filters.indexOf(f) >= 0) ? '' : 'none';
+                });
+                var visible = document.querySelectorAll('.shop-product-card:not([style*="display: none"])').length;
+                var countEl = document.querySelector('.shop-count');
+                if (countEl) countEl.textContent = visible + ' items found';
+            });
+        });
+    </script>
+</body>
+</html>

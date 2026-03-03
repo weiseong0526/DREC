@@ -10,6 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>🌿 100% Natural Ingredients</span>
+            <span>✓ Vet Recommended</span>
+            <span>🚚 Free Shipping Over $50</span>
+            <span>💚 Cruelty Free</span>
+        </div>
+    </div>
     <header class="header">
         <div class="container">
             <a href="../index.html" class="logo">
@@ -18,7 +26,9 @@
             </a>
             <nav class="nav">
                 <a href="../index.html">Home</a>
-                <a href="../index.html#products">Shop</a>
+                <a href="../shop.html">Shop</a>
+                <a href="../cart.html">🛒 Cart</a>
+                <a href="../login.html">Login</a>
             </nav>
         </div>
     </header>
@@ -28,7 +38,7 @@
             <div class="breadcrumb">
                 <a href="../index.html">Home</a>
                 <span> / </span>
-                <a href="../index.html#products">Shop</a>
+                <a href="../shop.html">Shop</a>
                 <span> / Fresh Scent Shampoo</span>
             </div>
 
@@ -48,14 +58,17 @@
                     </div>
                 </div>
 
-                <div class="product-info">
+                <div class="product-info" data-id="odour-control" data-name="Fresh Scent Shampoo" data-price="19.99" data-image="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80">
                     <span class="category-tag">Smelly / Odour</span>
                     <h1>Fresh Scent Shampoo</h1>
-                    <p class="price">$24.99</p>
+                    <p class="price">$19.99</p>
                     <p class="description">
                         Our Fresh Scent Shampoo is specially formulated to eliminate stubborn odours while leaving your pet's coat soft and fragrant. Made with natural deodorizing ingredients like oatmeal and lavender, it's gentle enough for regular use. Perfect for dogs and cats who love to explore the great outdoors!
                     </p>
-                    <button class="add-to-cart">🛒 Add to Cart</button>
+                    <div class="product-actions">
+                        <button class="add-to-cart">🛒 Add to Cart</button>
+                        <button class="buy-now">⚡ Buy Now</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,10 +76,27 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Prince Paw. Premium pet care for your furry family.</p>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Premium pet care for your furry family.</p>
+                <div class="footer-links">
+                    <a href="../my-orders.html">My Orders</a>
+                    <a href="../wishlist.html">Wishlist</a>
+                    <a href="../notifications.html">Notifications</a>
+                    <a href="../terms.html">Terms & Conditions</a>
+                    <a href="../privacy.html">Privacy Policy</a>
+                    <a href="../delivery.html">Delivery Policy</a>
+                    <a href="../return-refund.html">Return & Refund</a>
+                </div>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. All rights reserved.</p>
         </div>
     </footer>
 
+    <script src="../js/cart.js"></script>
     <script>
         const videoHtml = `<video controls poster="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80"><source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
         document.querySelectorAll('.product-thumbnails img').forEach(thumb => {
@@ -80,6 +110,16 @@
                     mainMedia.innerHTML = `<img src="${this.dataset.src}" alt="Product view">`;
                 }
             });
+        });
+        document.querySelector('.add-to-cart').addEventListener('click', function() {
+            const info = document.querySelector('.product-info');
+            addToCart({ id: info.dataset.id, name: info.dataset.name, price: parseFloat(info.dataset.price), image: info.dataset.image });
+            window.location.href = '../cart.html';
+        });
+        document.querySelector('.buy-now').addEventListener('click', function() {
+            const info = document.querySelector('.product-info');
+            setBuyNow({ id: info.dataset.id, name: info.dataset.name, price: parseFloat(info.dataset.price), image: info.dataset.image });
+            window.location.href = '../checkout.html';
         });
     </script>
 </body>

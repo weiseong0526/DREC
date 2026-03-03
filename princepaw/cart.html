@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Prince Paw</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>🌿 100% Natural Ingredients</span>
+            <span>✓ Vet Recommended</span>
+            <span>🚚 Free Shipping Over $50</span>
+            <span>💚 Cruelty Free</span>
+        </div>
+    </div>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="cart.html">🛒 Cart</a>
+                <a href="login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="cart-page">
+        <div class="container">
+            <h1>Your Cart</h1>
+            <div id="cartContent">
+                <!-- Filled by JavaScript -->
+            </div>
+            <div id="cartEmpty" class="cart-empty" style="display: none;">
+                <p>Your cart is empty.</p>
+                <a href="shop.html" class="btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Premium pet care for your furry family.</p>
+                <div class="footer-links">
+                    <a href="my-orders.html">My Orders</a>
+                    <a href="wishlist.html">Wishlist</a>
+                    <a href="notifications.html">Notifications</a>
+                    <a href="terms.html">Terms & Conditions</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="delivery.html">Delivery Policy</a>
+                    <a href="return-refund.html">Return & Refund</a>
+                </div>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/cart.js"></script>
+    <script>
+        function renderCart() {
+            const cart = getCart();
+            const contentEl = document.getElementById('cartContent');
+            const emptyEl = document.getElementById('cartEmpty');
+
+            if (cart.length === 0) {
+                contentEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+                emptyEl.innerHTML = `
+                    <p>Your cart is empty.</p>
+                    <a href="shop.html" class="btn-primary">Continue Shopping</a>
+                `;
+                return;
+            }
+
+            emptyEl.style.display = 'none';
+            contentEl.style.display = 'block';
+
+            let total = 0;
+            let html = '<div class="cart-items">';
+            cart.forEach(item => {
+                const subtotal = item.price * (item.qty || 1);
+                total += subtotal;
+                html += `
+                    <div class="cart-item" data-id="${item.id}">
+                        <div class="cart-item-img">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="cart-item-info">
+                            <h3>${item.name}</h3>
+                            <p class="cart-item-price">$${item.price.toFixed(2)}</p>
+                            <div class="cart-item-qty">
+                                <label>Qty:</label>
+                                <input type="number" value="${item.qty || 1}" min="1" onchange="updateQty('${item.id}', this.value)">
+                            </div>
+                            <p class="cart-item-subtotal">Subtotal: $${subtotal.toFixed(2)}</p>
+                            <button class="cart-remove" onclick="removeItem('${item.id}')">Remove</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            html += `
+                <div class="cart-summary">
+                    <p class="cart-total">Total: $${total.toFixed(2)}</p>
+                    <a href="checkout.html" class="btn-primary">Proceed to Checkout</a>
+                </div>
+            `;
+            contentEl.innerHTML = html;
+        }
+
+        function updateQty(id, qty) {
+            updateCartQty(id, qty);
+            renderCart();
+        }
+
+        function removeItem(id) {
+            removeFromCart(id);
+            renderCart();
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>
