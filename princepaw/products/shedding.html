@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Shed Formula - Shedding | Prince Paw</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw</span>
+            </a>
+            <nav class="nav">
+                <a href="../index.html">Home</a>
+                <a href="../index.html#products">Shop</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="product-page">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Home</a>
+                <span> / </span>
+                <a href="../index.html#products">Shop</a>
+                <span> / Anti-Shed Formula</span>
+            </div>
+
+            <div class="product-layout">
+                <div class="product-gallery">
+                    <div class="main-media" id="mainMedia">
+                        <video controls poster="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=800&q=80">
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="product-thumbnails">
+                        <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=200&q=80" alt="Watch video" class="active" data-type="video" title="Watch product video">
+                        <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&q=80" alt="Product view 2" data-type="img" data-src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80">
+                        <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=200&q=80" alt="Product view 3" data-type="img" data-src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80">
+                        <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=200&q=80" alt="Product view 4" data-type="img" data-src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&q=80">
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <span class="category-tag">Shedding</span>
+                    <h1>Anti-Shed Formula</h1>
+                    <p class="price">$28.99</p>
+                    <p class="description">
+                        Reduce loose fur and keep your home cleaner with our Anti-Shed Formula. Enriched with omega fatty acids and natural botanicals, this shampoo strengthens the coat from root to tip while minimizing excessive shedding. Ideal for double-coated breeds and cats with thick fur. Gentle formula safe for weekly use.
+                    </p>
+                    <button class="add-to-cart">🛒 Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Prince Paw. Premium pet care for your furry family.</p>
+        </div>
+    </footer>
+
+    <script>
+        const videoHtml = `<video controls poster="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=800&q=80"><source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
+        document.querySelectorAll('.product-thumbnails img').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.product-thumbnails img').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const mainMedia = document.getElementById('mainMedia');
+                if (this.dataset.type === 'video') {
+                    mainMedia.innerHTML = videoHtml;
+                } else {
+                    mainMedia.innerHTML = `<img src="${this.dataset.src}" alt="Product view">`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
