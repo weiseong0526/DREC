@@ -22,7 +22,7 @@
     <!-- Shop Header with Search -->
     <header class="shop-header">
         <div class="container">
-            <a href="index.html" class="logo logo-dark">
+            <a href="index.html" class="logo">
                 <span class="logo-icon">🐾</span>
                 <span class="logo-text">Prince Paw</span>
             </a>
@@ -113,7 +113,7 @@
                     </div>
 
                     <div class="shop-grid shop-grid-3" id="shopGrid">
-                        <div class="shop-product-card promo" data-filter="odour">
+                        <div class="shop-product-card promo has-sets" data-filter="odour">
                             <button type="button" class="product-favourite" data-id="odour" data-name="Fresh Scent Shampoo" data-price="19.99" data-image="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" data-url="products/odour-control.html" title="Add to wishlist">♡</button>
                             <a href="products/odour-control.html" class="shop-product-link">
                                 <span class="product-badge new">NEW</span>
@@ -128,6 +128,13 @@
                                     <span class="price-old">$24.99</span>
                                 </div>
                             </a>
+                            <div class="product-options">
+                                <span class="option-label">Set</span>
+                                <div class="option-buttons">
+                                    <button type="button" class="option-btn active" data-set="a" data-price="19.99" data-id="odour-seta" data-img="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80">SET A</button>
+                                    <button type="button" class="option-btn" data-set="b" data-price="34.99" data-id="odour-setb" data-img="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80">SET B</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="shop-product-card" data-filter="shedding">
@@ -145,7 +152,7 @@
                             </a>
                         </div>
 
-                        <div class="shop-product-card promo" data-filter="sensitive">
+                        <div class="shop-product-card promo has-sets" data-filter="sensitive">
                             <button type="button" class="product-favourite" data-id="sensitive" data-name="Soothing Oatmeal Shampoo" data-price="26.99" data-image="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" data-url="products/sensitive-skin.html" title="Add to wishlist">♡</button>
                             <a href="products/sensitive-skin.html" class="shop-product-link">
                                 <span class="product-badge bestseller">Best Seller</span>
@@ -159,6 +166,13 @@
                                     <span class="price-current">$26.99</span>
                                 </div>
                             </a>
+                            <div class="product-options">
+                                <span class="option-label">Set</span>
+                                <div class="option-buttons">
+                                    <button type="button" class="option-btn active" data-set="a" data-price="26.99" data-id="sensitive-seta" data-img="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80">SET A</button>
+                                    <button type="button" class="option-btn" data-set="b" data-price="48.99" data-id="sensitive-setb" data-img="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80">SET B</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="shop-product-card" data-filter="dandruff">
@@ -176,7 +190,7 @@
                             </a>
                         </div>
 
-                        <div class="shop-product-card promo" data-filter="flea">
+                        <div class="shop-product-card promo has-sets" data-filter="flea">
                             <button type="button" class="product-favourite" data-id="flea" data-name="Flea & Tick Defense" data-price="25.49" data-image="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" data-url="products/flea-tick.html" title="Add to wishlist">♡</button>
                             <a href="products/flea-tick.html" class="shop-product-link">
                                 <span class="product-badge new">15% OFF</span>
@@ -191,6 +205,13 @@
                                     <span class="price-old">$29.99</span>
                                 </div>
                             </a>
+                            <div class="product-options">
+                                <span class="option-label">Set</span>
+                                <div class="option-buttons">
+                                    <button type="button" class="option-btn active" data-set="a" data-price="25.49" data-id="flea-seta" data-img="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80">SET A</button>
+                                    <button type="button" class="option-btn" data-set="b" data-price="45.99" data-id="flea-setb" data-img="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80">SET B</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -246,6 +267,30 @@
                 btn.textContent = '♥';
                 btn.title = 'Remove from wishlist';
             }
+        });
+
+        // SET A / SET B option buttons
+        document.querySelectorAll('.product-options .option-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var card = this.closest('.shop-product-card');
+                card.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var price = this.getAttribute('data-price');
+                var imgUrl = this.getAttribute('data-img');
+                var id = this.getAttribute('data-id');
+                var link = card.querySelector('.shop-product-link');
+                var priceEl = card.querySelector('.price-current');
+                var imgEl = card.querySelector('.product-image img');
+                var favBtn = card.querySelector('.product-favourite');
+                if (priceEl) priceEl.textContent = '$' + price;
+                if (imgEl && imgUrl) imgEl.src = imgUrl;
+                if (favBtn && imgUrl) favBtn.setAttribute('data-image', imgUrl);
+                if (favBtn && id) favBtn.setAttribute('data-id', id);
+                var baseHref = link.getAttribute('href').split('?')[0];
+                link.setAttribute('href', baseHref + '?set=' + this.getAttribute('data-set'));
+            });
         });
 
         // Filter by checkboxes

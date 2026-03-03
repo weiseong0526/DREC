@@ -61,10 +61,18 @@
                 <div class="product-info" data-id="odour-control" data-name="Fresh Scent Shampoo" data-price="19.99" data-image="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80">
                     <span class="category-tag">Smelly / Odour</span>
                     <h1>Fresh Scent Shampoo</h1>
-                    <p class="price">$19.99</p>
+                    <p class="price" id="productPrice">$19.99</p>
+                    <div class="product-set-options">
+                        <span class="option-label">Set</span>
+                        <div class="option-buttons">
+                            <button type="button" class="option-btn active" data-set="a" data-price="19.99" data-id="odour-seta" data-img="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80">SET A</button>
+                            <button type="button" class="option-btn" data-set="b" data-price="34.99" data-id="odour-setb" data-img="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80">SET B</button>
+                        </div>
+                    </div>
                     <p class="description">
                         Our Fresh Scent Shampoo is specially formulated to eliminate stubborn odours while leaving your pet's coat soft and fragrant. Made with natural deodorizing ingredients like oatmeal and lavender, it's gentle enough for regular use. Perfect for dogs and cats who love to explore the great outdoors!
                     </p>
+                    <p class="product-info-link"><a href="odour-control-info.html">View ingredients & product info →</a></p>
                     <div class="product-actions">
                         <button class="add-to-cart">🛒 Add to Cart</button>
                         <button class="buy-now">⚡ Buy Now</button>
@@ -109,6 +117,34 @@
                 } else {
                     mainMedia.innerHTML = `<img src="${this.dataset.src}" alt="Product view">`;
                 }
+            });
+        });
+        var params = new URLSearchParams(window.location.search);
+        var setParam = params.get('set') || 'a';
+        var activeBtn = document.querySelector('.product-set-options .option-btn[data-set="' + setParam + '"]') || document.querySelector('.product-set-options .option-btn');
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            document.querySelectorAll('.product-set-options .option-btn').forEach(function(b) { if (b !== activeBtn) b.classList.remove('active'); });
+            document.getElementById('productPrice').textContent = '$' + activeBtn.dataset.price;
+            document.querySelector('.product-info').dataset.price = activeBtn.dataset.price;
+            document.querySelector('.product-info').dataset.id = activeBtn.dataset.id;
+            var mainMedia = document.getElementById('mainMedia');
+            if (mainMedia && setParam === 'b' && activeBtn.dataset.img) mainMedia.innerHTML = '<img src="' + activeBtn.dataset.img.replace('w=400','w=800') + '" alt="Product">';
+        }
+        document.querySelectorAll('.product-set-options .option-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.product-set-options .option-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                document.getElementById('productPrice').textContent = '$' + this.dataset.price;
+                document.querySelector('.product-info').dataset.price = this.dataset.price;
+                document.querySelector('.product-info').dataset.id = this.dataset.id;
+                var mainMedia = document.getElementById('mainMedia');
+                if (mainMedia) {
+                    if (this.dataset.set === 'a') mainMedia.innerHTML = videoHtml;
+                    else if (this.dataset.img) mainMedia.innerHTML = '<img src="' + this.dataset.img.replace('w=400','w=800') + '" alt="Product">';
+                }
+                var info = document.querySelector('.product-info');
+                if (this.dataset.img) info.dataset.image = this.dataset.img;
             });
         });
         document.querySelector('.add-to-cart').addEventListener('click', function() {
