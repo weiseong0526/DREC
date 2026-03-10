@@ -64,6 +64,7 @@
     </footer>
 
     <script src="js/cart.js"></script>
+    <script src="js/analytics.js"></script>
     <script>
         function renderCheckout() {
             const buyNow = getBuyNow();
@@ -109,7 +110,7 @@
                     <div class="pending-status">
                         <span class="pending-badge">⏳ Pending</span>
                         <h1>Order Confirmation</h1>
-                        <p>Thank you for your order! Your order is being processed.</p>
+                        <p>Review your order and confirm your details.</p>
                     </div>
                     <div class="pending-items">
                         <h2>Order Summary</h2>
@@ -119,16 +120,66 @@
                         </div>
                     </div>
                     <div class="pending-note">
-                        <p>You will receive an email confirmation shortly. We'll notify you when your order ships.</p>
-                        <a href="shop.html" class="btn-primary">Continue Shopping</a>
+                        <p>Please enter your contact details so we can follow up on your order.</p>
+                        <div class="account-form" style="max-width:420px;margin:0 auto 1rem;">
+                            <label for="custName">Name</label>
+                            <input type="text" id="custName" placeholder="Your name">
+                            <label for="custEmail">Email</label>
+                            <input type="email" id="custEmail" placeholder="you@example.com">
+                            <label for="custPhone">Phone</label>
+                            <input type="tel" id="custPhone" placeholder="+60...">
+                        </div>
+                        <button id="confirmOrder" class="btn-primary">Confirm Order</button>
+                        <p style="font-size:0.85rem;color:#888;margin-top:0.75rem;">This is a demo checkout – payment is not processed.</p>
                     </div>
                 </div>
             `;
 
-            clearBuyNow();
+            const confirmBtn = document.getElementById('confirmOrder');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function () {
+                    const name = document.getElementById('custName').value || 'Guest';
+                    const email = document.getElementById('custEmail').value || '';
+                    const phone = document.getElementById('custPhone').value || '';
+                    const order = {
+                        id: 'ORD-' + Date.now(),
+                        dateISO: new Date().toISOString(),
+                        items: items.map(it => ({
+                            id: it.id,
+                            name: it.name,
+                            qty: it.qty || 1,
+                            price: it.price
+                        })),
+                        total: total,
+                        customer: { name, email, phone }
+                    };
+                    if (window.PrincePawAnalytics) {
+                        PrincePawAnalytics.recordOrder(order);
+                    }
+                    // Clear cart / buynow and show thank you
+                    clearBuyNow();
+                    localStorage.removeItem('princepaw_cart');
+                    document.getElementById('checkoutContent').innerHTML = `
+                        <div class="pending-card">
+                            <div class="pending-status">
+                                <span class="pending-badge">✅ Confirmed</span>
+                                <h1>Thank You, ${name}!</h1>
+                                <p>Your order has been recorded in the demo admin dashboard.</p>
+                            </div>
+                            <div class="pending-note">
+                                <p>You can review this order in the Admin &gt; Analytics / Orders section.</p>
+                                <a href="shop.html" class="btn-primary">Back to Shop</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
         }
 
         renderCheckout();
+        if (window.PrincePawAnalytics) {
+            PrincePawAnalytics.trackPageView('page:checkout');
+        }
     </script>
 </body>
 </html>

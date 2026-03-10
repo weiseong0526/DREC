@@ -242,6 +242,8 @@
     </footer>
     <script src="js/cart.js"></script>
     <script src="js/wishlist.js"></script>
+    <script src="js/admin-config.js"></script>
+    <script src="js/analytics.js"></script>
     <script>
         // Favourite buttons
         document.querySelectorAll('.product-favourite').forEach(function(btn) {
@@ -309,6 +311,10 @@
                 if (countEl) countEl.textContent = visible + ' items found';
             });
         });
+
+        if (window.PrincePawAnalytics) {
+            PrincePawAnalytics.trackPageView('page:shop');
+        }
     </script>
 </body>
 </html>

@@ -105,6 +105,7 @@
     </footer>
 
     <script src="../js/cart.js"></script>
+    <script src="../js/analytics.js"></script>
     <script>
         const videoHtml = `<video controls poster="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80"><source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
         document.querySelectorAll('.product-thumbnails img').forEach(thumb => {
@@ -157,6 +158,10 @@
             setBuyNow({ id: info.dataset.id, name: info.dataset.name, price: parseFloat(info.dataset.price), image: info.dataset.image });
             window.location.href = '../checkout.html';
         });
+
+        if (window.PrincePawAnalytics) {
+            PrincePawAnalytics.trackProductView('sensitive-skin');
+        }
     </script>
 </body>
 </html>

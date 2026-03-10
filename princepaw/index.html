@@ -37,7 +37,7 @@
     <main>
         <!-- Main Hero - Photo & Title Only -->
         <section class="main-hero">
-            <img src="images/hero-main.png" alt="Premium Care for Your Furry Royalty">
+            <img src="https://drec.pages.dev/princepaw/images/1.png" alt="Premium Care for Your Furry Royalty">
             <div class="main-hero-overlay"></div>
             <div class="main-hero-content">
                 <h1>Premium Care for Your Furry Royalty</h1>
@@ -54,24 +54,24 @@
                 </div>
                 <div class="filter-buttons">
                     <a href="products/odour-control.html" class="filter-btn">
-                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80" alt="Smelly / Odour"></div>
-                        <span class="filter-label">Smelly / Odour</span>
+                        <div class="filter-img"><img src="https://drec.pages.dev/princepaw/images/smelly.png" alt="Smelly"></div>
+                        <span class="filter-label">Smelly</span>
                     </a>
                     <a href="products/shedding.html" class="filter-btn">
-                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&q=80" alt="Shedding"></div>
-                        <span class="filter-label">Shedding</span>
+                        <div class="filter-img"><img src="https://drec.pages.dev/princepaw/images/fur.png" alt="Tangled Fur"></div>
+                        <span class="filter-label">Tangled Fur</span>
                     </a>
                     <a href="products/sensitive-skin.html" class="filter-btn">
-                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="Sensitive Skin"></div>
-                        <span class="filter-label">Sensitive / Itchy Skin</span>
+                        <div class="filter-img"><img src="https://drec.pages.dev/princepaw/images/sensitive.png" alt="Sensitive Skin & Itchy"></div>
+                        <span class="filter-label">Sensitive Skin & Itchy</span>
                     </a>
                     <a href="products/dandruff-infection.html" class="filter-btn">
-                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80" alt="Dandruff"></div>
-                        <span class="filter-label">Dandruff / Infection</span>
+                        <div class="filter-img"><img src="https://drec.pages.dev/princepaw/images/redspot.png" alt="Red Spot"></div>
+                        <span class="filter-label">Red Spot</span>
                     </a>
                     <a href="products/flea-tick.html" class="filter-btn">
-                        <div class="filter-img"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="Flea & Tick"></div>
-                        <span class="filter-label">Flea & Tick Control</span>
+                        <div class="filter-img"><img src="https://drec.pages.dev/princepaw/images/prevention.png" alt="Prevention"></div>
+                        <span class="filter-label">Prevention</span>
                     </a>
                 </div>
             </div>
@@ -430,6 +430,13 @@
             showSolutionSlide(solutionIndex + 1);
         });
         solutionDots.forEach((d, i) => d.addEventListener('click', () => showSolutionSlide(i)));
+    </script>
+    <script src="js/admin-config.js"></script>
+    <script src="js/analytics.js"></script>
+    <script>
+        if (window.PrincePawAnalytics) {
+            PrincePawAnalytics.trackPageView('page:index');
+        }
     </script>
 </body>
 </html>

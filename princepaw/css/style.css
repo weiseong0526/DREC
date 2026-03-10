@@ -2100,6 +2100,128 @@ body {
     text-decoration: underline;
 }
 
+/* Admin dashboard cards & charts */
+.admin-dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.admin-card {
+    display: block;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: white;
+    text-decoration: none;
+    color: var(--color-main);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(149, 113, 66, 0.08);
+    transition: all var(--transition);
+}
+
+.admin-card h2 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.admin-card p {
+    font-size: 0.9rem;
+    color: var(--color-copper);
+}
+
+.admin-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(149, 113, 66, 0.3);
+}
+
+.admin-chart {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    min-height: 160px;
+    border-radius: 12px;
+    padding: 1rem;
+    background: var(--color-cream);
+    overflow-x: auto;
+}
+
+.admin-chart-bar {
+    flex: 0 0 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.admin-chart-bar-fill {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, var(--color-copper) 0%, var(--color-gold) 100%);
+    transition: height 0.3s ease;
+}
+
+.admin-chart-label {
+    white-space: nowrap;
+}
+
+.admin-chart-value {
+    color: var(--color-copper);
+}
+
+.admin-products-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.admin-products-list {
+    background: var(--color-cream);
+    border-radius: 16px;
+    padding: 1rem;
+    max-height: 460px;
+    overflow-y: auto;
+}
+
+.admin-products-detail {
+    min-height: 260px;
+}
+
+.admin-product-item {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+}
+
+.admin-product-item.active {
+    border-color: var(--color-copper);
+    background: #fff7ea;
+}
+
+.admin-product-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 800px) {
+    .admin-products-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ========== PRODUCT PAGE STYLES ========== */
 .product-page {
     padding: 2rem 0 4rem;

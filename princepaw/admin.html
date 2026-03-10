@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prince Paw Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>🐾 Prince Paw Admin Panel</span>
+            <span>Content editor (local to this browser)</span>
+        </div>
+    </div>
+    <header class="header">
+        <div class="container">
+            <a href="admin.html" class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw Admin</span>
+            </a>
+            <nav class="nav">
+                <a href="admin.html">Dashboard</a>
+                <a href="admin.html#products">Products</a>
+                <a href="admin-analytics.html">Analytics &amp; Sales</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="policy-page">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <p class="policy-updated">
+                Manage products, view sales analytics and track customer activity. All data is stored in this browser for demo purposes.
+            </p>
+
+            <div class="admin-dashboard-cards">
+                <a href="#products" class="admin-card">
+                    <h2>Add &amp; Edit Products</h2>
+                    <p>Update product names, prices, images and sets.</p>
+                </a>
+                <a href="admin-analytics.html#orders" class="admin-card">
+                    <h2>View Orders</h2>
+                    <p>See all demo orders and what customers purchased.</p>
+                </a>
+                <a href="admin-analytics.html#productViews" class="admin-card">
+                    <h2>Product Views</h2>
+                    <p>Track which products customers like to view.</p>
+                </a>
+                <a href="admin-analytics.html#overview" class="admin-card">
+                    <h2>Sales &amp; Charts</h2>
+                    <p>View total, weekly and monthly sales with charts.</p>
+                </a>
+                <a href="admin-analytics.html#customers" class="admin-card">
+                    <h2>Customers</h2>
+                    <p>See customer contact details and total spend.</p>
+                </a>
+            </div>
+
+            <div class="product-info-content" id="products">
+                <h2>Products</h2>
+                <p>Select a product to view or edit. You can change prices, details, promotion text and photos for each product individually.</p>
+
+                <div class="admin-products-layout" id="adminProducts">
+                    <div class="admin-products-list" id="adminProductList">
+                        <!-- Filled by JS -->
+                    </div>
+                    <div class="admin-products-detail" id="adminProductDetail">
+                        <p style="font-size:0.9rem;color:#a27a4a;">Select a product on the left to start editing.</p>
+                    </div>
+                </div>
+
+                <div class="section-cta" style="display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem;">
+                    <button id="addProduct" class="btn-primary" style="background:#555;border-color:#555;">+ Add Product</button>
+                    <button id="saveAdmin" class="btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Admin tools for managing Prince Paw content.</p>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. Admin panel.</p>
+        </div>
+    </footer>
+
+    <script src="js/admin-config.js"></script>
+</body>
+</html>
+

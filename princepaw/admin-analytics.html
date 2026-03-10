@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prince Paw Admin - Analytics & Orders</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>📊 Prince Paw Admin Analytics</span>
+            <span>Stats stored in this browser only</span>
+        </div>
+    </div>
+    <header class="header">
+        <div class="container">
+            <a href="admin.html" class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw Admin</span>
+            </a>
+            <nav class="nav">
+                <a href="admin.html">Dashboard</a>
+                <a href="admin.html#products">Products</a>
+                <a href="admin-analytics.html">Analytics &amp; Sales</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="policy-page">
+        <div class="container">
+            <h1>Analytics & Orders</h1>
+            <p class="policy-updated">
+                All numbers below are based on activity in this browser (localStorage).
+            </p>
+
+            <div class="product-info-content" id="analyticsRoot">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Admin analytics for Prince Paw.</p>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. Admin analytics.</p>
+        </div>
+    </footer>
+
+    <script src="js/analytics.js"></script>
+    <script>
+        const root = document.getElementById('analyticsRoot');
+        const data = window.PrincePawAnalytics ? PrincePawAnalytics.getSummary() : null;
+        if (!data) {
+            root.innerHTML = '<p>Analytics not available.</p>';
+        } else {
+            const views = data.views || { siteTotal: 0, pages: {}, products: {} };
+            const orders = data.orders || [];
+            const customers = data.customers || {};
+
+            // Sales aggregation
+            const now = new Date();
+            const weeklyCutoff = new Date(now.getTime());
+            weeklyCutoff.setDate(now.getDate() - 7);
+            const monthlyCutoff = new Date(now.getTime());
+            monthlyCutoff.setDate(now.getDate() - 30);
+
+            let weeklyTotal = 0;
+            let monthlyTotal = 0;
+            let overallTotal = 0;
+            const monthlyBuckets = {}; // key: YYYY-MM
+
+            orders.forEach(o => {
+                const d = o.dateISO ? new Date(o.dateISO) : new Date();
+                const total = o.total || 0;
+                overallTotal += total;
+                if (d >= weeklyCutoff) weeklyTotal += total;
+                if (d >= monthlyCutoff) monthlyTotal += total;
+                const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                monthlyBuckets[key] = (monthlyBuckets[key] || 0) + total;
+            });
+
+            const monthKeys = Object.keys(monthlyBuckets).sort();
+            const maxMonthTotal = monthKeys.reduce((max, k) => Math.max(max, monthlyBuckets[k]), 0);
+            const chartBars = monthKeys.length ? monthKeys.map(k => {
+                const val = monthlyBuckets[k];
+                const h = maxMonthTotal ? Math.round((val / maxMonthTotal) * 100) : 0;
+                return `
+                    <div class="admin-chart-bar">
+                        <div class="admin-chart-bar-fill" style="height:${h}%;"></div>
+                        <span class="admin-chart-label">${k}</span>
+                        <span class="admin-chart-value">$${val.toFixed(2)}</span>
+                    </div>
+                `;
+            }).join('') : '<p style="font-size:0.9rem;color:#777;">No sales recorded yet.</p>';
+
+            const pageRows = Object.keys(views.pages).map(key => {
+                return `<tr><td>${key}</td><td style="text-align:right;">${views.pages[key]}</td></tr>`;
+            }).join('') || '<tr><td colspan="2">No page views recorded yet.</td></tr>';
+
+            const productRows = Object.keys(views.products).map(pid => {
+                return `<tr><td>${pid}</td><td style="text-align:right;">${views.products[pid]}</td></tr>`;
+            }).join('') || '<tr><td colspan="2">No product views recorded yet.</td></tr>';
+
+            const orderRows = orders.map(o => {
+                const date = new Date(o.dateISO).toLocaleString();
+                const cust = o.customer || {};
+                return `
+                    <tr>
+                        <td>${o.id}</td>
+                        <td>${date}</td>
+                        <td>${cust.name || 'Guest'}</td>
+                        <td>${cust.email || ''}</td>
+                        <td style="text-align:right;">$${(o.total || 0).toFixed(2)}</td>
+                        <td>${(o.items || []).map(i => i.name + ' × ' + i.qty).join('<br>')}</td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="6">No orders recorded yet.</td></tr>';
+
+            const customerRows = Object.keys(customers).map(key => {
+                const c = customers[key];
+                return `
+                    <tr>
+                        <td>${c.name || ''}</td>
+                        <td>${c.email}</td>
+                        <td>${c.phone || ''}</td>
+                        <td style="text-align:right;">${c.orderCount}</td>
+                        <td style="text-align:right;">$${(c.totalSpent || 0).toFixed(2)}</td>
+                        <td>${c.lastOrderDate ? new Date(c.lastOrderDate).toLocaleString() : ''}</td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="6">No customer information recorded yet.</td></tr>';
+
+            root.innerHTML = `
+                <section class="info-section" id="overview">
+                    <h2>Overview</h2>
+                    <p><strong>Total page views (this browser):</strong> ${views.siteTotal}</p>
+                    <p><strong>Total orders (this browser):</strong> ${orders.length}</p>
+                    <p><strong>Total sales (all time):</strong> $${overallTotal.toFixed(2)}</p>
+                    <p><strong>Last 30 days sales:</strong> $${monthlyTotal.toFixed(2)}</p>
+                    <p><strong>Last 7 days sales:</strong> $${weeklyTotal.toFixed(2)}</p>
+                    <div class="admin-chart" id="salesChart">
+                        ${chartBars}
+                    </div>
+                </section>
+
+                <section class="info-section" id="pageViews">
+                    <h2>Page Views</h2>
+                    <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Page</th>
+                                <th style="text-align:right;border-bottom:1px solid #eee;">Views</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pageRows}
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="info-section" id="productViews">
+                    <h2>Product Views</h2>
+                    <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Product ID</th>
+                                <th style="text-align:right;border-bottom:1px solid #eee;">Views</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${productRows}
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="info-section" id="orders">
+                    <h2>Orders</h2>
+                    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Order ID</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Date</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Customer</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Email</th>
+                                <th style="text-align:right;border-bottom:1px solid #eee;">Total</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Items</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${orderRows}
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="info-section" id="customers">
+                    <h2>Customers</h2>
+                    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Name</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Email</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Phone</th>
+                                <th style="text-align:right;border-bottom:1px solid #eee;">Orders</th>
+                                <th style="text-align:right;border-bottom:1px solid #eee;">Total Spent</th>
+                                <th style="text-align:left;border-bottom:1px solid #eee;">Last Order</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${customerRows}
+                        </tbody>
+                    </table>
+                </section>
+            `;
+        }
+    </script>
+</body>
+</html>
+
