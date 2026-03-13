@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shampoo - Gentle Pet Shampoo | Prince Paw</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trust-bar">
+        <div class="container">
+            <span>🌿 100% Natural Ingredients</span>
+            <span>✓ Vet Recommended</span>
+            <span>🚚 Free Shipping Over $50</span>
+            <span>💚 Cruelty Free</span>
+        </div>
+    </div>
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">Prince Paw</span>
+            </a>
+            <nav class="nav">
+                <a href="../index.html">Home</a>
+                <a href="../shop.html">Shop</a>
+                <a href="../cart.html">🛒 Cart</a>
+                <a href="../login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="product-page">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Home</a>
+                <span> / </span>
+                <a href="../shop.html">Shop</a>
+                <span> / Shampoo</span>
+            </div>
+
+            <div class="product-layout">
+                <div class="product-gallery">
+                    <div class="main-media" id="mainMedia">
+                        <img src="https://drec.pages.dev/princepaw/images/shampoo1.png" alt="Shampoo">
+                    </div>
+                    <div class="product-thumbnails">
+                        <img src="https://drec.pages.dev/princepaw/images/shampoo1.png" alt="Shampoo view 1" class="active" data-type="img" data-src="https://drec.pages.dev/princepaw/images/shampoo1.png">
+                        <img src="https://drec.pages.dev/princepaw/images/shampoo2.png" alt="Shampoo view 2" data-type="img" data-src="https://drec.pages.dev/princepaw/images/shampoo2.png">
+                        <img src="https://drec.pages.dev/princepaw/images/shampoo3.png" alt="Shampoo view 3" data-type="img" data-src="https://drec.pages.dev/princepaw/images/shampoo3.png">
+                    </div>
+                </div>
+
+                <div class="product-info" data-id="shampoo" data-name="Shampoo" data-price="18.99" data-image="https://drec.pages.dev/princepaw/images/shampoo1.png">
+                    <span class="category-tag">Shampoo</span>
+                    <h1>Shampoo</h1>
+                    <p class="price">$18.99</p>
+                    <p class="description">
+                        Gentle pet shampoo formulated with natural ingredients to cleanse and nourish your pet's coat. pH-balanced for sensitive skin, leaving fur soft, shiny, and fresh. Suitable for dogs and cats. Free from harsh chemicals and artificial fragrances.
+                    </p>
+                    <div class="product-actions">
+                        <button class="add-to-cart">🛒 Add to Cart</button>
+                        <button class="buy-now">⚡ Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Prince Paw</span>
+                </div>
+                <p class="footer-tagline">Premium pet care for your furry family.</p>
+                <div class="footer-links">
+                    <a href="../my-orders.html">My Orders</a>
+                    <a href="../wishlist.html">Wishlist</a>
+                    <a href="../notifications.html">Notifications</a>
+                    <a href="../terms.html">Terms & Conditions</a>
+                    <a href="../privacy.html">Privacy Policy</a>
+                    <a href="../delivery.html">Delivery Policy</a>
+                    <a href="../return-refund.html">Return & Refund</a>
+                </div>
+            </div>
+            <p class="footer-copy">&copy; 2025 Prince Paw. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../js/cart.js"></script>
+    <script>
+        document.querySelectorAll('.product-thumbnails img').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.product-thumbnails img').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const mainMedia = document.getElementById('mainMedia');
+                mainMedia.innerHTML = `<img src="${this.dataset.src}" alt="Shampoo">`;
+            });
+        });
+        document.querySelector('.add-to-cart').addEventListener('click', function() {
+            const info = document.querySelector('.product-info');
+            addToCart({ id: info.dataset.id, name: info.dataset.name, price: parseFloat(info.dataset.price), image: info.dataset.image });
+            window.location.href = '../cart.html';
+        });
+        document.querySelector('.buy-now').addEventListener('click', function() {
+            const info = document.querySelector('.product-info');
+            setBuyNow({ id: info.dataset.id, name: info.dataset.name, price: parseFloat(info.dataset.price), image: info.dataset.image });
+            window.location.href = '../checkout.html';
+        });
+    </script>
+</body>
+</html>
