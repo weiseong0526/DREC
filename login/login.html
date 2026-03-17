@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete 3D Pet Garden</title>
+    <style>
+        :root {
+            --corgi: #f3a15c;
+            --corgi-light: #f8c08a;
+            --corgi-dark: #d9783c;
+            --cat: #9da8c4;
+            --cat-light: #c7d0ea;
+            --cat-dark: #7a82a0;
+            --sky: #9ddcff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            overflow: hidden; cursor: none;
+            background: var(--sky);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* --- GARDEN --- */
+        .garden {
+            position: absolute; bottom: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, #55efc4, #2ecc71);
+            z-index: 0;
+        }
+        .fence {
+            position: absolute; bottom: 50%; width: 100%; height: 40px;
+            background: #a67c52; border-top: 5px solid #5d4037; z-index: 1;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0,0,0,0.1) 30px, rgba(0,0,0,0.1) 35px);
+        }
+
+        /* --- THE RAT --- */
+        #rat {
+            position: fixed; width: 22px; height: 14px; background: #636e72;
+            border-radius: 50% 50% 40% 40%; z-index: 1000; pointer-events: none;
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4);
+        }
+
+        /* --- LOGIN CARD --- */
+        .login-card {
+            position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1); width: 300px; text-align: center; z-index: 100;
+        }
+
+        /* UI HEADS (WITH EARS) */
+        .heads-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        
+        .head-ui { width: 75px; height: 70px; border-radius: 25px; position: relative; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.1); }
+        .head-ui.dog { background: var(--corgi); }
+        .head-ui.cat { background: var(--cat); }
+
+        /* Ears for UI Dog */
+        .head-ui.dog::before, .head-ui.dog::after { content: ''; position: absolute; top: -10px; width: 22px; height: 28px; background: var(--corgi); border-radius: 10px 10px 5px 5px; }
+        .head-ui.dog::before { left: 4px; } .head-ui.dog::after { right: 4px; }
+
+        /* Ears for UI Cat */
+        .head-ui.cat::before, .head-ui.cat::after { content: ''; position: absolute; top: -15px; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 25px solid var(--cat); }
+        .head-ui.cat::before { left: 4px; } .head-ui.cat::after { right: 4px; }
+
+        .ui-eyes { display: flex; justify-content: center; gap: 8px; padding-top: 25px; }
+        .ui-eye { width: 18px; height: 18px; background: white; border-radius: 50%; position: relative; overflow: hidden; }
+        .ui-pupil { width: 8px; height: 8px; background: #2d3436; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .ui-nose { width: 8px; height: 4px; background: #333; border-radius: 50%; margin: 6px auto; }
+
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #f1f2f6; border-radius: 12px; outline: none; }
+        button { width: 100%; padding: 12px; background: #ff7675; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: none; }
+
+        /* --- OUTSIDE PETS (FULL BODY + HEAD) --- */
+        .pet { position: fixed; z-index: 50; pointer-events: none; }
+        
+        .body-3d {
+            width: 70px; height: 55px; border-radius: 32px 32px 26px 26px;
+            position: relative;
+            background: #fbe8d9;
+            box-shadow: 0 10px 18px rgba(0,0,0,0.22);
+        }
+        .corgi-color { background: var(--corgi-light); }
+        .cat-color { background: var(--cat-light); }
+
+        /* Full Head for Outside Pets - big chibi style */
+        .pet-head {
+            width: 78px; height: 76px; background: inherit; border-radius: 70% 70% 60% 60%;
+            position: absolute; top: -62px; left: 50%; transform: translateX(-50%);
+            box-shadow: 0 10px 16px rgba(0,0,0,0.25);
+        }
+        .corgi .pet-head { }
+        .cat .pet-head { }
+
+        .corgi-face-mark {
+            position: absolute; inset: 16px 26px 18px;
+            background: #fff5e9;
+            border-radius: 30px;
+        }
+
+        .cat-face-mark {
+            position: absolute; inset: 22px 18px 20px;
+            background: radial-gradient(circle at 50% 0, #ffffff, #f3f4ff 70%);
+            border-radius: 30px;
+        }
+
+        /* Ears for Outside Pets */
+        .pet-ear { position: absolute; background: inherit; }
+        .corgi .pet-ear {
+            width: 26px; height: 34px; border-radius: 18px 18px 8px 8px; top: -14px;
+            background: var(--corgi);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.25);
+        }
+        .corgi .pet-ear::after {
+            content: ''; position: absolute; inset: 6px;
+            border-radius: inherit;
+            background: #ffd5c1;
+        }
+        .cat .pet-ear {
+            width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
+            border-bottom: 30px solid var(--cat-dark); top: -18px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+        }
+        .cat .pet-ear::after {
+            content: ''; position: absolute; left: -14px; top: 4px;
+            border-left: 14px solid transparent; border-right: 14px solid transparent;
+            border-bottom: 22px solid #ffd9f6;
+        }
+
+        /* Small Eyes for Outside Pets */
+        .p-eye {
+            width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 22px;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+        }
+        .p-pupil {
+            width: 10px; height: 10px; background: radial-gradient(circle at 30% 30%, #ffffff, #2d3436 60%);
+            border-radius: 50%; position: absolute; top: 3px; left: 3px;
+        }
+        .p-highlight {
+            position: absolute; width: 3px; height: 3px; border-radius: 50%;
+            background: rgba(255,255,255,0.9); top: 1px; right: 1px;
+        }
+
+        .p-muzzle {
+            position: absolute; width: 32px; height: 22px; left: 50%; bottom: 4px; transform: translateX(-50%);
+            background: radial-gradient(circle at 30% 10%, #ffffff, #ffe9d6 70%);
+            border-radius: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        }
+        .p-nose {
+            position: absolute; width: 12px; height: 10px; left: 50%; top: -2px; transform: translateX(-50%);
+            background: #333; border-radius: 60% 60% 40% 40%;
+        }
+        .p-smile {
+            position: absolute; width: 18px; height: 12px; left: 50%; bottom: 3px; transform: translateX(-50%);
+            border-bottom: 2px solid rgba(90,60,40,0.8); border-radius: 0 0 10px 10px;
+        }
+        .p-tongue {
+            position: absolute; width: 10px; height: 12px; left: 50%; bottom: -6px; transform: translateX(-50%);
+            background: radial-gradient(circle at 50% 0, #ff9fb5, #ff6b92);
+            border-radius: 0 0 8px 8px;
+        }
+        .p-blush {
+            position: absolute; width: 8px; height: 5px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,148,180,0.85), transparent 70%);
+            bottom: 2px;
+        }
+
+        /* Legs */
+        .legs { position: absolute; bottom: -10px; width: 100%; display: flex; justify-content: space-around; }
+        .leg {
+            width: 13px; height: 20px; background: inherit; border-radius: 7px;
+            border-bottom: 4px solid rgba(255,255,255,0.9);
+            box-shadow: 0 4px 4px rgba(0,0,0,0.3);
+        }
+        .leg.far { filter: brightness(0.7); margin-top: -4px; z-index: -1; }
+
+        .tail {
+            position: absolute; width: 22px; height: 14px; border-radius: 20px;
+            right: -10px; top: 6px;
+            transform-origin: left center;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.28);
+            animation: wag 0.35s infinite alternate;
+        }
+        .corgi .tail {
+            background: linear-gradient(135deg, var(--corgi-dark), var(--corgi-light));
+        }
+        .cat .tail {
+            right: -12px; top: 0;
+            width: 20px; height: 40px; border-radius: 14px;
+            background: linear-gradient(180deg, var(--cat-dark), var(--cat-light));
+        }
+
+        .corgi-chest,
+        .cat-chest {
+            position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 30px; border-radius: 26px 26px 10px 10px;
+            background: radial-gradient(circle at 50% 0, #ffffff, #ffe9d6 70%);
+        }
+        .cat-chest {
+            background: radial-gradient(circle at 50% 0, #ffffff, #e9f1ff 70%);
+        }
+
+        .front-paws {
+            position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 6px;
+        }
+        .front-paw {
+            width: 16px; height: 14px; border-radius: 12px;
+            background: #fff9f4;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.24);
+        }
+
+        .cat-stripe {
+            position: absolute; width: 12px; height: 4px; border-radius: 6px;
+            background: rgba(90,100,140,0.8);
+        }
+
+        @keyframes wag {
+            from { transform: rotate(-18deg); }
+            to { transform: rotate(18deg); }
+        }
+
+        .walking { animation: hop 0.35s infinite alternate; }
+        @keyframes hop { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="fence"></div>
+    <div class="garden"></div>
+    <div id="rat"></div>
+
+    <div class="login-card">
+        <div class="heads-container">
+            <div class="head-ui dog">
+                <div class="ui-eyes">
+                    <div class="ui-eye"><div class="ui-pupil"></div></div>
+                    <div class="ui-eye"><div class="ui-pupil"></div></div>
+                </div>
+                <div class="ui-nose"></div>
+            </div>
+            <div class="head-ui cat">
+                <div class="ui-eyes">
+                    <div class="ui-eye"><div class="ui-pupil"></div></div>
+                    <div class="ui-eye"><div class="ui-pupil"></div></div>
+                </div>
+                <div class="ui-nose"></div>
+            </div>
+        </div>
+        <input type="text" placeholder="Username">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+    </div>
+
+    <div id="corgi" class="pet corgi walking">
+        <div class="body-3d corgi-color">
+            <div class="tail"></div>
+            <div class="corgi-chest"></div>
+            <div class="front-paws">
+                <div class="front-paw"></div>
+                <div class="front-paw"></div>
+            </div>
+            <div class="legs">
+                <div class="leg far"></div><div class="leg far"></div>
+                <div class="leg"></div><div class="leg"></div>
+            </div>
+            <div class="pet-head">
+                <div class="corgi-face-mark"></div>
+                <div class="pet-ear" style="left:2px"></div>
+                <div class="pet-ear" style="right:2px"></div>
+                <div class="p-eye" style="left:16px">
+                    <div class="p-pupil"></div>
+                    <div class="p-highlight"></div>
+                </div>
+                <div class="p-eye" style="right:16px">
+                    <div class="p-pupil"></div>
+                    <div class="p-highlight"></div>
+                </div>
+                <div class="p-muzzle">
+                    <div class="p-nose"></div>
+                    <div class="p-smile"></div>
+                    <div class="p-tongue"></div>
+                </div>
+                <div class="p-blush" style="left:6px"></div>
+                <div class="p-blush" style="right:6px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cat" class="pet cat walking">
+        <div class="body-3d cat-color">
+            <div class="tail"></div>
+            <div class="cat-chest"></div>
+            <div class="front-paws">
+                <div class="front-paw"></div>
+                <div class="front-paw"></div>
+            </div>
+            <div class="legs">
+                <div class="leg far"></div><div class="leg far"></div>
+                <div class="leg"></div><div class="leg"></div>
+            </div>
+            <div class="pet-head">
+                <div class="cat-face-mark"></div>
+                <div class="pet-ear" style="left:10px"></div>
+                <div class="pet-ear" style="right:10px"></div>
+                <div class="p-eye" style="left:18px">
+                    <div class="p-pupil"></div>
+                    <div class="p-highlight"></div>
+                </div>
+                <div class="p-eye" style="right:18px">
+                    <div class="p-pupil"></div>
+                    <div class="p-highlight"></div>
+                </div>
+                <div class="p-muzzle">
+                    <div class="p-nose" style="background:#444;"></div>
+                    <div class="p-smile"></div>
+                </div>
+                <div class="p-blush" style="left:4px"></div>
+                <div class="p-blush" style="right:4px"></div>
+                <div class="cat-stripe" style="top:6px; left:16px;"></div>
+                <div class="cat-stripe" style="top:10px; left:12px; width:14px;"></div>
+                <div class="cat-stripe" style="top:6px; right:16px;"></div>
+                <div class="cat-stripe" style="top:10px; right:12px; width:14px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rat = document.getElementById('rat');
+        const uiPupils = document.querySelectorAll('.ui-pupil');
+        const corgi = document.getElementById('corgi');
+        const cat = document.getElementById('cat');
+
+        let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+        let isActive = false, timer;
+
+        let pets = [
+            { el: corgi, x: 200, y: 600, tx: 200, ty: 600, speed: 0.04, wander: 0.01, name: 'corgi' },
+            { el: cat, x: 800, y: 700, tx: 800, ty: 700, speed: 0.06, wander: 0.015, name: 'cat' }
+        ];
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            isActive = true;
+            rat.style.left = mouseX + 'px';
+            rat.style.top = mouseY + 'px';
+
+            uiPupils.forEach(pupil => {
+                const rect = pupil.parentElement.getBoundingClientRect();
+                const center = { x: rect.left + rect.width/2, y: rect.top + rect.height/2 };
+                const angle = Math.atan2(mouseY - center.y, mouseX - center.x);
+                const d = 5;
+                pupil.style.transform = `translate(calc(-50% + ${Math.cos(angle)*d}px), calc(-50% + ${Math.sin(angle)*d}px))`;
+            });
+
+            clearTimeout(timer);
+            timer = setTimeout(() => isActive = false, 2000);
+        });
+
+        function animate() {
+            pets.forEach(p => {
+                if (!isActive) {
+                    if (Math.hypot(p.x - p.tx, p.y - p.ty) < 20) {
+                        p.tx = Math.random() * window.innerWidth;
+                        p.ty = (Math.random() * (window.innerHeight * 0.3)) + (window.innerHeight * 0.6);
+                    }
+                    p.x += (p.tx - p.x) * p.wander; p.y += (p.ty - p.y) * p.wander;
+                } else {
+                    p.x += (mouseX - p.x - 40) * p.speed;
+                    p.y += (mouseY - p.y - 30) * p.speed;
+                }
+                p.el.style.left = p.x + 'px'; p.el.style.top = p.y + 'px';
+                
+                let targetX = isActive ? mouseX : p.tx;
+                let flip = targetX > p.x ? 1 : -1;
+                if (p.name === 'cat') flip = -flip;
+                p.el.style.transform = `scaleX(${flip})`;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
