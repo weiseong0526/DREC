@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DREC Healthcare Academy — Admin Desktop UI (v3)</title>
+<style>
+  :root {
+    --brand:      #1E88E5;   /* DREC primary blue */
+    --brand-2:    #26C1E8;   /* Light cyan */
+    --brand-deep: #1565C0;   /* Deep blue */
+    --accent:     #7BC142;   /* DREC logo green */
+    --accent-2:   #4CAF50;
+    --grad-start: #7BC142;
+    --grad-end:   #1E88E5;
+    --hero-red:   #5C1F2A;
+    --accent-red: #D63A4D;
+    --bg:         #F4F8FC;
+    --card:       #FFFFFF;
+    --ink:        #1A2A3A;
+    --muted:      #6B7A8A;
+    --soft:       #8FA3B8;
+    --ok:         #4CAF50;
+    --warn:       #FFA726;
+    --bad:        #E53935;
+    --line:       #E3E8F0;
+    --chip:       #E8F4FC;
+    --hl:         #FFF7E6;
+    --hl-bd:      #F4D68F;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    font-size: 15px; line-height: 1.5;
+  }
+  .preview-note {
+    background: var(--hl);
+    border-bottom: 1px solid var(--hl-bd);
+    padding: 8px 24px;
+    font-size: 12px; color: #7A5B1A;
+    text-align: center;
+  }
+  .app { max-width: 1440px; margin: 0 auto; min-height: 100vh; }
+
+  /* HEADER */
+  header.topbar {
+    background: linear-gradient(120deg, #1565C0 0%, #1E88E5 45%, #26C1E8 75%, #7BC142 100%);
+    color: #fff; padding: 12px 24px;
+    display: flex; align-items: center; gap: 18px;
+    position: sticky; top: 0; z-index: 30;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 17px; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 9px;
+    background: #fff; display: grid; place-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18); overflow: hidden;
+  }
+  .logo-mark img { width: 36px; height: 36px; object-fit: contain; }
+  .tag-admin {
+    background: rgba(255,255,255,.2); padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  }
+  .spacer { flex: 1; }
+  .searchbar {
+    background: rgba(255,255,255,.16); padding: 8px 14px; border-radius: 20px;
+    display: flex; align-items: center; gap: 8px; min-width: 280px;
+  }
+  .searchbar input { border: none; outline: none; background: transparent; color: #fff; font-size: 14px; width: 100%; }
+  .searchbar input::placeholder { color: rgba(255,255,255,.75); }
+  .iconbtn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,.14); display: grid; place-items: center; cursor: pointer;
+    position: relative;
+  }
+  .iconbtn .badge {
+    position: absolute; top: -2px; right: -2px;
+    background: #FFC94A; color: #6A4A13; font-size: 10px; font-weight: 800;
+    padding: 2px 5px; border-radius: 10px; border: 2px solid var(--brand);
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.14); padding: 5px 12px 5px 5px; border-radius: 30px;
+  }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #F6C57F; color: #6A4A13; display: grid; place-items: center;
+    font-weight: 700; font-size: 12px;
+  }
+
+  /* TABS */
+  nav.tabs {
+    background: #fff; border-bottom: 1px solid var(--line);
+    padding: 0 16px; display: flex; gap: 2px; overflow-x: auto;
+    position: sticky; top: 58px; z-index: 20;
+  }
+  nav.tabs button {
+    border: none; background: transparent; padding: 14px 16px;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent;
+    display: flex; align-items: center; gap: 7px; white-space: nowrap;
+    transition: all .15s ease;
+  }
+  nav.tabs button:hover { color: var(--brand); }
+  nav.tabs button.active { color: var(--brand); border-bottom-color: var(--brand); }
+  nav.tabs .badge-red {
+    background: var(--bad); color: #fff; font-size: 10px; font-weight: 800;
+    padding: 2px 6px; border-radius: 10px;
+  }
+
+  main { padding: 22px 24px 60px; }
+  .view { display: none; animation: fade .2s ease; }
+  .view.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  h1.page-title { font-size: 24px; margin: 0 0 4px; }
+  .page-sub { color: var(--muted); margin-bottom: 18px; font-size: 14px; }
+  .section-title { font-size: 18px; font-weight: 700; margin: 24px 0 10px; }
+
+  /* Cards */
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px 18px;
+    box-shadow: 0 1px 2px rgba(30, 50, 80, .04);
+  }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  .kpi .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+  .kpi .big { font-size: 26px; font-weight: 800; color: var(--ink); line-height: 1.2; margin: 4px 0; }
+  .kpi .delta { font-size: 13px; }
+  .delta-good { color: var(--ok); font-weight: 700; }
+  .delta-bad  { color: var(--bad); font-weight: 700; }
+
+  /* Pills */
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .pill-ok     { background: #E7F6E9; color: var(--ok); }
+  .pill-warn   { background: #FDF1DC; color: var(--warn); }
+  .pill-bad    { background: #FCE3E2; color: var(--bad); }
+  .pill-info   { background: var(--chip); color: var(--brand); }
+  .pill-grey   { background: #EEF1F5; color: var(--muted); }
+
+  /* Buttons */
+  .btn {
+    background: var(--brand); color: #fff; border: none; padding: 9px 16px;
+    border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { background: var(--brand-2); }
+  .btn.ghost { background: #fff; color: var(--brand); border: 1px solid var(--brand); }
+  .btn.ghost:hover { background: var(--chip); }
+  .btn.ok { background: var(--ok); }
+  .btn.ok:hover { background: #249B3F; }
+  .btn.warn { background: var(--warn); color: #fff; }
+  .btn.bad { background: var(--bad); }
+  .btn.sm { padding: 6px 10px; font-size: 12px; }
+  .btn.lg { padding: 11px 20px; font-size: 14px; }
+
+  /* Filter bar */
+  .filter-bar {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-bar input, .filter-bar select {
+    border: 1px solid var(--line); background: #FAFBFD;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; color: var(--ink); outline: none;
+  }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: var(--brand-2); background: #fff; }
+  .filter-bar label { font-size: 12px; color: var(--muted); font-weight: 600; margin-right: 2px; }
+  .filter-bar .sep { flex: 1; }
+
+  /* Table */
+  .tbl-wrap { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table.tbl { width: 100%; border-collapse: collapse; }
+  table.tbl th, table.tbl td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); font-size: 13px; vertical-align: middle; }
+  table.tbl th {
+    color: var(--muted); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .5px;
+    background: #FAFBFD; position: sticky; top: 0;
+  }
+  table.tbl tr:hover { background: #FAFBFD; cursor: pointer; }
+  table.tbl tr.selected { background: var(--chip); }
+  table.tbl tr:last-child td { border-bottom: none; }
+  .name-cell { display: flex; align-items: center; gap: 10px; }
+  .name-cell .av { width: 32px; height: 32px; border-radius: 50%; background: var(--chip); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+  .name-cell .name { font-weight: 700; color: var(--ink); }
+  .name-cell .sub  { color: var(--muted); font-size: 12px; }
+  .dt-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .dt-SS  { background: #FDECE5; color: #B5521B; }
+  .dt-Jen { background: #E6F0FA; color: var(--brand-2); }
+  .dt-CY  { background: #E8F5EF; color: #1F6B3A; }
+
+  .progress-cell { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+  .progress-cell .bar { flex: 1; height: 6px; background: #EAF0F7; border-radius: 4px; overflow: hidden; }
+  .progress-cell .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-2), var(--accent)); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; background: rgba(20, 30, 50, .5);
+    z-index: 100; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 14px; width: 100%; max-width: 960px;
+    max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-head {
+    padding: 16px 20px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 14px;
+    background: #FAFBFD;
+  }
+  .modal-head .av { width: 44px; height: 44px; border-radius: 50%; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 700; }
+  .modal-title { font-weight: 700; font-size: 16px; }
+  .modal-sub { color: var(--muted); font-size: 13px; }
+  .modal-body { padding: 20px; overflow-y: auto; }
+  .modal-foot { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; background: #FAFBFD; }
+  .close-x { margin-left: auto; font-size: 22px; cursor: pointer; color: var(--muted); background: none; border: none; }
+
+  /* Tabs inside modal */
+  .m-tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin: -20px -20px 20px; padding: 0 20px; }
+  .m-tabs button { background: none; border: none; padding: 10px 14px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; font-size: 13px; }
+  .m-tabs button.active { color: var(--brand); border-bottom-color: var(--brand); }
+  .m-view { display: none; }
+  .m-view.active { display: block; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-row { display: flex; flex-direction: column; gap: 5px; }
+  .form-row label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .form-row input, .form-row select, .form-row textarea {
+    border: 1px solid var(--line); background: #FAFBFD;
+    padding: 9px 12px; border-radius: 8px; font-size: 14px; outline: none;
+    font-family: inherit;
+  }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--brand-2); background: #fff; }
+  .form-row textarea { min-height: 70px; resize: vertical; }
+
+  /* Chat approval layout */
+  .chat-wrap {
+    display: grid; grid-template-columns: 300px 1fr 260px; gap: 14px;
+    height: calc(100vh - 200px); min-height: 560px;
+  }
+  @media (max-width: 1100px) { .chat-wrap { grid-template-columns: 280px 1fr; } .pt-summary-col { display: none; } }
+  @media (max-width: 900px) { .chat-wrap { grid-template-columns: 1fr; height: auto; } }
+  /* Patient summary sidebar (admin-only, right of chat) */
+  .pt-summary-col {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    overflow-y: auto; display: flex; flex-direction: column; font-size: 12px;
+  }
+  .pts-head { padding: 10px 13px; border-bottom: 1px solid var(--line); font-weight: 700; font-size: 12px; background: #FAFBFD; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .pts-section { padding: 10px 13px; border-bottom: 1px solid var(--line); }
+  .pts-section-title { font-weight: 700; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .pts-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
+  .pts-label { color: var(--muted); }
+  .pts-val { font-weight: 700; color: var(--ink); }
+  .pts-val.ok { color: var(--ok); }
+  .pts-val.warn { color: var(--warn); }
+  .pts-val.bad { color: var(--bad); }
+  .pts-trend { display: flex; gap: 3px; margin-top: 4px; flex-wrap: wrap; }
+  .pts-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .pts-chip { font-size: 10px; background: var(--chip); color: var(--brand); padding: 2px 7px; border-radius: 10px; margin-bottom: 3px; display: inline-block; }
+  .pts-chip.warn { background: #FEF9EF; color: var(--warn); }
+  .pts-chip.bad { background: #FCE3E2; color: var(--bad); }
+  .pts-note { font-size: 11px; line-height: 1.5; color: var(--ink); background: #FAFBFD; border-radius: 6px; padding: 7px 9px; border: 1px solid var(--line); margin-top: 4px; }
+  .thread-list {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .thread-list-head { padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 700; background: #FAFBFD; display: flex; justify-content: space-between; align-items: center; }
+  .thread-list-body { overflow-y: auto; flex: 1; }
+  .thread-item { padding: 12px 14px; border-bottom: 1px solid var(--line); cursor: pointer; display: flex; gap: 10px; }
+  .thread-item:hover { background: #FAFBFD; }
+  .thread-item.selected { background: var(--chip); }
+  .thread-item .av { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--chip); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .thread-meta { flex: 1; min-width: 0; }
+  .thread-name { font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+  .thread-preview { color: var(--muted); font-size: 12px; margin-top: 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+  .thread-tail { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .thread-badge { background: var(--bad); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; }
+
+  .chat-panel {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .chat-head {
+    padding: 12px 16px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 12px; background: #FAFBFD;
+  }
+  .chat-body {
+    flex: 1; overflow-y: auto; padding: 16px;
+    background: #F4F6FA; display: flex; flex-direction: column; gap: 10px;
+  }
+  .bubble-row { display: flex; align-items: flex-end; gap: 8px; max-width: 78%; }
+  .bubble-row.pt { align-self: flex-start; }
+  .bubble-row.me { align-self: flex-end; flex-direction: row-reverse; }
+  .bubble { padding: 9px 13px; border-radius: 14px; font-size: 14px; line-height: 1.5; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .bubble.pt { background: #fff; color: var(--ink); border-top-left-radius: 4px; }
+  .bubble.me { background: var(--brand); color: #fff; border-top-right-radius: 4px; }
+  .bubble-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .av.sm { width: 26px; height: 26px; font-size: 11px; }
+
+  /* AI draft card */
+  .ai-draft {
+    margin: 12px 16px; background: var(--hl); border: 2px solid var(--hl-bd);
+    border-radius: 12px; padding: 14px;
+  }
+  .ai-draft-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .ai-badge { background: var(--warn); color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .ai-draft textarea {
+    width: 100%; border: 1px solid #E0C068; border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; background: #fff; font-family: inherit; resize: vertical;
+    min-height: 90px;
+  }
+  .ai-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+  /* Resource manager */
+  .lr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .lr-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .lr-grid { grid-template-columns: 1fr; } }
+  .lr-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .lr-cover { height: 100px; display: grid; place-items: center; color: #fff; font-size: 28px; position: relative; }
+  .lr-cover.video  { background: linear-gradient(135deg, #3D5A80, #98C1D9); }
+  .lr-cover.pdf    { background: linear-gradient(135deg, #E07A5F, #F2CC8F); }
+  .lr-cover.info   { background: linear-gradient(135deg, #6A8EAE, #9CC5A1); }
+  .lr-cover .tag   { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,.9); color: var(--ink); font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+  .lr-body { padding: 12px 14px; }
+  .lr-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+  .lr-meta { color: var(--muted); font-size: 12px; }
+  .lr-acts { display: flex; gap: 6px; margin-top: 10px; }
+
+  /* Template cards */
+  .tpl-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .tpl-head { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .tpl-id { font-family: 'Courier New', monospace; background: var(--brand); color: #fff; padding: 3px 10px; border-radius: 8px; font-weight: 700; font-size: 12px; }
+  .tpl-desc { font-size: 13px; color: var(--ink); flex: 1; }
+  .tpl-meta { font-size: 11px; color: var(--muted); }
+  .tpl-card textarea { width: 100%; border: 1px solid var(--line); background: #FAFBFD; padding: 10px 12px; border-radius: 8px; font-family: inherit; font-size: 13px; min-height: 70px; resize: vertical; }
+  .tpl-vars { margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .tpl-vars code { background: var(--chip); color: var(--brand); padding: 2px 7px; border-radius: 4px; font-family: 'Courier New', monospace; margin-right: 4px; }
+  .tpl-row-foot { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
+
+  /* Alerts list */
+  .alert-list { display: flex; flex-direction: column; gap: 8px; }
+  .alert-item {
+    background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--warn);
+    border-radius: 10px; padding: 12px 14px;
+    display: flex; gap: 12px; align-items: center;
+  }
+  .alert-item.bad  { border-left-color: var(--bad);  background: #FDF4F3; }
+  .alert-item.warn { border-left-color: var(--warn); background: #FEF9EF; }
+  .alert-item.ok   { border-left-color: var(--ok);   background: #F1FAF3; }
+  .alert-icon { font-size: 22px; }
+  .alert-msg { flex: 1; font-size: 13px; }
+  .alert-msg strong { color: var(--ink); }
+  .alert-time { color: var(--muted); font-size: 11px; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ok); color: #fff; padding: 12px 18px; border-radius: 10px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.15); z-index: 200; display: none; animation: slideup .25s ease; }
+  .toast.show { display: block; }
+  @keyframes slideup { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* Risk row */
+  tr.risk { background: #FDF4F3; }
+  tr.risk:hover { background: #FAE8E6; }
+
+  /* Appointment quick view */
+  .day-counter { font-weight: 800; color: var(--brand); }
+</style>
+</head>
+<body>
+
+<div class="preview-note">
+  <strong>UI Preview — Admin / Dietitian View</strong> &nbsp;·&nbsp;
+  10 sample patients, fully clickable. All data is demo only.
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <strong>Role preview:</strong>
+  <button onclick="setRole('master')" id="roleBtn-master" style="margin:0 3px;padding:2px 10px;border-radius:4px;border:1px solid #ccc;background:#1E88E5;color:#fff;cursor:pointer;font-size:12px;font-weight:700;">👑 Master Admin (Dr. Chang)</button>
+  <button onclick="setRole('SS')" id="roleBtn-SS" style="margin:0 3px;padding:2px 10px;border-radius:4px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:12px;">👩‍⚕️ Suk Sin</button>
+  <button onclick="setRole('Jen')" id="roleBtn-Jen" style="margin:0 3px;padding:2px 10px;border-radius:4px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:12px;">👩‍⚕️ Jen</button>
+  <button onclick="setRole('CY')" id="roleBtn-CY" style="margin:0 3px;padding:2px 10px;border-radius:4px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:12px;">👩‍⚕️ Chin Yee</button>
+</div>
+
+<div class="app">
+
+  <!-- ============ HEADER ============ -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark"><img src="../DREC Company logo.jpeg" alt="DREC"></div>
+      <div>DREC Healthcare Academy
+        <div style="font-size: 10px; font-weight: 400; opacity: .9; letter-spacing: .3px;">Admin Console · Doctor Chang</div>
+      </div>
+    </div>
+    <span class="tag-admin">Admin</span>
+    <div class="spacer"></div>
+    <div class="searchbar">
+      <span>🔎</span>
+      <input placeholder="Search patients, messages, resources..." />
+    </div>
+    <div class="iconbtn" title="Pending AI messages to approve">💬<span class="badge">4</span></div>
+    <div class="iconbtn" title="Alerts">🔔<span class="badge">2</span></div>
+    <div class="user-chip">
+      <div class="avatar">EA</div>
+      <div style="font-size: 13px; line-height: 1.2;">
+        <div style="font-weight: 700;">Eason Chang</div>
+        <div style="font-size: 11px; opacity: .85;">Doctor · Owner</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TABS ============ -->
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="dashboard">🏠 Dashboard</button>
+    <button data-view="patients">👥 Patient's Folder</button>
+    <button data-view="chat">💬 Chat Approval <span class="badge-red">4</span></button>
+    <button data-view="appt">📅 Appointments</button>
+    <button data-view="resources">📚 Learning Resources</button>
+    <button data-view="templates">📝 Auto Follow-up Templates</button>
+    <button data-view="progress">📈 Progress Dashboard</button>
+  </nav>
+
+  <main>
+
+    <!-- ========================================== DASHBOARD ========================================== -->
+    <section class="view active" id="view-dashboard">
+      <h1 class="page-title">Good morning, Dr. Chang 👋</h1>
+      <div class="page-sub">Saturday, 18 April 2026 · Today's overview across your team.</div>
+
+      <div class="grid-4">
+        <div class="card kpi"><div class="label">Active Patients</div><div class="big">10</div><div class="delta"><span class="delta-good">+2</span> this week</div></div>
+        <div class="card kpi"><div class="label">Appointments Today</div><div class="big">3</div><div class="delta">2 confirmed · 1 pending</div></div>
+        <div class="card kpi" style="cursor:pointer;" onclick="document.querySelector('[data-view=chat]').click(); toast('↗ Opened Chat Approval queue')"><div class="label">Pending AI Messages ↗</div><div class="big" style="color: var(--warn);">4</div><div class="delta">Click to open approval queue</div></div>
+        <div class="card kpi" style="cursor:pointer;" onclick="document.querySelector('[data-view=patients]').click(); setTimeout(()=>{const r=document.querySelector('tr.risk'); if(r){r.scrollIntoView({behavior:'smooth'}); r.style.outline='3px solid var(--bad)'; setTimeout(()=>r.style.outline='',2000);}},300); toast('↗ Scrolled to high-risk patient: Goh Chee Keong')"><div class="label">High-Risk Patients ↗</div><div class="big" style="color: var(--bad);">1</div><div class="delta"><span class="delta-bad">Goh Chee Keong</span></div></div>
+      </div>
+
+      <div class="section-title">⚠️ Alerts Needing Attention</div>
+      <div class="alert-list">
+        <div class="alert-item bad">
+          <div class="alert-icon">🚨</div>
+          <div class="alert-msg"><strong>Goh Chee Keong (CY)</strong> — glucose reading 11.2 mmol/L fasting + symptom keyword "头晕" detected. Moved to High-Risk folder.</div>
+          <div class="alert-time">15 min ago</div>
+          <button class="btn sm bad">Review</button>
+        </div>
+        <div class="alert-item warn">
+          <div class="alert-icon">😴</div>
+          <div class="alert-msg"><strong>Lau Mei Hua (Jen)</strong> — no reply for 3 consecutive days. Hibernating flag raised.</div>
+          <div class="alert-time">2 hours ago</div>
+          <button class="btn sm ghost">Send R10 follow-up</button>
+        </div>
+        <div class="alert-item warn">
+          <div class="alert-icon">💳</div>
+          <div class="alert-msg"><strong>Koh Geok Peng (SS)</strong> — instalment payment failed yesterday. Finance to follow up.</div>
+          <div class="alert-time">1 day ago</div>
+          <button class="btn sm ghost">Notify Finance</button>
+        </div>
+        <div class="alert-item ok">
+          <div class="alert-icon">🎉</div>
+          <div class="alert-msg"><strong>Lee Siew Lan (Jen)</strong> — Day 88, sugar trend excellent. Eligible for testimony capture.</div>
+          <div class="alert-time">this morning</div>
+          <button class="btn sm ok">Capture Testimony</button>
+        </div>
+      </div>
+
+      <!-- ══ PPT READY BANNER ══ -->
+      <div class="section-title">📊 Tomorrow's Consultation Slides — Ready to Download</div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+
+        <!-- Appt tomorrow: Lim Kian Hua 1st -->
+        <div style="display:flex; align-items:center; gap:14px; padding:14px 18px; background:#EAF2FB; border:1px solid #B3D0EE; border-radius:12px; flex-wrap:wrap;">
+          <div style="width:44px; height:44px; border-radius:10px; background:#FEFCE8; border:2px solid #1A1A1A; display:grid; place-items:center; font-size:11px; font-weight:800; color:#1A1A1A; flex-shrink:0;">1ST</div>
+          <div style="flex:1; min-width:160px;">
+            <div style="font-weight:700; font-size:14px;">Lim Kian Hua — 1st Appointment</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Tomorrow · 10:00 AM · Dietitian SS · PPT auto-generated at 08:00 today</div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn sm" onclick="toast('📥 Downloading: DREC_1st_Appointment_Lim_Kian_Hua.pptx')">📥 Download PPT</button>
+            <button class="btn sm ghost" onclick="toast('👁 Opening slide preview for Lim Kian Hua 1st Appt')">👁 Preview</button>
+          </div>
+        </div>
+
+        <!-- Appt tomorrow: Lee Siew Lan 4th -->
+        <div style="display:flex; align-items:center; gap:14px; padding:14px 18px; background:#EAF2FB; border:1px solid #B3D0EE; border-radius:12px; flex-wrap:wrap;">
+          <div style="width:44px; height:44px; border-radius:10px; background:#EDFAF1; border:2px solid #1E8449; display:grid; place-items:center; font-size:11px; font-weight:800; color:#1E8449; flex-shrink:0;">4TH</div>
+          <div style="flex:1; min-width:160px;">
+            <div style="font-weight:700; font-size:14px;">Lee Siew Lan — 4th Appointment 🎓</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Tomorrow · 2:00 PM · Dr. Chang + SS · Pre/post comparison included</div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn sm" onclick="toast('📥 Downloading: DREC_4th_Appointment_Lee_Siew_Lan.pptx')">📥 Download PPT</button>
+            <button class="btn sm ghost" onclick="toast('👁 Opening slide preview for Lee Siew Lan 4th Appt')">👁 Preview</button>
+          </div>
+        </div>
+
+        <div style="font-size:12px; color:var(--muted); padding:0 4px;">
+          💡 Slides are auto-generated 24h before each appointment with the latest patient data. Open in PowerPoint to edit before your Zoom call.
+          <a href="#" style="color:var(--brand); margin-left:6px;" onclick="document.querySelector('[data-view=appt]').click(); return false;">View all upcoming appointments →</a>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 4px;">
+        <div class="card">
+          <div class="section-title" style="margin: 0 0 10px;">📅 Today's Appointments</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 10px;">
+              <div style="text-align: center; background: var(--brand); color: #fff; padding: 6px 10px; border-radius: 8px;"><div style="font-size: 10px;">10:00</div><div style="font-size: 16px; font-weight: 800;">AM</div></div>
+              <div style="flex: 1;"><div style="font-weight: 700;">Wong Lai Chin — 3rd Appt</div><div style="font-size: 12px; color: var(--muted);">Dietitian CY · Zoom</div></div>
+              <span class="pill pill-ok">Confirmed</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 10px;">
+              <div style="text-align: center; background: var(--brand); color: #fff; padding: 6px 10px; border-radius: 8px;"><div style="font-size: 10px;">2:00</div><div style="font-size: 16px; font-weight: 800;">PM</div></div>
+              <div style="flex: 1;"><div style="font-weight: 700;">Chen Mei Ling — 3rd Appt</div><div style="font-size: 12px; color: var(--muted);">Dietitian SS · Zoom</div></div>
+              <span class="pill pill-ok">Confirmed</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 10px;">
+              <div style="text-align: center; background: var(--brand); color: #fff; padding: 6px 10px; border-radius: 8px;"><div style="font-size: 10px;">4:00</div><div style="font-size: 16px; font-weight: 800;">PM</div></div>
+              <div style="flex: 1;"><div style="font-weight: 700;">Tay Jia Hao — 4th Appt 🎓</div><div style="font-size: 12px; color: var(--muted);">Doctor + SS · Zoom</div></div>
+              <span class="pill pill-warn">Pending confirm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title" style="margin: 0 0 10px;">👩‍⚕️ Dietitian Workload</div>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span><span class="dt-chip dt-SS">SS</span> Suk Sin</span><span style="font-size: 13px; font-weight: 700;">4 patients</span></div>
+              <div style="height: 8px; background: #EAF0F7; border-radius: 4px; overflow: hidden;"><div style="height: 100%; width: 80%; background: #F4A766;"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span><span class="dt-chip dt-Jen">Jen</span> Jen</span><span style="font-size: 13px; font-weight: 700;">3 patients</span></div>
+              <div style="height: 8px; background: #EAF0F7; border-radius: 4px; overflow: hidden;"><div style="height: 100%; width: 60%; background: var(--brand-2);"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span><span class="dt-chip dt-CY">CY</span> Chin Yee</span><span style="font-size: 13px; font-weight: 700;">3 patients</span></div>
+              <div style="height: 8px; background: #EAF0F7; border-radius: 4px; overflow: hidden;"><div style="height: 100%; width: 60%; background: var(--accent);"></div></div>
+            </div>
+          </div>
+          <div style="margin-top: 14px; font-size: 12px; color: var(--muted);">
+            Next new patient → auto-assigned to <strong>Jen</strong> or <strong>CY</strong> (round-robin, workload-balanced).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== PATIENTS ========================================== -->
+    <section class="view" id="view-patients">
+      <h1 class="page-title">Patient's Folder</h1>
+      <div class="page-sub">10 active patients · Filter, search, edit, or add new patients.</div>
+
+      <div class="filter-bar">
+        <label>Search</label>
+        <input id="ptSearch" placeholder="Name or phone..." style="min-width: 220px;" />
+        <label>Dietitian</label>
+        <select id="ptDt">
+          <option value="all">All (3)</option>
+          <option value="SS">Suk Sin — 4</option>
+          <option value="Jen">Jen — 3</option>
+          <option value="CY">Chin Yee — 3</option>
+        </select>
+        <label>Payment</label>
+        <select id="ptPay">
+          <option value="all">All statuses</option>
+          <option value="complete">✅ Complete</option>
+          <option value="instalment">⏳ Instalment (on-going)</option>
+          <option value="failed">⚠️ Instalment failed</option>
+          <option value="notyet">❌ Not yet confirmed</option>
+        </select>
+        <label>Status</label>
+        <select id="ptStatus">
+          <option value="all">All</option>
+          <option value="active">Active</option>
+          <option value="graduated">Graduated</option>
+          <option value="risk">High Risk</option>
+          <option value="hibernate">Hibernating</option>
+        </select>
+        <div class="sep"></div>
+        <button class="btn ghost sm" onclick="resetFilters()">🔄 Reset</button>
+        <button class="btn" onclick="openAddPatient()">➕ Add New Patient</button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tbl" id="patientsTable">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Dietitian</th>
+              <th>Day</th>
+              <th>Progress</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Last Activity</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="patientsTbody">
+            <!-- filled by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="patientCountInfo" style="margin-top: 10px; color: var(--muted); font-size: 13px;"></div>
+    </section>
+
+    <!-- ========================================== CHAT APPROVAL ========================================== -->
+    <section class="view" id="view-chat">
+      <h1 class="page-title">💬 Chatbox · AI Message Approval</h1>
+      <div class="page-sub">
+        Review, edit or reject AI-drafted replies before they're sent to patients.
+        During working hours, every AI reply needs your endorsement.
+      </div>
+
+      <div class="chat-wrap">
+        <!-- Thread list -->
+        <div class="thread-list">
+          <div class="thread-list-head">
+            <span>📥 Pending Approvals</span>
+            <span class="pill pill-bad">4</span>
+          </div>
+          <div class="thread-list-body" id="threadList">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <!-- Chat panel -->
+        <div class="chat-panel" id="chatPanel">
+          <div class="chat-head" id="chatHead"></div>
+          <div class="chat-body" id="chatBody"></div>
+          <div class="ai-draft" id="aiDraft"></div>
+        </div>
+
+        <!-- Patient summary sidebar (admin-only) -->
+        <div class="pt-summary-col" id="ptSummaryCol">
+          <div class="pts-head">👁 Patient Snapshot</div>
+          <div id="ptSummaryBody" style="flex:1; overflow-y:auto;">
+            <div style="padding:24px; text-align:center; color:var(--muted); font-size:12px;">Select a thread to view patient summary</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== APPOINTMENTS ========================================== -->
+    <section class="view" id="view-appt">
+      <h1 class="page-title">📅 Appointments</h1>
+      <div class="page-sub">Team calendar — Mon–Fri 10am–12pm &amp; 2–5pm. Click any slot to manage.</div>
+
+      <!-- ══ CONSULTATION SLIDES PANEL ══ -->
+      <div style="background:#EAF2FB; border:1px solid #B3D0EE; border-radius:12px; padding:14px 18px; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-weight:700; font-size:15px; color:var(--ink);">📊 Consultation Slides — Auto-generated PPT</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Slides are auto-generated 24h before each appointment. Download and edit in PowerPoint before your Zoom call.</div>
+          </div>
+          <button class="btn ghost sm" onclick="toast('📥 All 5 upcoming PPT files downloaded as ZIP')">⬇ Download All (ZIP)</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Tomorrow -->
+          <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:10px; border:1px solid #B3D0EE; flex-wrap:wrap;">
+            <span style="font-size:10px; font-weight:700; background:#E53935; color:#fff; padding:2px 7px; border-radius:6px; flex-shrink:0;">TOMORROW</span>
+            <div style="width:34px; height:34px; border-radius:8px; background:#FEFCE8; border:2px solid #1A1A1A; display:grid; place-items:center; font-size:10px; font-weight:800; color:#1A1A1A; flex-shrink:0;">1ST</div>
+            <div style="flex:1; min-width:140px;">
+              <div style="font-weight:700; font-size:13px;">Lim Kian Hua</div>
+              <div style="font-size:11px; color:var(--muted);">Mon 20 Apr · 10:00 AM · Dietitian SS · Day 22</div>
+            </div>
+            <span class="pill pill-ok" style="font-size:11px;">✅ PPT Ready</span>
+            <button class="btn sm" onclick="toast('📥 DREC_1st_Appt_Lim_Kian_Hua_20Apr.pptx downloaded')">📥 Download</button>
+            <button class="btn ghost sm" onclick="toast('👁 Previewing slides for Lim Kian Hua')">👁 Preview</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:10px; border:1px solid #B3D0EE; flex-wrap:wrap;">
+            <span style="font-size:10px; font-weight:700; background:#E53935; color:#fff; padding:2px 7px; border-radius:6px; flex-shrink:0;">TOMORROW</span>
+            <div style="width:34px; height:34px; border-radius:8px; background:#EDFAF1; border:2px solid #1E8449; display:grid; place-items:center; font-size:10px; font-weight:800; color:#1E8449; flex-shrink:0;">4TH</div>
+            <div style="flex:1; min-width:140px;">
+              <div style="font-weight:700; font-size:13px;">Lee Siew Lan 🎓</div>
+              <div style="font-size:11px; color:var(--muted);">Mon 20 Apr · 2:00 PM · Dietitian Jen · Day 88 · Graduation</div>
+            </div>
+            <span class="pill pill-ok" style="font-size:11px;">✅ PPT Ready</span>
+            <button class="btn sm" onclick="toast('📥 DREC_4th_Appt_Lee_Siew_Lan_20Apr.pptx downloaded')">📥 Download</button>
+            <button class="btn ghost sm" onclick="toast('👁 Previewing slides for Lee Siew Lan')">👁 Preview</button>
+          </div>
+
+          <!-- Upcoming (>24h away, PPT not yet generated) -->
+          <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:10px; border:1px solid var(--line); flex-wrap:wrap; opacity:0.75;">
+            <span style="font-size:10px; font-weight:700; background:var(--muted); color:#fff; padding:2px 7px; border-radius:6px; flex-shrink:0;">IN 3 DAYS</span>
+            <div style="width:34px; height:34px; border-radius:8px; background:#FEF3E2; border:2px solid #E55A00; display:grid; place-items:center; font-size:10px; font-weight:800; color:#E55A00; flex-shrink:0;">3RD</div>
+            <div style="flex:1; min-width:140px;">
+              <div style="font-weight:700; font-size:13px;">Wong Lai Chin</div>
+              <div style="font-size:11px; color:var(--muted);">Wed 22 Apr · 10:00 AM · Dietitian CY · Day 67</div>
+            </div>
+            <span class="pill pill-warn" style="font-size:11px;">⏳ Generating in 2 days</span>
+            <button class="btn ghost sm" style="opacity:.5;" disabled>📥 Not ready yet</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:10px; border:1px solid var(--line); flex-wrap:wrap; opacity:0.75;">
+            <span style="font-size:10px; font-weight:700; background:var(--muted); color:#fff; padding:2px 7px; border-radius:6px; flex-shrink:0;">IN 4 DAYS</span>
+            <div style="width:34px; height:34px; border-radius:8px; background:#FFF0F0; border:2px solid #C0392B; display:grid; place-items:center; font-size:10px; font-weight:800; color:#C0392B; flex-shrink:0;">2ND</div>
+            <div style="flex:1; min-width:140px;">
+              <div style="font-weight:700; font-size:13px;">Teo Wei Ming</div>
+              <div style="font-size:11px; color:var(--muted);">Thu 23 Apr · 2:00 PM · Dietitian Jen · Day 12</div>
+            </div>
+            <span class="pill pill-warn" style="font-size:11px;">⏳ Generating in 3 days</span>
+            <button class="btn ghost sm" style="opacity:.5;" disabled>📥 Not ready yet</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <label>Dietitian</label>
+        <select><option>All</option><option>Suk Sin</option><option>Jen</option><option>Chin Yee</option></select>
+        <label>Week</label>
+        <select><option>Apr 13 – Apr 19, 2026</option><option>Apr 20 – Apr 26, 2026</option></select>
+        <div class="sep"></div>
+        <button class="btn ghost sm">🏖️ Block availability (holiday/MC)</button>
+        <button class="btn sm">➕ Manual booking</button>
+      </div>
+
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:90px;">Time</th>
+              <th>Mon 13</th>
+              <th>Tue 14</th>
+              <th>Wed 15</th>
+              <th>Thu 16</th>
+              <th>Fri 17</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>10:00</strong></td>
+              <td><span class="pill pill-info">SS · Lim 1st</span></td>
+              <td><span class="pill pill-ok">CY · Wong 3rd</span></td>
+              <td><span class="pill pill-info">Jen · Teo 2nd</span></td>
+              <td style="color: var(--muted);">—</td>
+              <td><span class="pill pill-warn">Jen · Lau 2nd (pending)</span></td>
+            </tr>
+            <tr>
+              <td><strong>11:00</strong></td>
+              <td style="color: var(--muted);">—</td>
+              <td><span class="pill pill-info">SS · Koh 3rd</span></td>
+              <td style="color: var(--muted);">—</td>
+              <td><span class="pill pill-info">CY · Ng 1st</span></td>
+              <td style="color: var(--muted);">—</td>
+            </tr>
+            <tr>
+              <td><strong>2:00</strong></td>
+              <td><span class="pill pill-ok">SS · Chen 3rd</span></td>
+              <td style="color: var(--muted);">—</td>
+              <td><span class="pill pill-info">Jen · Lee 4th 🎓</span></td>
+              <td style="color: var(--muted);">—</td>
+              <td style="color: var(--muted);">—</td>
+            </tr>
+            <tr>
+              <td><strong>3:00</strong></td>
+              <td style="color: var(--muted);">—</td>
+              <td style="color: var(--muted);">—</td>
+              <td style="color: var(--muted);">—</td>
+              <td><span class="pill pill-info">SS · Tay 4th 🎓</span></td>
+              <td><span class="pill pill-bad">CY · Goh (HIGH RISK)</span></td>
+            </tr>
+            <tr>
+              <td><strong>4:00</strong></td>
+              <td style="color: var(--muted);">—</td>
+              <td style="color: var(--muted);">—</td>
+              <td><span class="pill pill-warn">SS · Tay 4th (pending)</span></td>
+              <td style="color: var(--muted);">—</td>
+              <td style="color: var(--muted);">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title">Upcoming This Week</div>
+      <div class="grid-3">
+        <div class="card"><div class="kpi"><div class="label">Total Appointments</div><div class="big">11</div></div></div>
+        <div class="card"><div class="kpi"><div class="label">Pending Confirmation</div><div class="big" style="color:var(--warn);">2</div></div></div>
+        <div class="card"><div class="kpi"><div class="label">Graduations 🎓</div><div class="big" style="color:var(--ok);">2</div></div></div>
+      </div>
+    </section>
+
+    <!-- ========================================== LEARNING RESOURCES ========================================== -->
+    <section class="view" id="view-resources">
+      <h1 class="page-title">📚 Learning Resources Manager</h1>
+      <div class="page-sub">Upload, organise and unlock resources for patients by program day. Nation is auto-detected from the patient's registration — SG-exclusive content only appears for Singapore patients.</div>
+
+      <div class="filter-bar">
+        <label>Type</label>
+        <select><option>All</option><option>Video</option><option>PDF</option><option>Infographic</option></select>
+        <label>Nation</label>
+        <select><option>All patients</option><option>🇲🇾 Malaysia only</option><option>🇸🇬 Singapore only</option></select>
+        <label>Status</label>
+        <select><option>All</option><option>Published</option><option>Draft</option></select>
+        <div class="sep"></div>
+        <button class="btn" onclick="openUploadResource()">⬆️ Upload New Resource</button>
+      </div>
+
+      <!-- General Resources (All patients) -->
+      <div class="section-title" style="margin-top:18px;">🌏 General Resources — All Patients</div>
+      <div class="lr-grid">
+        <div class="lr-item">
+          <div class="lr-cover video">▶<span class="tag">Video · 12 min</span></div>
+          <div class="lr-body">
+            <div class="lr-title">Welcome &amp; Program Overview</div>
+            <div class="lr-meta">Unlocks: Day 1 · All patients · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm ghost">Unlock for…</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover pdf">📄<span class="tag">PDF · 8 p</span></div>
+          <div class="lr-body">
+            <div class="lr-title">均衡餐盘指南 · Balanced Plate Guide</div>
+            <div class="lr-meta">Unlocks: Day 1 · All patients · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm ghost">Unlock for…</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover info">🧠<span class="tag">Infographic</span></div>
+          <div class="lr-body">
+            <div class="lr-title">糖尿病 vs 预糖尿病</div>
+            <div class="lr-meta">Unlocks: Day 7 · All patients · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm ghost">Unlock for…</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover video">▶<span class="tag">Video · 18 min</span></div>
+          <div class="lr-body">
+            <div class="lr-title">认识 GI 与 GL · GI/GL Explained</div>
+            <div class="lr-meta">Unlocks: Day 30 · All patients · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm ghost">Unlock for…</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover pdf">📄<span class="tag">PDF · Locked</span></div>
+          <div class="lr-body">
+            <div class="lr-title">外食族生存指南</div>
+            <div class="lr-meta">Unlocks: Day 60 · All patients · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm ghost">Unlock for…</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover video">▶<span class="tag">Video · 15 min</span></div>
+          <div class="lr-body">
+            <div class="lr-title">运动 &amp; 血糖管理</div>
+            <div class="lr-meta">Unlocks: Day 75 · All patients · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm ghost">Unlock for…</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover pdf">📄<span class="tag">PDF · Draft</span></div>
+          <div class="lr-body">
+            <div class="lr-title">Graduation Maintenance Plan</div>
+            <div class="lr-meta">Unlocks: Day 100 · All patients · <strong style="color: var(--warn);">Draft</strong></div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button><button class="btn sm">Publish</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SG-Exclusive: Dr Eason's 100-Day Companion Videos -->
+      <div class="section-title" style="margin-top:28px; display:flex; align-items:center; gap:10px;">
+        🇸🇬 Dr Eason's 100-Day Companion Videos
+        <span style="font-size:12px; font-weight:400; background:#FDECEB; color:#C0392B; padding:2px 9px; border-radius:12px;">Singapore Patients Only · Auto-detected</span>
+      </div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:14px;">100 videos · 30 seconds each · 1 video unlocked per day automatically · System detects SG patients from registration nation field.</div>
+      <div class="lr-grid">
+        <div class="lr-item">
+          <div class="lr-cover video" style="background:linear-gradient(135deg,#C0392B,#E74C3C);">▶<span class="tag">Day 1 · 30s</span></div>
+          <div class="lr-body">
+            <div class="lr-title">Day 1: 欢迎你加入100天逆糖之旅</div>
+            <div class="lr-meta" style="display:flex;align-items:center;gap:6px;"><span style="font-size:10px;background:#FDECEB;color:#C0392B;padding:1px 7px;border-radius:8px;font-weight:700;">SG Only</span> Published · 3 SG patients watching</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover video" style="background:linear-gradient(135deg,#C0392B,#E74C3C);">▶<span class="tag">Day 2 · 30s</span></div>
+          <div class="lr-body">
+            <div class="lr-title">Day 2: 今天的血糖目标是？</div>
+            <div class="lr-meta" style="display:flex;align-items:center;gap:6px;"><span style="font-size:10px;background:#FDECEB;color:#C0392B;padding:1px 7px;border-radius:8px;font-weight:700;">SG Only</span> Published · 3 SG patients watching</div>
+            <div class="lr-acts"><button class="btn sm ghost">Edit</button></div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-cover video" style="background:linear-gradient(135deg,#95A5A6,#BDC3C7);">▶<span class="tag">Day 3–100</span></div>
+          <div class="lr-body">
+            <div class="lr-title">Day 3–100: Remaining Videos</div>
+            <div class="lr-meta" style="display:flex;align-items:center;gap:6px;"><span style="font-size:10px;background:#FDECEB;color:#C0392B;padding:1px 7px;border-radius:8px;font-weight:700;">SG Only</span> 98 videos · Published</div>
+            <div class="lr-acts"><button class="btn sm ghost">Manage All 100 Videos →</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== TEMPLATES ========================================== -->
+    <section class="view" id="view-templates">
+      <h1 class="page-title">📝 Auto Follow-up Templates</h1>
+      <div class="page-sub">
+        Edit the message copy that is sent automatically by the system.
+        Variables in <code style="background: var(--chip); padding: 1px 5px; border-radius: 3px;">{{curly_braces}}</code> are substituted at send time.
+      </div>
+
+      <div class="filter-bar">
+        <label>Language</label>
+        <select><option>Simplified Chinese</option><option>English</option><option>Bahasa Malaysia</option></select>
+        <label>Channel</label>
+        <select><option>All</option><option>WhatsApp</option><option>Chatbox (in-app)</option></select>
+        <div class="sep"></div>
+        <button class="btn ghost sm">↩️ Restore defaults</button>
+        <button class="btn">💾 Save all changes</button>
+      </div>
+
+      <!-- R1 -->
+      <div class="tpl-card">
+        <div class="tpl-head">
+          <span class="tpl-id">R1</span>
+          <div class="tpl-desc"><strong>Sign-up welcome</strong> — sent via WhatsApp when a new patient is added.<div class="tpl-meta">Trigger: admin adds patient · Last edited by Eason · 2 days ago</div></div>
+          <span class="pill pill-info">Active</span>
+        </div>
+        <textarea>您好 {{patient_name}} 😊 欢迎加入 DREC Healthcare Academy 的 100 天逆转糖尿病之旅！
+
+以下是您的 onboarding 资料：
+📋 Onboarding Form: {{form_link}}
+📜 条款 T&Cs: {{tnc_link}}
+🎬 如何使用 app: {{tutorial_link}}
+
+点击下方按钮同意 T&Cs 后我们将为您安排第一次会诊 💙</textarea>
+        <div class="tpl-vars">Variables: <code>{{patient_name}}</code><code>{{form_link}}</code><code>{{tnc_link}}</code><code>{{tutorial_link}}</code></div>
+        <div class="tpl-row-foot">
+          <button class="btn sm ghost">Preview send</button>
+          <button class="btn sm">Save</button>
+          <div class="sep" style="flex:1;"></div>
+          <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" checked /> <span>Auto-send <span style="color:var(--muted);">(skip approval queue)</span></span>
+          </label>
+          <span style="font-size: 12px; color: var(--muted);">Stop after: <strong>1 send</strong></span>
+        </div>
+      <div class="tpl-card">
+        <div class="tpl-head">
+          <span class="tpl-id">R2B</span>
+          <div class="tpl-desc"><strong>Missing info reminder</strong> — nudges patient when onboarding data is incomplete.<div class="tpl-meta">Trigger: AI detects missing field · Max 3 reminders · Channel: Chatbox</div></div>
+          <span class="pill pill-info">Active</span>
+        </div>
+        <textarea>不好意思 {{patient_name}} 😊 目前您的 [{{missing_field}}] 还不完整，可以请您补充一下吗？这样我们才能更准确地为您分析和提供建议。谢谢 🙏</textarea>
+        <div class="tpl-vars">Variables: <code>{{patient_name}}</code><code>{{missing_field}}</code></div>
+        <div class="tpl-row-foot">
+          <button class="btn sm ghost">Preview send</button>
+          <button class="btn sm">Save</button>
+          <div class="sep" style="flex:1;"></div>
+          <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" /> <span>Auto-send <span style="color:var(--muted);">(skip approval queue)</span></span>
+          </label>
+          <span style="font-size: 12px; color: var(--muted);">Stop after: <input style="width: 50px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px;" value="3" /> reminders</span>
+        </div>
+      </div>
+
+      <!-- R2D -->
+      <div class="tpl-card">
+        <div class="tpl-head">
+          <span class="tpl-id">R2D</span>
+          <div class="tpl-desc"><strong>1-day appointment reminder</strong> — sent 24 h before appointment.<div class="tpl-meta">Trigger: T-24h · Channel: Chatbox + WhatsApp</div></div>
+          <span class="pill pill-info">Active</span>
+        </div>
+        <textarea>📅 您好 {{patient_name}} 😊
+
+温馨提醒您，您的第 {{appt_number}} 次会诊已安排在：
+🗓 {{date}}
+⏰ {{time}}
+
+我们到时候见！如需更改时间请点击下方链接 👉 {{reschedule_link}}</textarea>
+        <div class="tpl-vars">Variables: <code>{{patient_name}}</code><code>{{appt_number}}</code><code>{{date}}</code><code>{{time}}</code><code>{{reschedule_link}}</code></div>
+        <div class="tpl-row-foot">
+          <button class="btn sm ghost">Preview send</button>
+          <button class="btn sm">Save</button>
+          <div class="sep" style="flex:1;"></div>
+          <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" checked /> <span>Auto-send <span style="color:var(--muted);">(skip approval queue)</span></span>
+          </label>
+          <span style="font-size: 12px; color: var(--muted);">Send: <input style="width: 50px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px;" value="24" /> hours before</span>
+        </div>
+      </div>
+
+      <!-- R10 -->
+      <div class="tpl-card">
+        <div class="tpl-head">
+          <span class="tpl-id">R10</span>
+          <div class="tpl-desc"><strong>Weekly follow-up / hibernating patient</strong> — gentle check-in.<div class="tpl-meta">Trigger: No patient reply ≥ 3 days · Channel: Chatbox</div></div>
+          <span class="pill pill-warn">Frequently used</span>
+        </div>
+        <textarea>您好 {{patient_name}} 😊 好几天没收到您的消息，最近还好吗？
+
+这是您的第 {{program_day}} 天啦！记得：
+✅ 每天测血糖
+✅ 记录三餐
+✅ 有问题随时找我们
+
+别忘了查看 Learning Resources 哦 👉 {{resource_link}}
+
+我们在这里陪您 💙</textarea>
+        <div class="tpl-vars">Variables: <code>{{patient_name}}</code><code>{{program_day}}</code><code>{{resource_link}}</code></div>
+        <div class="tpl-row-foot">
+          <button class="btn sm ghost">Preview send</button>
+          <button class="btn sm">Save</button>
+          <div class="sep" style="flex:1;"></div>
+          <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" checked /> <span>Auto-send <span style="color:var(--muted);">(skip approval queue)</span></span>
+          </label>
+          <span style="font-size: 12px; color: var(--muted);">Trigger: no reply for <input style="width: 40px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px;" value="3" /> days · Out-of-office: <label><input type="checkbox" checked /> enabled</label></span>
+        </div>
+      </div>
+
+      <!-- R11 -->
+      <div class="tpl-card">
+        <div class="tpl-head">
+          <span class="tpl-id">R11</span>
+          <div class="tpl-desc"><strong>Nutrition label check request</strong> — asks patient to upload product label photo.<div class="tpl-meta">Trigger: patient asks "can I eat this?" · Channel: Chatbox</div></div>
+          <span class="pill pill-info">Active</span>
+        </div>
+        <textarea>你好 {{patient_name}} 😊 请问可以拍一张产品的营养标签 (Nutrition Label) 给我们吗？这样我们可以更准确地帮您分析糖分和成分 🙏</textarea>
+        <div class="tpl-vars">Variables: <code>{{patient_name}}</code></div>
+        <div class="tpl-row-foot">
+          <button class="btn sm ghost">Preview send</button>
+          <button class="btn sm">Save</button>
+          <div class="sep" style="flex:1;"></div>
+          <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" /> <span>Auto-send <span style="color:var(--muted);">(skip approval queue)</span></span>
+          </label>
+          <span style="font-size: 12px; color: var(--muted);">AI escalates to dietitian before final verdict</span>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 18px;">
+        <button class="btn ghost">Show all templates (R1A, R1B, R2A, R2E, R2F, R2G, R3A, R3B, R4, R5A, R5B, R6, R7A, R7B, R8, R9A, R9B…)</button>
+      </div>
+    </section>
+
+    <!-- ========================================== PROGRESS ========================================== -->
+    <section class="view" id="view-progress">
+      <h1 class="page-title">📈 Progress Dashboard</h1>
+      <div class="page-sub">Weekly company-wide metrics across all 10 patients.</div>
+
+      <div class="grid-4">
+        <div class="card kpi"><div class="label">Avg HbA1c Drop</div><div class="big" style="color: var(--ok);">−1.5%</div><div class="delta">8.0 → 6.5 avg</div></div>
+        <div class="card kpi"><div class="label">Avg Weight Loss</div><div class="big" style="color: var(--ok);">−4.2 kg</div><div class="delta">over 100 days</div></div>
+        <div class="card kpi"><div class="label">Compliance Score</div><div class="big">88%</div><div class="delta"><span class="delta-good">+4%</span> vs last week</div></div>
+        <div class="card kpi"><div class="label">Testimonies Captured</div><div class="big">7</div><div class="delta">Auto-screenshotted</div></div>
+      </div>
+
+      <!-- Dietitian Performance (Master Admin View) -->
+      <div class="section-title">👩‍⚕️ Dietitian Performance <span style="font-size:12px; font-weight:400; color:var(--muted);">— Master Admin View</span></div>
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <!-- Filter bar -->
+        <div style="padding:10px 16px; background:#FAFBFD; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <span style="font-size:12px; font-weight:600; color:var(--muted);">Period:</span>
+          <button class="btn sm ghost dietitian-period-btn" onclick="setPeriod(this,'7d')">Last 7 days</button>
+          <button class="btn sm dietitian-period-btn" style="background:var(--brand);color:#fff;" onclick="setPeriod(this,'30d')">Last 30 days</button>
+          <button class="btn sm ghost dietitian-period-btn" onclick="setPeriod(this,'90d')">Last 90 days</button>
+          <button class="btn sm ghost dietitian-period-btn" onclick="setPeriod(this,'all')">All time</button>
+          <div style="flex:1;"></div>
+          <span style="font-size:11px;color:var(--muted);">Last updated: today 08:00</span>
+        </div>
+        <div style="overflow-x:auto;">
+        <table class="tbl" style="min-width:860px;">
+          <thead>
+            <tr style="background:#F4F8FC;">
+              <th style="min-width:130px;">Dietitian</th>
+              <th style="text-align:center;">Patients<br><span style="font-weight:400;font-size:11px;">active</span></th>
+              <th style="text-align:center;">Avg Response<br><span style="font-weight:400;font-size:11px;">msg → reply</span></th>
+              <th style="text-align:center;">Within 4h<br><span style="font-weight:400;font-size:11px;">% messages</span></th>
+              <th style="text-align:center;">Within 24h<br><span style="font-weight:400;font-size:11px;">% messages</span></th>
+              <th style="text-align:center;">Msgs handled<br><span style="font-weight:400;font-size:11px;">this period</span></th>
+              <th style="text-align:center;">Patient Improvement<br><span style="font-weight:400;font-size:11px;">HbA1c or glucose ↓</span></th>
+              <th style="text-align:center;">Avg HbA1c Drop<br><span style="font-weight:400;font-size:11px;">baseline → now</span></th>
+              <th style="text-align:center;">Avg Weight Loss<br><span style="font-weight:400;font-size:11px;">kg</span></th>
+              <th style="text-align:center;">Compliance Rate<br><span style="font-weight:400;font-size:11px;">log adherence</span></th>
+              <th style="text-align:center;">Appt Completed<br><span style="font-weight:400;font-size:11px;">on schedule</span></th>
+            </tr>
+          </thead>
+          <tbody id="dietPerformBody">
+            <tr>
+              <td><div style="font-weight:700;">Suk Sin</div><div style="font-size:11px;color:var(--muted);">SS · 4 patients</div></td>
+              <td style="text-align:center;"><strong>4</strong></td>
+              <td style="text-align:center;"><span class="pill pill-ok" style="font-size:12px;">1h 42min</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">96%</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">100%</span></td>
+              <td style="text-align:center;">148</td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">92%</span></td>
+              <td style="text-align:center;"><span class="delta-good">−1.7%</span></td>
+              <td style="text-align:center;"><span class="delta-good">−4.8 kg</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">91%</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">4 / 4</span></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:700;">Jen</div><div style="font-size:11px;color:var(--muted);">Jen · 3 patients</div></td>
+              <td style="text-align:center;"><strong>3</strong></td>
+              <td style="text-align:center;"><span class="pill pill-ok" style="font-size:12px;">2h 15min</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">88%</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">99%</span></td>
+              <td style="text-align:center;">112</td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">85%</span></td>
+              <td style="text-align:center;"><span class="delta-good">−1.4%</span></td>
+              <td style="text-align:center;"><span class="delta-good">−3.9 kg</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">87%</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">3 / 3</span></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:700;">Chin Yee</div><div style="font-size:11px;color:var(--muted);">CY · 3 patients</div></td>
+              <td style="text-align:center;"><strong>3</strong></td>
+              <td style="text-align:center;"><span class="pill pill-warn" style="font-size:12px;">3h 50min</span></td>
+              <td style="text-align:center;"><span style="color:var(--warn);font-weight:700;">74%</span></td>
+              <td style="text-align:center;"><span style="color:var(--ok);font-weight:700;">95%</span></td>
+              <td style="text-align:center;">97</td>
+              <td style="text-align:center;"><span style="color:var(--warn);font-weight:700;">78%</span></td>
+              <td style="text-align:center;"><span class="delta-good">−1.2%</span></td>
+              <td style="text-align:center;"><span class="delta-good">−3.1 kg</span></td>
+              <td style="text-align:center;"><span style="color:var(--warn);font-weight:700;">82%</span></td>
+              <td style="text-align:center;"><span style="color:var(--warn);">2 / 3</span></td>
+            </tr>
+            <!-- Team average -->
+            <tr style="background:#F4F8FC; border-top:2px solid var(--line);">
+              <td><div style="font-weight:700;color:var(--muted);">Team Average</div></td>
+              <td style="text-align:center;font-weight:700;">10</td>
+              <td style="text-align:center;font-weight:700;">2h 36min</td>
+              <td style="text-align:center;font-weight:700;">86%</td>
+              <td style="text-align:center;font-weight:700;">98%</td>
+              <td style="text-align:center;font-weight:700;">119</td>
+              <td style="text-align:center;font-weight:700;">85%</td>
+              <td style="text-align:center;font-weight:700;">−1.4%</td>
+              <td style="text-align:center;font-weight:700;">−3.9 kg</td>
+              <td style="text-align:center;font-weight:700;">87%</td>
+              <td style="text-align:center;font-weight:700;">9 / 10</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div style="padding:8px 16px; font-size:11px; color:var(--muted); border-top:1px solid var(--line); display:flex; gap:20px; flex-wrap:wrap;">
+          <span>📬 Response time = avg time from patient message to approved reply delivered</span>
+          <span>📈 Improvement rate = % of patients with measurable HbA1c or FBG improvement vs baseline</span>
+        </div>
+      </div>
+
+      <div class="section-title">Program Funnel (in-scope)</div>
+      <div class="card">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div style="flex:1; text-align: center;"><div class="big" style="font-size: 22px;">10</div><div class="kpi label">Onboarded</div></div>
+          <div style="color: var(--muted);">→</div>
+          <div style="flex:1; text-align: center;"><div class="big" style="font-size: 22px;">10</div><div class="kpi label">1st Appt</div></div>
+          <div style="color: var(--muted);">→</div>
+          <div style="flex:1; text-align: center;"><div class="big" style="font-size: 22px;">7</div><div class="kpi label">2nd Appt</div></div>
+          <div style="color: var(--muted);">→</div>
+          <div style="flex:1; text-align: center;"><div class="big" style="font-size: 22px;">4</div><div class="kpi label">3rd Appt</div></div>
+          <div style="color: var(--muted);">→</div>
+          <div style="flex:1; text-align: center;"><div class="big" style="font-size: 22px; color: var(--ok);">1</div><div class="kpi label">Graduated 🎓</div></div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 18px;">
+        <div class="card">
+          <div class="section-title" style="margin: 0 0 10px;">🏆 Top Improvers</div>
+          <table class="tbl" style="border: none;">
+            <thead><tr><th>Patient</th><th>HbA1c ↓</th><th>Weight ↓</th></tr></thead>
+            <tbody>
+              <tr><td>Lee Siew Lan (Jen)</td><td class="delta-good">−2.1%</td><td class="delta-good">−6.8 kg</td></tr>
+              <tr><td>Chen Mei Ling (SS)</td><td class="delta-good">−1.8%</td><td class="delta-good">−3.6 kg</td></tr>
+              <tr><td>Wong Lai Chin (CY)</td><td class="delta-good">−1.5%</td><td class="delta-good">−4.2 kg</td></tr>
+              <tr><td>Tay Jia Hao (SS) 🎓</td><td class="delta-good">−2.3%</td><td class="delta-good">−8.1 kg</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="section-title" style="margin: 0 0 10px;">💬 Recent Testimonies (auto-captured)</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: #F4F6FA; padding: 10px; border-radius: 8px;">
+              <div style="font-size: 13px;">"血糖变好了！从 9.8 降到 5.9 🥰"</div>
+              <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">— Lee Siew Lan · 3 days ago · Keyword: 血糖变好</div>
+            </div>
+            <div style="background: #F4F6FA; padding: 10px; border-radius: 8px;">
+              <div style="font-size: 13px;">"精神变好，睡眠也改善了 😊"</div>
+              <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">— Wong Lai Chin · 5 days ago · Keyword: 精神变好</div>
+            </div>
+            <div style="background: #F4F6FA; padding: 10px; border-radius: 8px;">
+              <div style="font-size: 13px;">"谢谢 DREC 团队 ❤️ 控制得很好"</div>
+              <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">— Tay Jia Hao · 1 week ago · Keyword: 控制得很好</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============================== MODAL: PATIENT DETAIL ============================== -->
+<div class="modal-overlay" id="patientModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="av" id="pmAv">—</div>
+      <div>
+        <div class="modal-title" id="pmName">—</div>
+        <div class="modal-sub" id="pmSub">—</div>
+      </div>
+      <button class="close-x" onclick="closeModal('patientModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-tabs" id="pmTabs">
+        <button class="active" data-mv="profile">Profile</button>
+        <button data-mv="clinical">Clinical</button>
+        <button data-mv="slides">Appointment Slides</button>
+        <button data-mv="payment">Payment</button>
+        <button data-mv="notes">Progress Notes</button>
+      </div>
+
+      <div class="m-view active" id="mv-profile">
+        <div class="form-grid">
+          <div class="form-row"><label>Full Name</label><input id="pmFullName" /></div>
+          <div class="form-row"><label>Phone (WhatsApp)</label><input id="pmPhone" /></div>
+          <div class="form-row"><label>Email</label><input id="pmEmail" /></div>
+          <div class="form-row"><label>Country</label><select id="pmCountry"><option>Malaysia</option><option>Singapore</option></select></div>
+          <div class="form-row"><label>Date of Birth</label><input type="date" id="pmDob" /></div>
+          <div class="form-row"><label>Gender</label><select id="pmGender"><option>Female</option><option>Male</option></select></div>
+          <div class="form-row"><label>Assigned Dietitian</label><select id="pmDietitian"><option value="SS">Suk Sin (SS)</option><option value="Jen">Jen</option><option value="CY">Chin Yee (CY)</option></select></div>
+          <div class="form-row"><label>Program Day</label><input type="number" id="pmDay" readonly style="background: #EEF1F5;" /></div>
+          <div class="form-row full"><label>Emergency Contact</label><input placeholder="Name · Relationship · Phone" /></div>
+          <div class="form-row" style="background:#EAF2FB; border:1px solid #B3D0EE; border-radius:8px; padding:10px 12px;">
+            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:var(--ink);">📅 Program Validity</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div><label style="font-size:11px; color:var(--muted);">Start Date</label><input type="date" value="2026-03-20" style="width:100%; font-size:12px;" /></div>
+              <div><label style="font-size:11px; color:var(--muted);">Program Duration</label>
+                <select style="width:100%; font-size:12px; padding:5px 8px; border:1px solid var(--line); border-radius:6px;">
+                  <option>100 days (default)</option><option>120 days</option><option>180 days</option><option>Custom</option>
+                </select>
+              </div>
+              <div><label style="font-size:11px; color:var(--muted);">Grace Period</label>
+                <select style="width:100%; font-size:12px; padding:5px 8px; border:1px solid var(--line); border-radius:6px;">
+                  <option>14 days (default)</option><option>7 days</option><option>30 days</option><option>None</option>
+                </select>
+              </div>
+              <div><label style="font-size:11px; color:var(--muted);">Expiry Date (auto-calc)</label><input type="date" value="2026-07-03" style="width:100%; font-size:12px;" readonly style="background:#EEF1F5;" /></div>
+            </div>
+            <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
+              <span style="font-size:12px; font-weight:600;">Status:</span>
+              <span class="pill pill-ok" style="font-size:11px;">✅ Active · 55 days remaining</span>
+              <button class="btn sm ghost" style="margin-left:auto;" onclick="toast('✅ Validity extended by 30 days')">➕ Extend Manually</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-view" id="mv-clinical">
+        <div class="form-grid">
+          <div class="form-row"><label>Diabetes Type</label><select><option>Type 2 Diabetes</option><option>Pre-diabetes</option></select></div>
+          <div class="form-row"><label>Diagnosis Year</label><input value="2021" /></div>
+          <div class="form-row"><label>Baseline Weight (kg)</label><input value="72.0" /></div>
+          <div class="form-row"><label>Baseline Waist (cm)</label><input value="93" /></div>
+          <div class="form-row full"><label>Comorbidities</label><textarea>Hypertension (stable on Amlodipine 5mg OD); mild fatty liver</textarea></div>
+          <div class="form-row full"><label>Current Medications</label><textarea>Metformin 500mg BD (reduced from 1000mg BD on Day 35)
+Amlodipine 5mg OD
+Vitamin D3 1000 IU daily</textarea></div>
+          <div class="form-row full"><label>Special Remarks (clinical notes)</label><textarea placeholder="Date-stamped clinical notes...">2026-05-22 (Dr. Chang) — HbA1c 6.4%, excellent response. Reduced metformin dose. Continue monitoring.</textarea></div>
+        </div>
+      </div>
+
+      <div class="m-view" id="mv-slides">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="alert-item ok"><div class="alert-icon">✅</div><div class="alert-msg"><strong>1st Appointment Slide</strong> — auto-compiled · edited by Dietitian SS</div><button class="btn sm ghost">Open</button></div>
+          <div class="alert-item ok"><div class="alert-icon">✅</div><div class="alert-msg"><strong>2nd Appointment Slide</strong> — includes medical report review</div><button class="btn sm ghost">Open</button></div>
+          <div class="alert-item warn"><div class="alert-icon">📝</div><div class="alert-msg"><strong>3rd Appointment Slide</strong> — compiling (Day 45 of 60 trigger)</div><button class="btn sm ghost">Preview</button></div>
+          <div class="alert-item bad" style="flex-direction:column; align-items:flex-start; gap:8px;">
+            <div style="display:flex; gap:12px; align-items:center; width:100%;">
+              <div class="alert-icon">🩸</div>
+              <div class="alert-msg">
+                <strong>4th Appointment (Day 100) — Blood Test Required</strong><br>
+                <span style="font-size:12px;">Patient must upload latest blood test results before the final consultation. Required: HbA1c, Fasting Glucose, 2hPP, eGFR, Lipid Panel.</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; padding-left:34px;">
+              <button class="btn sm" onclick="toast('📤 Blood test upload request sent to patient via WhatsApp')">📤 Request Upload from Patient</button>
+              <button class="btn sm ghost" onclick="toast('📂 Upload on behalf of patient')">📂 Upload Report</button>
+              <span style="font-size:11px; color:var(--muted); align-self:center;">Status: ⏳ Awaiting patient upload</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-view" id="mv-payment">
+        <div class="form-grid">
+          <div class="form-row"><label>Payment Status</label><select id="pmPayment"><option value="complete">✅ Complete</option><option value="instalment">⏳ Instalment (on-going)</option><option value="failed">⚠️ Instalment failed</option><option value="notyet">❌ Not yet confirmed</option></select></div>
+          <div class="form-row"><label>Payment Method</label><select><option>Bank Transfer</option><option>ChipIn (MY)</option><option>ThriveCart (SG)</option><option>SenangPay (instalment)</option></select></div>
+          <div class="form-row"><label>Total Paid</label><input value="RM 3,500.00" /></div>
+          <div class="form-row"><label>Remaining</label><input value="RM 0.00" /></div>
+          <div class="form-row full"><label>Receipt / Notes</label><textarea>Full payment received 15 Apr 2026. Receipt filed in shared drive.</textarea></div>
+        </div>
+      </div>
+
+      <div class="m-view" id="mv-notes">
+        <div style="font-size:12px; color:var(--muted); margin-bottom:10px;">Post-appointment progress notes by Dr / Dietitian (admin view only — not visible to patient)</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="alert-item ok">
+            <div class="alert-icon">📝</div>
+            <div class="alert-msg">
+              <strong>2026-05-22 · 2nd Appointment</strong> · Dr. Chang<br>
+              <span style="font-size:12px;">HbA1c 6.4% (↓1.8 from baseline). Reduced metformin to 500mg BD. Patient responding excellently. Continue current diet plan. Next review at Day 60.</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-icon">📝</div>
+            <div class="alert-msg">
+              <strong>2026-05-10 · Between appointments</strong> · Dietitian SS<br>
+              <span style="font-size:12px;">Patient struggling with dinner carb portion. Discussed half-bowl rice rule. Introduced evening walk habit. Compliance improving.</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-icon">📝</div>
+            <div class="alert-msg">
+              <strong>2026-05-02 · 1st Appointment</strong> · Dietitian SS<br>
+              <span style="font-size:12px;">1st consult complete. Motivated patient, good data compliance. Baseline: HbA1c 8.2%, FBG 8.4, weight 72kg. Targets set for Day 60.</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:14px; border:1px solid var(--line); border-radius:10px; padding:12px; background:#FAFBFD;">
+          <div style="font-weight:700; font-size:13px; margin-bottom:8px;">➕ Add Post-Appointment Note</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <select style="font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:6px;"><option>1st Appointment</option><option>2nd Appointment</option><option>3rd Appointment</option><option>4th Appointment</option><option>Between appointments</option></select>
+            <select style="font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:6px;"><option>Dr. Eason Chang</option><option>Suk Sin (Dietitian)</option><option>Jen (Dietitian)</option><option>Chin Yee (Dietitian)</option></select>
+          </div>
+          <textarea rows="3" style="width:100%; font-size:13px; padding:8px 10px; border:1px solid var(--line); border-radius:6px; font-family:inherit; resize:vertical;" placeholder="Clinical observations, patient progress, plan changes, next steps..."></textarea>
+          <div style="margin-top:8px; text-align:right;"><button class="btn sm" onclick="toast('✅ Progress note saved')">Save Note</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal('patientModal')">Cancel</button>
+      <button class="btn bad" onclick="toast('⚠️ Patient archived'); closeModal('patientModal')">Archive Patient</button>
+      <button class="btn" onclick="toast('✅ Changes saved'); closeModal('patientModal')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: ADD PATIENT ============================== -->
+<div class="modal-overlay" id="addPatientModal">
+  <div class="modal" style="max-width: 620px;">
+    <div class="modal-head">
+      <div class="av">+</div>
+      <div>
+        <div class="modal-title">Add New Patient</div>
+        <div class="modal-sub">Auto-assigns dietitian by round-robin &amp; triggers onboarding R1.</div>
+      </div>
+      <button class="close-x" onclick="closeModal('addPatientModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row full"><label>Full Name *</label><input placeholder="e.g. Tan Siew Choo" /></div>
+        <div class="form-row"><label>Phone (WhatsApp) *</label><input placeholder="+60 12 345 6789" /></div>
+        <div class="form-row"><label>Email</label><input type="email" placeholder="patient@example.com" /></div>
+        <div class="form-row"><label>Country *</label><select><option>Malaysia</option><option>Singapore</option></select></div>
+        <div class="form-row"><label>Assigned Dietitian</label><select><option>🎲 Auto (round-robin → Jen)</option><option>Suk Sin</option><option>Jen</option><option>Chin Yee</option></select></div>
+        <div class="form-row"><label>Payment Status</label><select><option>✅ Complete</option><option>⏳ Instalment (on-going)</option><option>❌ Not yet confirmed</option></select></div>
+        <div class="form-row full" style="background:#EAF2FB; border:1px solid #B3D0EE; border-radius:8px; padding:10px 12px;">
+          <div style="font-weight:700; font-size:13px; margin-bottom:4px;">📅 1st Appointment Scheduling</div>
+          <div style="font-size:12px; color:#1A2A3A; margin-bottom:8px;">Patient will self-book their preferred slot via a booking link sent in the R1 WhatsApp. Admin can also manually assign if needed.</div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <label style="font-size:12px; font-weight:600;">Override — assign manually:</label>
+            <input type="date" style="font-size:12px; padding:4px 8px;" />
+            <select style="font-size:12px; padding:4px 8px;"><option>Select dietitian's slot</option><option>Suk Sin · Mon 10:00</option><option>Suk Sin · Tue 14:00</option><option>Jen · Wed 10:00</option><option>Chin Yee · Thu 11:00</option></select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <label><input type="checkbox" checked /> Send onboarding WhatsApp (R1) automatically on save</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal('addPatientModal')">Cancel</button>
+      <button class="btn" onclick="toast('✅ Patient added · R1 sent'); closeModal('addPatientModal')">Add &amp; Send R1</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: UPLOAD RESOURCE ============================== -->
+<div class="modal-overlay" id="uploadResourceModal">
+  <div class="modal" style="max-width: 560px;">
+    <div class="modal-head">
+      <div class="av">⬆️</div>
+      <div>
+        <div class="modal-title">Upload New Learning Resource</div>
+        <div class="modal-sub">Video, PDF, or infographic.</div>
+      </div>
+      <button class="close-x" onclick="closeModal('uploadResourceModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row full"><label>Title *</label><input placeholder="e.g. 外食族生存指南" /></div>
+        <div class="form-row full"><label>Description</label><textarea placeholder="Short summary shown to patients..."></textarea></div>
+        <div class="form-row"><label>Type *</label><select><option>Video</option><option>PDF</option><option>Infographic</option></select></div>
+        <div class="form-row"><label>Language</label><select><option>Simplified Chinese</option><option>English</option><option>Both</option></select></div>
+        <div class="form-row full"><label>File *</label><input type="file" /></div>
+        <div class="form-row"><label>Unlock on Day</label><input type="number" value="60" min="0" max="100" /></div>
+        <div class="form-row"><label>Visibility</label><select><option>All patients</option><option>Selected patients only</option><option>Manual unlock only</option></select></div>
+        <div class="form-row full">
+          <label><input type="checkbox" /> Mark as gift / bonus (requires manual unlock)</label>
+        </div>
+        <div class="form-row full">
+          <label><input type="checkbox" checked /> Publish immediately</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal('uploadResourceModal')">Cancel</button>
+      <button class="btn" onclick="toast('✅ Resource uploaded & published'); closeModal('uploadResourceModal')">Upload &amp; Publish</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Saved</div>
+
+<script>
+  /* =========================================
+     DATA — 10 sample patients
+     ========================================= */
+  const PATIENTS = [
+    { id:1, name:"Chen Mei Ling", cn:"陈美玲",    dt:"SS",  day:45,  pay:"complete",   status:"active",     lastAct:"2 h ago",   phone:"+60 12 345 6789", email:"meiling@example.com", country:"Malaysia",   dob:"1968-03-14" },
+    { id:2, name:"Lim Kian Hua",  cn:"林建华",    dt:"Jen", day:22,  pay:"complete",   status:"active",     lastAct:"5 h ago",   phone:"+60 13 222 9981", email:"kianhua@example.com", country:"Malaysia",   dob:"1972-11-02" },
+    { id:3, name:"Wong Lai Chin", cn:"王丽珍",    dt:"CY",  day:67,  pay:"instalment", status:"active",     lastAct:"25 min ago",phone:"+65 9123 4567",   email:"laichin@example.com", country:"Singapore",  dob:"1965-07-22" },
+    { id:4, name:"Teo Wei Ming",  cn:"张伟明",    dt:"SS",  day:12,  pay:"complete",   status:"active",     lastAct:"yesterday", phone:"+60 17 555 0102", email:"weiming@example.com", country:"Malaysia",   dob:"1975-05-09" },
+    { id:5, name:"Lee Siew Lan",  cn:"李秀兰",    dt:"Jen", day:88,  pay:"complete",   status:"active",     lastAct:"3 h ago",   phone:"+65 8765 4321",   email:"siewlan@example.com", country:"Singapore",  dob:"1960-01-18" },
+    { id:6, name:"Ng Wen Keong",  cn:"黄文强",    dt:"CY",  day:5,   pay:"instalment", status:"active",     lastAct:"1 h ago",   phone:"+60 16 998 7766", email:"wenkeong@example.com",country:"Malaysia",   dob:"1981-09-30" },
+    { id:7, name:"Tay Jia Hao",   cn:"郑家豪",    dt:"SS",  day:100, pay:"complete",   status:"graduated",  lastAct:"2 days ago",phone:"+65 9988 7766",   email:"jiahao@example.com",  country:"Singapore",  dob:"1970-06-12" },
+    { id:8, name:"Lau Mei Hua",   cn:"刘美华",    dt:"Jen", day:34,  pay:"notyet",     status:"hibernate",  lastAct:"3 days ago",phone:"+60 11 229 3344", email:"meihua@example.com",  country:"Malaysia",   dob:"1978-02-27" },
+    { id:9, name:"Goh Chee Keong",cn:"吴志强",    dt:"CY",  day:15,  pay:"complete",   status:"risk",       lastAct:"15 min ago",phone:"+65 9000 1122",   email:"cheekeong@example.com",country:"Singapore", dob:"1963-12-05" },
+    { id:10,name:"Koh Geok Peng", cn:"许玉萍",    dt:"SS",  day:55,  pay:"failed",     status:"active",     lastAct:"6 h ago",   phone:"+60 19 445 6677", email:"geokpeng@example.com",country:"Malaysia",   dob:"1969-08-03" }
+  ];
+
+  const DT_NAME = { SS:"Suk Sin", Jen:"Jen", CY:"Chin Yee" };
+  const PAY_TAG = {
+    complete:   { cls:"pill-ok",   text:"✅ Complete" },
+    instalment: { cls:"pill-info", text:"⏳ Instalment" },
+    failed:     { cls:"pill-bad",  text:"⚠️ Failed" },
+    notyet:     { cls:"pill-grey", text:"❌ Not yet" }
+  };
+  const STATUS_TAG = {
+    active:    { cls:"pill-info", text:"Active" },
+    graduated: { cls:"pill-ok",   text:"🎓 Graduated" },
+    risk:      { cls:"pill-bad",  text:"🚨 High Risk" },
+    hibernate: { cls:"pill-warn", text:"😴 Hibernating" }
+  };
+
+  /* =========================================
+     TABS
+     ========================================= */
+  const tabs = document.querySelectorAll('nav.tabs button');
+  const views = document.querySelectorAll('main > .view');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      views.forEach(v => v.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('view-' + t.dataset.view).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* =========================================
+     PATIENT TABLE
+     ========================================= */
+  function renderPatients() {
+    const q    = document.getElementById('ptSearch').value.toLowerCase();
+    const dt   = document.getElementById('ptDt').value;
+    const pay  = document.getElementById('ptPay').value;
+    const st   = document.getElementById('ptStatus').value;
+    const tbody = document.getElementById('patientsTbody');
+    tbody.innerHTML = "";
+    let count = 0;
+
+    PATIENTS.forEach(p => {
+      if (q && !(p.name.toLowerCase().includes(q) || p.cn.includes(q) || p.phone.includes(q))) return;
+      if (dt !== 'all' && p.dt !== dt) return;
+      if (pay !== 'all' && p.pay !== pay) return;
+      if (st !== 'all' && p.status !== st) return;
+      count++;
+
+      const tr = document.createElement('tr');
+      if (p.status === 'risk') tr.classList.add('risk');
+      tr.innerHTML = `
+        <td>
+          <div class="name-cell">
+            <div class="av">${p.name.split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
+            <div>
+              <div class="name">${p.name} <span style="color: var(--muted); font-weight: 400;">· ${p.cn}</span></div>
+              <div class="sub">${p.country} · ${p.phone}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="dt-chip dt-${p.dt}">${p.dt}</span> ${DT_NAME[p.dt]}</td>
+        <td><span class="day-counter">Day ${p.day}</span><br/><span style="font-size:11px;color:var(--muted);">of 100</span></td>
+        <td>
+          <div class="progress-cell"><div class="bar"><span style="width:${p.day}%;"></span></div><span style="font-size:11px;color:var(--muted);">${p.day}%</span></div>
+        </td>
+        <td><span class="pill ${PAY_TAG[p.pay].cls}">${PAY_TAG[p.pay].text}</span></td>
+        <td><span class="pill ${STATUS_TAG[p.status].cls}">${STATUS_TAG[p.status].text}</span></td>
+        <td style="color: var(--muted); font-size: 12px;">${p.lastAct}</td>
+        <td style="text-align: right; white-space: nowrap;">
+          <button class="btn sm ghost" onclick="event.stopPropagation(); openPatient(${p.id})">Edit</button>
+          <button class="btn sm ghost" onclick="event.stopPropagation(); openPatientChat(${p.id})">💬</button>
+        </td>
+      `;
+      tr.onclick = () => openPatient(p.id);
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('patientCountInfo').textContent = `Showing ${count} of ${PATIENTS.length} patients`;
+  }
+  ['ptSearch','ptDt','ptPay','ptStatus'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', renderPatients);
+    document.getElementById(id).addEventListener('change', renderPatients);
+  });
+  function resetFilters() {
+    document.getElementById('ptSearch').value = '';
+    document.getElementById('ptDt').value = 'all';
+    document.getElementById('ptPay').value = 'all';
+    document.getElementById('ptStatus').value = 'all';
+    renderPatients();
+  }
+  renderPatients();
+
+  /* =========================================
+     PATIENT MODAL
+     ========================================= */
+  function openPatient(id) {
+    const p = PATIENTS.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('pmAv').textContent = p.name.split(' ').map(x=>x[0]).join('').slice(0,2);
+    document.getElementById('pmName').textContent = p.name + " · " + p.cn;
+    document.getElementById('pmSub').textContent  = `Day ${p.day} · ${DT_NAME[p.dt]} · ${p.country}`;
+    document.getElementById('pmFullName').value   = p.name;
+    document.getElementById('pmPhone').value      = p.phone;
+    document.getElementById('pmEmail').value      = p.email;
+    document.getElementById('pmCountry').value    = p.country;
+    document.getElementById('pmDob').value        = p.dob;
+    document.getElementById('pmDay').value        = p.day;
+    document.getElementById('pmDietitian').value  = p.dt;
+    document.getElementById('pmPayment').value    = p.pay;
+    document.getElementById('patientModal').classList.add('open');
+  }
+  function openPatientChat(id) {
+    // Switch to chat tab
+    tabs[2].click();
+    // Select the first thread (demo)
+    selectThread(0);
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function openAddPatient()     { document.getElementById('addPatientModal').classList.add('open'); }
+  function openUploadResource() { document.getElementById('uploadResourceModal').classList.add('open'); }
+
+  // Modal sub-tabs
+  document.getElementById('pmTabs').querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.getElementById('pmTabs').querySelectorAll('button').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('#patientModal .m-view').forEach(v => v.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById('mv-' + b.dataset.mv).classList.add('active');
+    });
+  });
+
+  /* =========================================
+     AI APPROVAL THREADS
+     ========================================= */
+  const THREADS = [
+    {
+      id: 0, patient: "Chen Mei Ling", cn: "陈美玲", dt: "SS", day: 45, preview: "请问这个饼干我可以吃吗？", tail: "2 min ago", badge: 1,
+      messages: [
+        { from: 'pt', text: "中午好！今天午餐：一碗糙米饭 + 清蒸鱼 + 炒青菜", time: "13:04" },
+        { from: 'pt', text: "[📷 Lunch photo]", time: "13:04" },
+        { from: 'pt', text: "请问这个饼干我可以吃吗？", time: "15:30", photo: true }
+      ],
+      aiDraft: "您好美玲 😊 我看了营养标签：\n每100g 含糖 24g · 总碳水 58g\n\n⚠️ 糖分偏高，不建议在 100 天 program 期间食用。\n\n可以用无糖坚果 或 无糖豆浆 + 鸡蛋 替代作为下午茶哦。",
+      aiNote: "Nutrition label analysed by Dr. Eason Brain AI. Medical history check: no nut allergy on file."
+    },
+    {
+      id: 1, patient: "Teo Wei Ming", cn: "张伟明", dt: "SS", day: 12, preview: "空腹 8.2 mmol/L 偏高吗？", tail: "8 min ago", badge: 1,
+      messages: [
+        { from: 'pt', text: "早安，今早空腹 8.2 mmol/L，比昨天高 0.5", time: "08:15" },
+        { from: 'pt', text: "有点担心...", time: "08:16" }
+      ],
+      aiDraft: "早安伟明 😊 8.2 mmol/L 是比昨天稍高，但不要太担心哦。\n\n常见原因：\n· 昨晚是否吃得比较晚或碳水较多？\n· 睡眠时间？\n· 压力或感冒？\n\n建议今天：减少一餐的主食分量、多喝水、散步10–15分钟。\n如果明早还超过8 mmol/L，请告诉我们。",
+      aiNote: "Patient is Day 12, first glucose spike. Not high-risk level yet. Flag for dietitian to follow in 2 days."
+    },
+    {
+      id: 2, patient: "Ng Wen Keong", cn: "黄文强", dt: "CY", day: 5, preview: "program rules 可以再解释吗", tail: "14 min ago", badge: 1,
+      messages: [
+        { from: 'pt', text: "嗨，我还是不太清楚 program 的饮食规则", time: "10:40" },
+        { from: 'pt', text: "可以再解释一下吗？特别是关于水果", time: "10:41" }
+      ],
+      aiDraft: "你好文强 😊 没问题，关于水果的 program rules：\n\n✅ 可以吃：莓类（蓝莓、草莓）、牛油果、番石榴（少量）\n⚠️ 小心：苹果、橙子（每天最多半份）\n❌ 避免：榴莲、芒果、葡萄、香蕉\n\n原则是选低 GI + 高纤维的水果，每天不超过1份。\n\n更详细的指南请查看 Learning Resources → 均衡餐盘指南 📄",
+      aiNote: "Rule clarification sent with link to R1-day resource. Suggest CY covers this in detail at 1st appt."
+    },
+    {
+      id: 3, patient: "Koh Geok Peng", cn: "许玉萍", dt: "SS", day: 55, preview: "今天感觉有点累...", tail: "32 min ago", badge: 1, urgent: true,
+      messages: [
+        { from: 'pt', text: "今天感觉有点累，胃不太舒服", time: "14:02" },
+        { from: 'pt', text: "血糖测了是 6.5 mmol/L", time: "14:05" }
+      ],
+      aiDraft: "你好玉萍，感谢您告诉我们 🙏\n\n血糖 6.5 mmol/L 其实在正常范围内哦。\n\n关于「累 + 胃不舒服」：\n· 最近睡眠如何？\n· 今天吃了什么？\n· 有没有新药物或压力来源？\n\n建议：多休息、少量多餐、避免生冷食物。\n\n⚠️ 如果症状持续超过24小时或加重，请立即告诉我们，dietitian 会联系您。",
+      aiNote: "⚠️ Keyword 'unwell' + '胃不舒服' detected. Auto-alert sent to Dr. Chang. Reply has been softened; please verify clinical tone."
+    }
+  ];
+
+  function renderThreadList() {
+    const list = document.getElementById('threadList');
+    list.innerHTML = "";
+    THREADS.forEach((t, i) => {
+      const item = document.createElement('div');
+      item.className = 'thread-item' + (i === 0 ? ' selected' : '');
+      item.onclick = () => selectThread(i);
+      item.innerHTML = `
+        <div class="av">${t.patient.split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
+        <div class="thread-meta">
+          <div class="thread-name">${t.patient} ${t.urgent ? '🚨' : ''} <span class="thread-badge">${t.badge}</span></div>
+          <div class="thread-preview">${t.preview}</div>
+        </div>
+        <div class="thread-tail">${t.tail}</div>
+      `;
+      list.appendChild(item);
+    });
+  }
+  function selectThread(idx) {
+    document.querySelectorAll('#threadList .thread-item').forEach((el, i) => el.classList.toggle('selected', i === idx));
+    const t = THREADS[idx];
+    if (!t) return;
+    document.getElementById('chatHead').innerHTML = `
+      <div class="avatar">${t.patient.split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
+      <div>
+        <div style="font-weight: 700;">${t.patient} · ${t.cn}</div>
+        <div style="font-size: 12px; color: var(--muted);">Day ${t.day} · Dietitian ${DT_NAME[t.dt]} · bound to WhatsApp</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn sm ghost" onclick="toast('Opened patient folder')">View folder</button>
+    `;
+    const body = document.getElementById('chatBody');
+    body.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;">Today</div>';
+    t.messages.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'bubble-row ' + (m.from === 'pt' ? 'pt' : 'me');
+      let content = m.text;
+      if (m.photo) content = `<div>${m.text}</div><div style="margin-top:4px; width: 200px; height: 120px; background: linear-gradient(135deg, #B8C2CC, #96A4B2); border-radius: 8px; display: grid; place-items: center; color: #fff; font-size: 12px;">📋 Nutrition label</div>`;
+      row.innerHTML = `
+        ${m.from === 'pt' ? `<div class="avatar av sm" style="background: var(--chip); color: var(--brand);">${t.patient[0]}</div>` : ''}
+        <div>
+          <div class="bubble ${m.from === 'pt' ? 'pt' : 'me'}">${content}</div>
+          <div class="bubble-meta" style="${m.from === 'me' ? 'text-align: right;' : ''}">${m.time}</div>
+        </div>
+      `;
+      body.appendChild(row);
+    });
+    body.scrollTop = body.scrollHeight;
+
+    // AI draft
+    const draft = document.getElementById('aiDraft');
+    draft.innerHTML = `
+      <div class="ai-draft-head">
+        <span class="ai-badge">🤖 AI DRAFT</span>
+        <strong style="font-size: 13px;">Pending your approval</strong>
+        <div class="spacer" style="flex:1;"></div>
+        <span style="font-size: 12px; color: var(--muted);">Drafted ${t.tail} · by Nurse AI</span>
+      </div>
+      <textarea>${t.aiDraft}</textarea>
+      <div style="margin-top: 8px; font-size: 12px; color: #7A5B1A;"><strong>🧠 AI Note:</strong> ${t.aiNote}</div>
+      <div class="ai-actions">
+        <button class="btn ok"   onclick="toast('✅ Message sent to ${t.patient}')">✓ Approve &amp; Send</button>
+        <button class="btn"      onclick="toast('💾 Edited version queued')">✏️ Send Edited Version</button>
+        <button class="btn ghost" onclick="toast('🔄 Regenerating AI reply...')">🔄 Regenerate</button>
+        <button class="btn bad" style="background: transparent; color: var(--bad); border: 1px solid var(--bad);" onclick="toast('✗ AI draft rejected. Write your own below.')">✗ Reject &amp; reply manually</button>
+      </div>
+    `;
+  }
+  renderThreadList();
+  selectThread(0);
+
+  /* =========================================
+     ROLE-BASED ACCESS CONTROL
+     master = Dr. Chang (sees all patients, all tabs incl. Progress Dashboard)
+     SS / Jen / CY = dietitian (sees own patients only, no Progress Dashboard tab)
+     ========================================= */
+  const ROLE_CONFIG = {
+    master: { name: 'Eason Chang', title: 'Doctor · Owner',  initials: 'EA', color: '#1E88E5', showProgress: true,  filterDt: null },
+    SS:     { name: 'Suk Sin',     title: 'Dietitian',        initials: 'SS', color: '#E89B2B', showProgress: false, filterDt: 'SS'  },
+    Jen:    { name: 'Jen',         title: 'Dietitian',        initials: 'JN', color: '#7BC142', showProgress: false, filterDt: 'Jen' },
+    CY:     { name: 'Chin Yee',    title: 'Dietitian',        initials: 'CY', color: '#26C1E8', showProgress: false, filterDt: 'CY'  }
+  };
+
+  let currentRole = 'master';
+
+  function setRole(role) {
+    currentRole = role;
+    const cfg = ROLE_CONFIG[role];
+
+    // Update role buttons styling
+    ['master','SS','Jen','CY'].forEach(r => {
+      const btn = document.getElementById('roleBtn-' + r);
+      if (!btn) return;
+      if (r === role) {
+        btn.style.background = '#1E88E5'; btn.style.color = '#fff'; btn.style.fontWeight = '700';
+      } else {
+        btn.style.background = '#fff'; btn.style.color = '#333'; btn.style.fontWeight = '400';
+      }
+    });
+
+    // Update header name/title/avatar
+    const av = document.querySelector('.user-chip .avatar');
+    if (av) { av.textContent = cfg.initials; av.style.background = cfg.color; }
+    const nameEl = document.querySelector('.user-chip div[style*="font-weight: 700"]') ||
+                   document.querySelector('.user-chip div div:first-child');
+    const subtEl = document.querySelector('.user-chip div[style*="font-size: 11px"]') ||
+                   document.querySelector('.user-chip div div:last-child');
+    if (nameEl) nameEl.textContent = cfg.name;
+    if (subtEl) subtEl.textContent = cfg.title;
+
+    // Update greeting
+    const greeting = document.querySelector('#view-dashboard .page-title');
+    if (greeting) {
+      greeting.textContent = role === 'master'
+        ? 'Good morning, Dr. Chang 👋'
+        : 'Good morning, ' + cfg.name + ' 👋';
+    }
+
+    // Show/hide Progress Dashboard tab
+    const progressTab = document.querySelector('nav.tabs button[data-view="progress"]');
+    if (progressTab) {
+      progressTab.style.display = cfg.showProgress ? '' : 'none';
+      // If currently on progress tab and not allowed, switch to dashboard
+      if (!cfg.showProgress && progressTab.classList.contains('active')) {
+        document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelector('nav.tabs button[data-view="dashboard"]').classList.add('active');
+        document.getElementById('view-dashboard').classList.add('active');
+      }
+    }
+
+    // Filter patient table rows
+    const rows = document.querySelectorAll('#patientsTable tbody tr');
+    rows.forEach(row => {
+      if (!cfg.filterDt) { row.style.display = ''; return; }
+      const dtCell = row.querySelector('td:nth-child(3)');
+      if (!dtCell) return;
+      row.style.display = dtCell.textContent.trim().startsWith(cfg.filterDt) ? '' : 'none';
+    });
+
+    // Filter chat threads to only show dietitian's patients
+    if (cfg.filterDt) {
+      THREADS.forEach((t, i) => { t._hidden = (t.dt !== cfg.filterDt); });
+    } else {
+      THREADS.forEach(t => { t._hidden = false; });
+    }
+    renderThreadList();
+    const firstVisible = THREADS.findIndex(t => !t._hidden);
+    if (firstVisible >= 0) selectThread(firstVisible);
+
+    // Update "my patients" counter in dashboard
+    const activePtKpi = document.querySelector('#view-dashboard .kpi .big');
+    if (activePtKpi) {
+      const count = cfg.filterDt ? PATIENTS.filter(p => p.dt === cfg.filterDt).length : PATIENTS.length;
+      activePtKpi.textContent = count;
+    }
+
+    toast('Switched to: ' + cfg.name + ' (' + cfg.title + ')');
+  }
+
+  /* =========================================
+     PERIOD FILTER (dietitian performance table)
+     ========================================= */
+  const PERIOD_DATA = {
+    '7d':  { SS: ['1h 12min','ok', '98%','100%', '42', '90%','−1.7%','−4.8 kg','93%','4 / 4'],
+              Jen:['1h 55min','ok', '92%','100%', '31', '83%','−1.4%','−3.9 kg','89%','3 / 3'],
+              CY: ['4h 10min','warn','70%', '93%', '28', '76%','−1.2%','−3.1 kg','80%','2 / 3'],
+              avg:['2h 26min','86%','98%','34','83%','−1.4%','−3.9 kg','87%','9 / 10'] },
+    '30d': { SS: ['1h 42min','ok', '96%','100%','148', '92%','−1.7%','−4.8 kg','91%','4 / 4'],
+              Jen:['2h 15min','ok', '88%', '99%','112', '85%','−1.4%','−3.9 kg','87%','3 / 3'],
+              CY: ['3h 50min','warn','74%', '95%', '97', '78%','−1.2%','−3.1 kg','82%','2 / 3'],
+              avg:['2h 36min','86%','98%','119','85%','−1.4%','−3.9 kg','87%','9 / 10'] },
+    '90d': { SS: ['1h 48min','ok', '95%', '99%','410', '91%','−1.7%','−4.8 kg','90%','4 / 4'],
+              Jen:['2h 22min','ok', '86%', '98%','320', '84%','−1.4%','−3.9 kg','86%','3 / 3'],
+              CY: ['3h 38min','warn','76%', '96%','280', '79%','−1.2%','−3.1 kg','83%','2 / 3'],
+              avg:['2h 33min','85%','98%','337','85%','−1.4%','−3.9 kg','86%','9 / 10'] },
+    'all': { SS: ['1h 51min','ok', '94%', '99%','820', '90%','−1.7%','−4.8 kg','89%','4 / 4'],
+              Jen:['2h 30min','ok', '85%', '97%','640', '83%','−1.4%','−3.9 kg','85%','3 / 3'],
+              CY: ['3h 45min','warn','73%', '95%','560', '77%','−1.2%','−3.1 kg','81%','2 / 3'],
+              avg:['2h 42min','84%','97%','673','83%','−1.4%','−3.9 kg','85%','9 / 10'] }
+  };
+
+  function setPeriod(btn, period) {
+    document.querySelectorAll('.dietitian-period-btn').forEach(b => {
+      b.style.background = ''; b.style.color = ''; b.classList.remove('btn-active');
+    });
+    btn.style.background = 'var(--brand)'; btn.style.color = '#fff';
+
+    const d = PERIOD_DATA[period];
+    if (!d) return;
+    const dietitians = ['SS','Jen','CY'];
+    const tbody = document.getElementById('dietPerformBody');
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr:not(:last-child)'); // skip avg row
+    dietitians.forEach((dt, i) => {
+      const row = rows[i];
+      if (!row) return;
+      const cells = row.querySelectorAll('td');
+      const v = d[dt];
+      const pillClass = v[1] === 'ok' ? 'pill-ok' : 'pill-warn';
+      cells[2].innerHTML = `<span class="pill ${pillClass}" style="font-size:12px;">${v[0]}</span>`;
+      cells[3].innerHTML = `<span style="color:var(--${v[1] === 'ok' ? 'ok' : 'warn'});font-weight:700;">${v[2]}</span>`;
+      cells[4].innerHTML = `<span style="color:var(--ok);font-weight:700;">${v[3]}</span>`;
+      cells[5].textContent = v[4];
+      cells[6].innerHTML = `<span style="color:var(--${v[1] === 'ok' ? 'ok' : 'warn'});font-weight:700;">${v[5]}</span>`;
+      cells[7].innerHTML = `<span class="delta-good">${v[6]}</span>`;
+      cells[8].innerHTML = `<span class="delta-good">${v[7]}</span>`;
+      cells[9].innerHTML = `<span style="color:var(--${v[1] === 'ok' ? 'ok' : 'warn'});font-weight:700;">${v[8]}</span>`;
+      cells[10].innerHTML = `<span style="color:var(--${dt === 'CY' ? 'warn' : 'ok'});">${v[9]}</span>`;
+    });
+    // Update avg row
+    const avgRow = tbody.querySelector('tr:last-child');
+    if (avgRow) {
+      const ac = avgRow.querySelectorAll('td');
+      ac[2].textContent = d.avg[0];
+      ac[3].textContent = d.avg[1];
+      ac[4].textContent = d.avg[2];
+      ac[5].textContent = d.avg[3];
+      ac[6].textContent = d.avg[4];
+      ac[7].textContent = d.avg[5];
+      ac[8].textContent = d.avg[6];
+      ac[9].textContent = d.avg[7];
+      ac[10].textContent = d.avg[8];
+    }
+  }
+
+  /* =========================================
+     TOAST
+     ========================================= */
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._tm);
+    toast._tm = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // Close modals on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', (e) => { if (e.target === o) o.classList.remove('open'); });
+  });
+</script>
+
+</body>
+</html>

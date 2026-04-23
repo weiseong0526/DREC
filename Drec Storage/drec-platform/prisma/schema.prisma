@@ -1,0 +1,423 @@
+// DREC Healthcare Academy — PostgreSQL schema
+// Mirrors §8 "Data Models" of the Software Developer Walkthrough.
+// Every model has id/uuid, created_at, updated_at, deleted_at, created_by, updated_by.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StaffRole {
+  master_admin
+  dr_eason
+  dietitian
+}
+
+enum DietitianCode {
+  SS
+  Jen
+  CY
+}
+
+enum PatientStatus {
+  pending
+  active
+  graduated
+  risk
+  hibernate
+}
+
+enum PaymentStatus {
+  complete
+  instalment
+  failed
+  notyet
+}
+
+enum ProgramState {
+  active
+  grace
+  expired
+}
+
+enum ApptStatus {
+  scheduled
+  completed
+  missed
+  rescheduled
+}
+
+enum ChatSender {
+  patient
+  dietitian
+  system
+  ai
+}
+
+enum DraftStatus {
+  pending
+  approved
+  edited
+  rejected
+}
+
+model Staff {
+  id            String        @id @default(uuid()) @db.Uuid
+  name          String
+  role          StaffRole
+  code          DietitianCode?
+  email         String        @unique
+  passwordHash  String
+  totpSecret    String?
+  totpEnabled   Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  assignedPatients Patient[]            @relation("AssignedDietitian")
+  approvedDrafts   AiDraft[]            @relation("ApprovedBy")
+  consultNotes     ConsultNote[]
+  assignments      PatientAssignmentHistory[]
+  auditLogs        AuditLog[]
+}
+
+model Patient {
+  id             String        @id @default(uuid()) @db.Uuid
+  enrollmentId   String        @unique // DREC-YYYY-#####
+  name           String
+  nameCn         String?
+  phone          String        @unique
+  email          String?
+  country        String        // MY | SG
+  dob            DateTime
+  day1Date       DateTime
+  status         PatientStatus @default(pending)
+  paymentStatus  PaymentStatus @default(notyet)
+  assignedDietitianId String?  @db.Uuid
+  assignedDietitian   Staff?   @relation("AssignedDietitian", fields: [assignedDietitianId], references: [id])
+  language       String        @default("en") // en | zh | ms
+
+  heightCm       Float?
+  weightKg       Float?
+  waistCm        Float?
+  hba1cBaseline  Float?
+  hba1cCurrent   Float?
+
+  pdpaConsentAt  DateTime?
+  marketingOptIn Boolean       @default(false)
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  chatMessages   ChatMessage[]
+  glucoseLogs    GlucoseLog[]
+  vitalsLogs     VitalsLog[]
+  mealLogs       MealLog[]
+  labelScans     LabelScan[]
+  symptomLogs    SymptomLog[]
+  medicationChanges MedicationChange[]
+  lifestyleLogs  LifestyleLog[]
+  voiceMessages  VoiceMessage[]
+  emergencyEvents EmergencyEvent[]
+  scheduledMessages ScheduledMessage[]
+  resourceViews  ResourceView[]
+  appointments   Appointment[]
+  apptPrebriefs  ApptPrebrief[]
+  patientSlides  PatientSlide[]
+  marketingCaptures MarketingCapture[]
+  consentLogs    ConsentLog[]
+  consultNotes   ConsultNote[]
+  assignmentHistory PatientAssignmentHistory[]
+}
+
+model PatientAssignmentHistory {
+  id         String   @id @default(uuid()) @db.Uuid
+  patientId  String   @db.Uuid
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  dietitianId String  @db.Uuid
+  dietitian  Staff    @relation(fields: [dietitianId], references: [id])
+  startedAt  DateTime @default(now())
+  endedAt    DateTime?
+  reason     String?
+}
+
+model Appointment {
+  id            String     @id @default(uuid()) @db.Uuid
+  patientId     String     @db.Uuid
+  patient       Patient    @relation(fields: [patientId], references: [id])
+  apptNumber    Int        // 1..4
+  scheduledAt   DateTime
+  zoomMeetingId String?
+  zoomJoinUrl   String?
+  slideReleased Boolean    @default(false)
+  status        ApptStatus @default(scheduled)
+  prebrief      ApptPrebrief?
+  slide         PatientSlide?
+  consultNote   ConsultNote?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+}
+
+model ChatMessage {
+  id           String     @id @default(uuid()) @db.Uuid
+  patientId    String     @db.Uuid
+  patient      Patient    @relation(fields: [patientId], references: [id])
+  sender       ChatSender
+  text         String
+  photoUrl     String?
+  readByAdmin  Boolean    @default(false)
+  whatsappId   String?    @unique
+  aiDraft      AiDraft?
+  createdAt    DateTime   @default(now())
+
+  @@index([patientId, createdAt])
+}
+
+model AiDraft {
+  id                  String       @id @default(uuid()) @db.Uuid
+  messageId           String       @unique @db.Uuid
+  message             ChatMessage  @relation(fields: [messageId], references: [id])
+  patientId           String       @db.Uuid
+  draftText           String
+  confidence          Float
+  reasoning           String
+  inputSnapshotHash   String
+  modelVersion        String
+  promptVersion       String
+  status              DraftStatus  @default(pending)
+  approvedById        String?      @db.Uuid
+  approvedBy          Staff?       @relation("ApprovedBy", fields: [approvedById], references: [id])
+  approvedAt          DateTime?
+  timeToApproveSec    Int?
+  editDiff            String?
+  createdAt           DateTime     @default(now())
+}
+
+model GlucoseLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  patientId    String   @db.Uuid
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  readingMmolL Float
+  readingType  String   // fbs | 2hpp | random
+  loggedAt     DateTime
+  note         String?
+  createdAt    DateTime @default(now())
+  @@index([patientId, loggedAt])
+}
+
+model VitalsLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  patientId String   @db.Uuid
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  weightKg  Float?
+  waistCm   Float?
+  bpSys     Int?
+  bpDia     Int?
+  loggedAt  DateTime
+  createdAt DateTime @default(now())
+}
+
+model MealLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  patientId String   @db.Uuid
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  mealType  String   // breakfast | lunch | dinner | snack
+  photoUrl  String?
+  aiTags    String[]
+  aiCarbEstG Float?
+  loggedAt  DateTime
+  createdAt DateTime @default(now())
+}
+
+model LabelScan {
+  id         String   @id @default(uuid()) @db.Uuid
+  patientId  String   @db.Uuid
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  photoUrl   String
+  ocrText    String?
+  carbsG     Float?
+  sugarsG    Float?
+  createdAt  DateTime @default(now())
+}
+
+model SymptomLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  patientId String   @db.Uuid
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  symptoms  String[]
+  severity  Int      // 1-10
+  loggedAt  DateTime
+}
+
+model MedicationChange {
+  id            String   @id @default(uuid()) @db.Uuid
+  patientId     String   @db.Uuid
+  patient       Patient  @relation(fields: [patientId], references: [id])
+  drug          String
+  fromDose      String?
+  toDose        String?
+  status        String   // proposed | confirmed | rejected
+  proposedById  String?  @db.Uuid
+  confirmedById String?  @db.Uuid   // Dr. Eason only
+  confirmedAt   DateTime?
+  rationale     String?
+  createdAt     DateTime @default(now())
+}
+
+model LifestyleLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  patientId String   @db.Uuid
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  sleepHr   Float?
+  stepsCnt  Int?
+  exerciseMin Int?
+  stressLvl Int?
+  loggedAt  DateTime
+}
+
+model VoiceMessage {
+  id           String   @id @default(uuid()) @db.Uuid
+  patientId    String   @db.Uuid
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  audioUrl     String
+  transcript   String?
+  language     String?
+  createdAt    DateTime @default(now())
+}
+
+model EmergencyEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  patientId  String   @db.Uuid
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  kind       String   // hypo | hyper | keyword | panic
+  payload    Json
+  escalatedTo String[] // staff ids
+  resolvedAt DateTime?
+  createdAt  DateTime @default(now())
+}
+
+model ScheduledMessage {
+  id           String   @id @default(uuid()) @db.Uuid
+  patientId    String   @db.Uuid
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  templateCode String   // R1..R11
+  sendAt       DateTime
+  status       String   @default("queued")
+  autoSend     Boolean  @default(false)
+  sentAt       DateTime?
+  createdAt    DateTime @default(now())
+  @@index([status, sendAt])
+}
+
+model LearningResource {
+  id           String   @id @default(uuid()) @db.Uuid
+  title        String
+  titleCn      String?
+  stage        Int      // 1..5
+  kind         String   // video | pdf | article
+  releasedDay  Int
+  url          String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+
+  views        ResourceView[]
+}
+
+model ResourceView {
+  id         String           @id @default(uuid()) @db.Uuid
+  patientId  String           @db.Uuid
+  patient    Patient          @relation(fields: [patientId], references: [id])
+  resourceId String           @db.Uuid
+  resource   LearningResource @relation(fields: [resourceId], references: [id])
+  viewedAt   DateTime         @default(now())
+  @@unique([patientId, resourceId])
+}
+
+model ApptPrebrief {
+  id           String       @id @default(uuid()) @db.Uuid
+  appointmentId String      @unique @db.Uuid
+  appointment  Appointment  @relation(fields: [appointmentId], references: [id])
+  patientId    String       @db.Uuid
+  patient      Patient      @relation(fields: [patientId], references: [id])
+  summaryJson  Json
+  generatedAt  DateTime     @default(now())
+}
+
+model PatientSlide {
+  id            String      @id @default(uuid()) @db.Uuid
+  appointmentId String      @unique @db.Uuid
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  patientId     String      @db.Uuid
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  pptUrl        String?
+  pdfUrl        String?
+  placeholders  Json
+  generatedAt   DateTime    @default(now())
+  releasedAt    DateTime?
+  releasedById  String?     @db.Uuid
+}
+
+model ConsultNote {
+  id            String      @id @default(uuid()) @db.Uuid
+  appointmentId String      @unique @db.Uuid
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  patientId     String      @db.Uuid
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  authorId      String      @db.Uuid
+  author        Staff       @relation(fields: [authorId], references: [id])
+  bodyMd        String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model MarketingCapture {
+  id            String   @id @default(uuid()) @db.Uuid
+  patientId     String   @db.Uuid
+  patient       Patient  @relation(fields: [patientId], references: [id])
+  screenshotUrl String
+  redactedUrl   String?
+  score         Int
+  consentStatus String   @default("pending") // pending | granted | denied
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+}
+
+model ConsentLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  patientId String   @db.Uuid
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  purpose   String   // pdpa | marketing | data_export ...
+  granted   Boolean
+  text      String
+  ipAddr    String?
+  createdAt DateTime @default(now())
+}
+
+model PromptTraining {
+  id            String   @id @default(uuid()) @db.Uuid
+  promptName    String
+  promptVersion String
+  bodyMd        String
+  createdAt     DateTime @default(now())
+  @@unique([promptName, promptVersion])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  actor      Staff?   @relation(fields: [actorId], references: [id])
+  action     String
+  entityType String
+  entityId   String
+  diff       Json?
+  ipAddr     String?
+  createdAt  DateTime @default(now())
+  @@index([entityType, entityId])
+}

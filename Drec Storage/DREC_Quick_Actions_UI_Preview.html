@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DREC · Quick Actions UI Preview</title>
+<style>
+  :root {
+    --brand:        #1E88E5;
+    --brand-2:      #26C1E8;
+    --brand-deep:   #1565C0;
+    --accent:       #7BC142;
+    --accent-2:     #4CAF50;
+    --grad:         linear-gradient(120deg,#1565C0 0%,#1E88E5 45%,#26C1E8 75%,#7BC142 100%);
+    --hero-red:     #5C1F2A;
+    --accent-red:   #D63A4D;
+    --bg:           #F4F8FC;
+    --bg-soft:      #E8F4FC;
+    --card:         #FFFFFF;
+    --ink:          #1A2A3A;
+    --muted:        #6B7A8A;
+    --soft:         #8FA3B8;
+    --ok:           #4CAF50;
+    --warn:         #FFA726;
+    --bad:          #E53935;
+    --line:         #E3E8F0;
+    --chip:         #E8F4FC;
+    --radius:       14px;
+    --radius-lg:    20px;
+    --shadow-sm:    0 1px 2px rgba(30,50,80,.04);
+    --shadow:       0 6px 20px rgba(21,101,192,.08);
+    --shadow-lg:    0 18px 40px rgba(21,101,192,.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 28px 36px 80px;
+  }
+  .page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--brand-deep);
+    letter-spacing: -.2px;
+  }
+  .page-title .zh { color: var(--muted); font-weight: 500; font-size: 16px; margin-left: 8px; }
+  .page-sub {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .flow-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-soft);
+    color: var(--brand-deep);
+    font-weight: 600;
+    font-size: 12px;
+    border-radius: 999px;
+    letter-spacing: .2px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 1200px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ---------- fake phone frame + dimmed dashboard ---------- */
+  .phone {
+    width: 100%;
+    aspect-ratio: 3 / 4.5;
+    max-height: 780px;
+    border-radius: 26px;
+    background: var(--bg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-bg {
+    position: absolute; inset: 0;
+    padding: 12px 14px;
+    overflow: hidden;
+    filter: blur(2.5px) saturate(.9);
+    opacity: .55;
+    pointer-events: none;
+  }
+  .phone-bg .topbar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--grad); color: #fff;
+    border-radius: 14px; padding: 10px 14px;
+    font-weight: 700;
+  }
+  .phone-bg .card-sm {
+    background: var(--card);
+    border-radius: 12px; padding: 12px;
+    margin-top: 12px; box-shadow: var(--shadow-sm);
+    border: 1px solid var(--line);
+  }
+  .phone-bg .card-sm .val { font-size: 22px; font-weight: 800; color: var(--brand-deep); }
+  .phone-bg .card-sm .lbl { font-size: 11px; color: var(--muted); }
+  .phone-bg .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;}
+  .phone-bg .qa-row  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px;}
+  .phone-bg .qa { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px; font-size: 10px; text-align: center; color: var(--ink); }
+
+  .scrim {
+    position: absolute; inset: 0;
+    background: rgba(22, 44, 76, .30);
+    backdrop-filter: blur(1.5px);
+  }
+
+  /* ---------- the modal sheet ---------- */
+  .sheet {
+    position: absolute;
+    left: 10px; right: 10px; bottom: 10px;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    max-height: 92%;
+  }
+  .sheet-handle {
+    width: 40px; height: 4px; border-radius: 999px;
+    background: #D9E1EC; margin: 10px auto 4px;
+  }
+  .sheet-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 18px 10px;
+  }
+  .sheet-title {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sheet-title .ic {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--bg-soft); color: var(--brand-deep);
+    display: grid; place-items: center;
+  }
+  .sheet-title .t {
+    font-size: 16px; font-weight: 800; color: var(--ink);
+  }
+  .sheet-title .t .zh { color: var(--muted); font-weight: 500; margin-left: 6px; font-size: 13px; }
+  .close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #F4F8FC; border: 1px solid var(--line);
+    display: grid; place-items: center; color: var(--muted);
+    cursor: pointer;
+  }
+  .sheet-body {
+    padding: 10px 18px 14px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .sheet-cta {
+    padding: 12px 18px 18px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+
+  /* --- components inside sheets --- */
+  .label {
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    letter-spacing: .2px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .label .zh { text-transform: none; letter-spacing: 0; margin-left: 6px; color: var(--soft); font-weight: 500; }
+
+  /* Segmented control (FBS / 2hpp / Random) */
+  .seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    background: #EEF4FB;
+    border-radius: 14px;
+    padding: 4px;
+    border: 1px solid var(--line);
+  }
+  .seg button {
+    appearance: none; border: none; background: transparent;
+    padding: 12px 6px; cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700; font-size: 13px; color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    transition: all .15s ease;
+  }
+  .seg button .emoji { font-size: 20px; line-height: 1; }
+  .seg button .zh { font-size: 11px; color: var(--soft); font-weight: 500; }
+  .seg button.active {
+    background: #fff;
+    color: var(--brand-deep);
+    box-shadow: 0 3px 10px rgba(21,101,192,.08), 0 1px 0 rgba(255,255,255,.8) inset;
+  }
+  .seg button.active .zh { color: var(--brand); }
+
+  /* Big number input */
+  .num-input {
+    display: flex; align-items: baseline; gap: 10px;
+    background: linear-gradient(180deg, #F9FCFF 0%, #F0F7FD 100%);
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 18px;
+    transition: border-color .15s;
+  }
+  .num-input:focus-within { border-color: var(--brand); }
+  .num-input input {
+    flex: 1;
+    font-size: 44px; font-weight: 800;
+    color: var(--brand-deep);
+    background: transparent;
+    border: none; outline: none;
+    letter-spacing: -1px;
+    min-width: 0;
+    font-family: inherit;
+  }
+  .num-input input::placeholder { color: #C4D2E0; }
+  .unit {
+    font-size: 15px; font-weight: 700; color: var(--muted);
+    flex-shrink: 0;
+  }
+  .unit-toggle {
+    display: inline-flex;
+    background: #EEF4FB;
+    border-radius: 999px;
+    padding: 2px;
+    margin-left: auto;
+  }
+  .unit-toggle button {
+    appearance: none; border: none; background: transparent;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .unit-toggle button.active {
+    background: #fff; color: var(--brand-deep);
+    box-shadow: 0 1px 3px rgba(21,101,192,.15);
+  }
+
+  /* Target zone bar */
+  .zone-bar {
+    margin-top: 14px;
+    position: relative;
+    height: 38px;
+  }
+  .zone-track {
+    height: 10px; border-radius: 999px;
+    background: linear-gradient(90deg,
+      #B8D8F5 0%, #B8D8F5 12%,
+      #A7DCA1 12%, #A7DCA1 55%,
+      #FFD08A 55%, #FFD08A 78%,
+      #F6A49C 78%, #F6A49C 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .zone-track .label-tick {
+    position: absolute; top: 14px;
+    font-size: 10px; color: var(--muted); font-weight: 600;
+    transform: translateX(-50%);
+  }
+  .marker {
+    position: absolute; top: -6px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; border: 3px solid var(--brand-deep);
+    box-shadow: 0 3px 8px rgba(21,101,192,.3);
+    transform: translateX(-50%);
+    transition: left .2s ease;
+  }
+  .zone-desc {
+    margin-top: 28px;
+    padding: 10px 12px;
+    background: #E8F5E0;
+    border-left: 3px solid var(--ok);
+    border-radius: 8px;
+    font-size: 12px; color: #2E7D32;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .zone-desc.warn { background: #FFF4E0; border-color: var(--warn); color: #B46A00; }
+  .zone-desc.bad  { background: #FCE3E2; border-color: var(--bad);  color: #B4201B; }
+
+  /* Quick preset chips */
+  .presets {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 12px;
+  }
+  .chip {
+    appearance: none; border: 1px solid var(--line);
+    background: #fff; color: var(--ink);
+    font-weight: 700; font-size: 12px;
+    padding: 6px 12px; border-radius: 999px;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .chip:hover { border-color: var(--brand); color: var(--brand); }
+
+  /* date / time row */
+  .dt-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-top: 6px;
+  }
+  .fld {
+    position: relative;
+  }
+  .fld input, .fld select, .fld textarea {
+    width: 100%;
+    padding: 11px 12px 11px 36px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 14px; color: var(--ink);
+    font-family: inherit;
+    outline: none;
+  }
+  .fld input:focus, .fld select:focus, .fld textarea:focus { border-color: var(--brand); }
+  .fld .ic-in {
+    position: absolute; left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .fld textarea { min-height: 72px; resize: vertical; padding: 11px 12px; }
+  .fld.plain input, .fld.plain textarea { padding-left: 12px; }
+  .hint {
+    font-size: 11px; color: var(--muted); margin-top: 4px;
+  }
+
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .section { margin-top: 16px; }
+
+  /* tags row */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    appearance: none; border: 1px solid var(--line); background: #fff;
+    padding: 7px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; color: var(--ink);
+    cursor: pointer;
+  }
+  .tag:hover { border-color: var(--brand); color: var(--brand); }
+  .tag.on { background: var(--bg-soft); border-color: var(--brand); color: var(--brand-deep); }
+
+  /* CTA buttons */
+  .cta {
+    display: flex; gap: 10px;
+  }
+  .btn {
+    appearance: none; border: none;
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-weight: 700; font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn.primary {
+    flex: 1;
+    background: var(--grad);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(21,101,192,.28);
+  }
+  .btn.secondary {
+    background: #fff;
+    color: var(--brand-deep);
+    border: 1.5px solid var(--brand);
+  }
+
+  /* meal suggestion card (2hpp path) */
+  .meal-link {
+    margin-top: 10px;
+    padding: 12px;
+    background: linear-gradient(180deg, #FFF9EE 0%, #FFF3D6 100%);
+    border: 1px dashed #F4C26A;
+    border-radius: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .meal-link .thumb {
+    width: 52px; height: 52px; border-radius: 10px;
+    background: linear-gradient(135deg, #FFD08A, #F4A261);
+    display: grid; place-items: center; font-size: 22px; flex-shrink: 0;
+  }
+  .meal-link .ml-title { font-weight: 700; font-size: 13px; color: var(--ink); }
+  .meal-link .ml-sub { font-size: 11px; color: var(--muted); }
+  .meal-link .ml-cta {
+    margin-left: auto; font-size: 12px; font-weight: 700; color: var(--brand-deep);
+    background: #fff; padding: 6px 10px; border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+
+  /* Upload flow */
+  .upload-zone {
+    border: 2px dashed #BBD6ED;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    background: linear-gradient(180deg,#F9FCFF,#EEF6FD);
+  }
+  .upload-zone .ic-big {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--grad); color: #fff;
+    display: grid; place-items: center; font-size: 24px;
+    margin: 0 auto 10px;
+  }
+  .upload-zone .tt { font-weight: 700; font-size: 14px; color: var(--ink); }
+  .upload-zone .tt .zh { color: var(--muted); font-weight: 500; font-size: 12px; margin-left: 4px; }
+  .upload-zone .st { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .upload-pill-row { display: flex; gap: 8px; margin-top: 14px; justify-content: center; }
+  .upload-pill {
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--brand-deep);
+    padding: 8px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ai-preview {
+    margin-top: 14px;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(30,136,229,.06) 0%, rgba(123,193,66,.06) 100%);
+    border: 1px solid #CDE2F4;
+    border-radius: 12px;
+  }
+  .ai-preview .pv-title {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    color: var(--brand-deep); letter-spacing: .3px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ai-preview .pv-body { font-size: 12px; color: var(--ink); margin-top: 6px; }
+  .stars { color: var(--warn); font-size: 13px; }
+
+  /* Weight / Waist sliders */
+  .metric-card {
+    background: #F9FCFF;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .metric-card + .metric-card { margin-top: 10px; }
+  .metric-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .metric-row .name { font-weight: 700; font-size: 13px; color: var(--ink); }
+  .metric-row .name .zh { color: var(--muted); font-weight: 500; margin-left: 4px; font-size: 11px; }
+  .metric-row .delta {
+    font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700;
+    background: #E8F5E0; color: #2E7D32;
+  }
+  .weight-num {
+    display: flex; align-items: baseline; gap: 4px;
+    font-size: 32px; font-weight: 800; color: var(--brand-deep);
+    letter-spacing: -.5px;
+  }
+  .weight-num .u { font-size: 13px; color: var(--muted); font-weight: 700; margin-left: 4px; }
+  .stepper {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 6px;
+  }
+  .stepper button {
+    appearance: none; width: 34px; height: 34px; border-radius: 10px;
+    background: #fff; border: 1px solid var(--line);
+    color: var(--brand-deep); font-size: 16px; font-weight: 700;
+    cursor: pointer;
+  }
+  .stepper input {
+    flex: 1; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: 10px;
+    text-align: center;
+    font-size: 15px; font-weight: 700; color: var(--ink);
+    font-family: inherit;
+    outline: none;
+  }
+
+  /* -------------- SUCCESS TOAST style -------------- */
+  .toast {
+    margin: 10px 18px 0;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #E8F5E0 0%, #DDF4E5 100%);
+    border: 1px solid #B7E2A1;
+    border-radius: 12px;
+    display: flex; align-items: center; gap: 10px;
+    color: #2E7D32;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .toast .check {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--ok); color: #fff;
+    display: grid; place-items: center;
+    font-size: 14px;
+  }
+
+  /* caption below each phone */
+  .cap {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .cap b { color: var(--ink); }
+
+  /* Inline SVG icon helper */
+  .ic-svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* small legend under page */
+  .legend {
+    margin-top: 44px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .legend h3 { font-size: 15px; color: var(--brand-deep); margin-bottom: 8px; }
+  .legend ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 20px; }
+  .legend li { font-size: 13px; color: var(--ink); padding-left: 18px; position: relative; }
+  .legend li::before { content: "▸"; color: var(--brand); position: absolute; left: 0; font-weight: 900; }
+  @media (max-width: 800px) { .legend ul { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-head">
+    <div>
+      <div class="page-title">Quick Actions · Logging Flows <span class="zh">快速记录流程</span></div>
+      <div class="page-sub">The three modals that open when a patient taps a Quick Action on the Home dashboard · 点击主页快捷操作后弹出的三个记录窗口</div>
+    </div>
+    <span class="flow-label">● Mobile · 移动端 &nbsp;·&nbsp; Ready for dev</span>
+  </div>
+
+  <div class="grid">
+
+    <!-- =========================================================== -->
+    <!-- PHONE 1 · LOG BLOOD GLUCOSE -->
+    <!-- =========================================================== -->
+    <div>
+      <div class="phone">
+        <!-- dimmed dashboard under -->
+        <div class="phone-bg">
+          <div class="topbar">🟢 <span>DREC · Day 45 / 100</span></div>
+          <div class="card-sm"><div class="lbl">Program Active · Valid until 3 Aug 2026</div></div>
+          <div class="kpi-row">
+            <div class="card-sm"><div class="lbl">Fasting</div><div class="val">6.1</div></div>
+            <div class="card-sm"><div class="lbl">Weight</div><div class="val">61.2</div></div>
+          </div>
+          <div class="card-sm" style="margin-top:16px;">🎯 Quick Actions</div>
+          <div class="qa-row">
+            <div class="qa">📸 Meal photo</div>
+            <div class="qa" style="outline: 2px solid var(--brand);">💧 Glucose</div>
+            <div class="qa">⚖️ Weight</div>
+          </div>
+          <div class="card-sm" style="margin-top:16px;"><div class="lbl">Last 7 days</div></div>
+        </div>
+        <div class="scrim"></div>
+
+        <!-- Sheet -->
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-head">
+            <div class="sheet-title">
+              <div class="ic">💧</div>
+              <div class="t">Log Blood Glucose <span class="zh">记录血糖</span></div>
+            </div>
+            <div class="close" title="Close">✕</div>
+          </div>
+
+          <div class="sheet-body">
+
+            <!-- Type toggle -->
+            <div class="section">
+              <div class="label">Reading type <span class="zh">血糖类型</span></div>
+              <div class="seg">
+                <button class="active">
+                  <span class="emoji">🌅</span>
+                  <span>FBS</span>
+                  <span class="zh">空腹</span>
+                </button>
+                <button>
+                  <span class="emoji">🍽️</span>
+                  <span>2hPP</span>
+                  <span class="zh">餐后2小时</span>
+                </button>
+                <button>
+                  <span class="emoji">🎲</span>
+                  <span>Random</span>
+                  <span class="zh">随机</span>
+                </button>
+              </div>
+              <div class="hint">FBS = fasting before breakfast · 2hPP = 2 hours after a meal · Random = any other time</div>
+            </div>
+
+            <!-- Value -->
+            <div class="section">
+              <div class="label">Your reading <span class="zh">血糖读数</span></div>
+              <div class="num-input">
+                <input type="number" step="0.1" placeholder="0.0" value="6.1" inputmode="decimal">
+                <span class="unit">mmol/L</span>
+                <div class="unit-toggle">
+                  <button class="active">mmol/L</button>
+                  <button>mg/dL</button>
+                </div>
+              </div>
+
+              <!-- Live target zone -->
+              <div class="zone-bar">
+                <div class="zone-track">
+                  <div class="marker" style="left: 41%;"></div>
+                  <span class="label-tick" style="left: 12%;">3.9</span>
+                  <span class="label-tick" style="left: 55%;">7.0</span>
+                  <span class="label-tick" style="left: 78%;">10</span>
+                </div>
+              </div>
+
+              <div class="zone-desc">
+                ✅ <span><b>In target range</b> for fasting (3.9 – 7.0 mmol/L) · 空腹目标范围内，继续保持！</span>
+              </div>
+
+              <!-- preset chips -->
+              <div class="presets">
+                <button class="chip">4.5</button>
+                <button class="chip">5.5</button>
+                <button class="chip">6.5</button>
+                <button class="chip">7.0</button>
+                <button class="chip">7.5</button>
+                <button class="chip">8.0</button>
+                <button class="chip">9.0</button>
+              </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="section">
+              <div class="label">When did you take it? <span class="zh">测量时间（自动填写，可修改）</span></div>
+              <div class="dt-row">
+                <div class="fld">
+                  <span class="ic-in">📅</span>
+                  <input type="date" value="2026-04-19">
+                </div>
+                <div class="fld">
+                  <span class="ic-in">⏰</span>
+                  <input type="time" value="07:18">
+                </div>
+              </div>
+              <div class="hint">Auto-filled to now. Tap to edit if you tested earlier.</div>
+            </div>
+
+            <!-- Optional context tags -->
+            <div class="section">
+              <div class="label">Add context <span class="zh">附加说明（可选）</span></div>
+              <div class="tags">
+                <button class="tag on">Before breakfast 早餐前</button>
+                <button class="tag">Feeling tired 疲倦</button>
+                <button class="tag">Woke up shaky 手抖</button>
+                <button class="tag">After workout 运动后</button>
+                <button class="tag">Stressed 压力</button>
+                <button class="tag">+ Note 备注</button>
+              </div>
+            </div>
+
+            <!-- Optional note -->
+            <div class="section">
+              <div class="label">Note to your dietitian <span class="zh">写给营养师的话（可选）</span></div>
+              <div class="fld plain">
+                <textarea placeholder="e.g. I slept only 5 hours last night · 昨晚只睡5小时…"></textarea>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CTA -->
+          <div class="sheet-cta">
+            <div class="cta">
+              <button class="btn secondary">Cancel</button>
+              <button class="btn primary">💾 Save reading · 保存记录</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><b>Flow 1 · Log Blood Glucose</b> — FBS / 2hPP / Random toggle · auto date-time (editable) · live target-zone feedback · optional context tags + note</div>
+    </div>
+
+
+    <!-- =========================================================== -->
+    <!-- PHONE 2 · UPLOAD MEAL PHOTO -->
+    <!-- =========================================================== -->
+    <div>
+      <div class="phone">
+        <div class="phone-bg">
+          <div class="topbar">🟢 <span>DREC · Day 45 / 100</span></div>
+          <div class="card-sm"><div class="lbl">Program Active · Valid until 3 Aug 2026</div></div>
+          <div class="kpi-row">
+            <div class="card-sm"><div class="lbl">Fasting</div><div class="val">6.1</div></div>
+            <div class="card-sm"><div class="lbl">Weight</div><div class="val">61.2</div></div>
+          </div>
+          <div class="card-sm" style="margin-top:16px;">🎯 Quick Actions</div>
+          <div class="qa-row">
+            <div class="qa" style="outline: 2px solid var(--brand);">📸 Meal photo</div>
+            <div class="qa">💧 Glucose</div>
+            <div class="qa">⚖️ Weight</div>
+          </div>
+          <div class="card-sm" style="margin-top:16px;"><div class="lbl">Last 7 days</div></div>
+        </div>
+        <div class="scrim"></div>
+
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-head">
+            <div class="sheet-title">
+              <div class="ic">📸</div>
+              <div class="t">Upload Meal Photo <span class="zh">上传饮食照片</span></div>
+            </div>
+            <div class="close">✕</div>
+          </div>
+
+          <div class="sheet-body">
+
+            <!-- Meal type -->
+            <div class="section">
+              <div class="label">Meal type <span class="zh">餐次</span></div>
+              <div class="seg">
+                <button><span class="emoji">🌅</span><span>Breakfast</span><span class="zh">早餐</span></button>
+                <button class="active"><span class="emoji">🍜</span><span>Lunch</span><span class="zh">午餐</span></button>
+                <button><span class="emoji">🍽️</span><span>Dinner</span><span class="zh">晚餐</span></button>
+              </div>
+              <div class="row" style="margin-top:8px;">
+                <button class="tag">Snack 小吃</button>
+                <button class="tag">Drink 饮料</button>
+                <button class="tag">Supplement 保健品</button>
+              </div>
+            </div>
+
+            <!-- Upload zone -->
+            <div class="section">
+              <div class="upload-zone">
+                <div class="ic-big">📷</div>
+                <div class="tt">Tap to take a photo <span class="zh">点击拍照</span></div>
+                <div class="st">or drag a picture here · 或上传图片</div>
+                <div class="upload-pill-row">
+                  <button class="upload-pill">📁 From gallery 相册</button>
+                  <button class="upload-pill">🏷️ Scan label 扫标签</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI preview card (would populate after upload) -->
+            <div class="section">
+              <div class="label">What the AI will detect <span class="zh">AI 将分析</span></div>
+              <div class="ai-preview">
+                <div class="pv-title">✨ Instant AI feedback preview</div>
+                <div class="pv-body">
+                  • Estimated carbs · 估计碳水 (g)<br>
+                  • Rule compliance check · 规则对照 (Rule 1–5)<br>
+                  • Portion size guidance · 份量建议<br>
+                  • Suggested improvement · 改善建议
+                </div>
+                <div class="row" style="margin-top:8px;">
+                  <span class="stars">★★★★☆</span>
+                  <span style="font-size:11px;color:var(--muted);">Typical meal score</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Time -->
+            <div class="section">
+              <div class="label">When did you eat? <span class="zh">用餐时间（自动填写，可修改）</span></div>
+              <div class="dt-row">
+                <div class="fld">
+                  <span class="ic-in">📅</span>
+                  <input type="date" value="2026-04-19">
+                </div>
+                <div class="fld">
+                  <span class="ic-in">⏰</span>
+                  <input type="time" value="12:45">
+                </div>
+              </div>
+            </div>
+
+            <!-- Note -->
+            <div class="section">
+              <div class="label">Note (optional) <span class="zh">备注（可选）</span></div>
+              <div class="fld plain">
+                <textarea placeholder="e.g. ate 4 mouthfuls of rice only · 只吃了4口米饭…"></textarea>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="sheet-cta">
+            <div class="cta">
+              <button class="btn secondary">Cancel</button>
+              <button class="btn primary">💾 Upload & analyse · 上传并分析</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><b>Flow 2 · Upload Meal Photo</b> — meal type selector · camera / gallery / label scan · instant AI preview · auto time (editable)</div>
+    </div>
+
+
+    <!-- =========================================================== -->
+    <!-- PHONE 3 · LOG WEIGHT / WAIST -->
+    <!-- =========================================================== -->
+    <div>
+      <div class="phone">
+        <div class="phone-bg">
+          <div class="topbar">🟢 <span>DREC · Day 45 / 100</span></div>
+          <div class="card-sm"><div class="lbl">Program Active · Valid until 3 Aug 2026</div></div>
+          <div class="kpi-row">
+            <div class="card-sm"><div class="lbl">Fasting</div><div class="val">6.1</div></div>
+            <div class="card-sm"><div class="lbl">Weight</div><div class="val">61.2</div></div>
+          </div>
+          <div class="card-sm" style="margin-top:16px;">🎯 Quick Actions</div>
+          <div class="qa-row">
+            <div class="qa">📸 Meal photo</div>
+            <div class="qa">💧 Glucose</div>
+            <div class="qa" style="outline: 2px solid var(--brand);">⚖️ Weight</div>
+          </div>
+          <div class="card-sm" style="margin-top:16px;"><div class="lbl">Last 7 days</div></div>
+        </div>
+        <div class="scrim"></div>
+
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-head">
+            <div class="sheet-title">
+              <div class="ic">⚖️</div>
+              <div class="t">Log Weight / Waist <span class="zh">记录体重 / 腰围</span></div>
+            </div>
+            <div class="close">✕</div>
+          </div>
+
+          <div class="sheet-body">
+
+            <!-- Weight card -->
+            <div class="section">
+              <div class="metric-card">
+                <div class="metric-row">
+                  <div class="name">Weight <span class="zh">体重</span></div>
+                  <span class="delta">−0.4 kg since last week</span>
+                </div>
+                <div class="weight-num">
+                  <span>61.2</span><span class="u">kg</span>
+                </div>
+                <div class="stepper">
+                  <button>−</button>
+                  <input type="number" value="61.2" step="0.1">
+                  <button>+</button>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-row">
+                  <div class="name">Waist <span class="zh">腰围</span></div>
+                  <span class="delta" style="background:#FFF4E0;color:#B46A00;">−1.0 cm this month</span>
+                </div>
+                <div class="weight-num">
+                  <span>82</span><span class="u">cm</span>
+                </div>
+                <div class="stepper">
+                  <button>−</button>
+                  <input type="number" value="82" step="0.5">
+                  <button>+</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Time -->
+            <div class="section">
+              <div class="label">Measured at <span class="zh">测量时间（自动填写，可修改）</span></div>
+              <div class="dt-row">
+                <div class="fld">
+                  <span class="ic-in">📅</span>
+                  <input type="date" value="2026-04-19">
+                </div>
+                <div class="fld">
+                  <span class="ic-in">⏰</span>
+                  <input type="time" value="07:05">
+                </div>
+              </div>
+              <div class="hint">Tip: weigh yourself first thing in the morning after using the bathroom, for the most consistent reading.</div>
+            </div>
+
+            <!-- BP optional -->
+            <div class="section">
+              <div class="label">Blood pressure (optional) <span class="zh">血压（可选）</span></div>
+              <div class="dt-row">
+                <div class="fld plain">
+                  <input type="number" placeholder="Systolic 收缩 (e.g. 125)">
+                </div>
+                <div class="fld plain">
+                  <input type="number" placeholder="Diastolic 舒张 (e.g. 82)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Note -->
+            <div class="section">
+              <div class="label">Note (optional) <span class="zh">备注（可选）</span></div>
+              <div class="fld plain">
+                <textarea placeholder="e.g. Jeans feel looser · 裤子变松了…"></textarea>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="sheet-cta">
+            <div class="cta">
+              <button class="btn secondary">Cancel</button>
+              <button class="btn primary">💾 Save check-in · 保存记录</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><b>Flow 3 · Log Weight / Waist</b> — dual stepper input · auto date-time (editable) · optional BP fields · weekly delta chip</div>
+    </div>
+
+  </div>
+
+  <!-- ============ LEGEND / BEHAVIOUR NOTES ============ -->
+  <div class="legend">
+    <h3>Behaviour & data notes for IT developer</h3>
+    <ul>
+      <li>All three modals open as a bottom-sheet on mobile, centred dialog on desktop (max-width 480px).</li>
+      <li>Glucose reading type pill (FBS / 2hPP / Random) is required before Save is enabled.</li>
+      <li>Units default to <b>mmol/L</b> (MY/SG standard) — stored in mmol/L internally regardless of UI toggle.</li>
+      <li>Date + time auto-fill to <b>now()</b>, and stay editable. Server stores both logged_at and created_at.</li>
+      <li>Target zone bar colour-codes live: green 3.9–7.0 (FBS) / &lt;7.8 (2hPP), amber up to prediabetic, red above.</li>
+      <li>If reading &lt; 3.0 or &gt; 14.0 mmol/L → trigger AI-11 Emergency Escalation immediately on save.</li>
+      <li>Meal photo upload triggers AI-04 (vision analysis) + AI-12 (feedback draft) in parallel.</li>
+      <li>Weight / waist saves to <code>vitals_log</code> (AI-02 data table) with delta computed against the last entry.</li>
+      <li>Context tags feed AI-06 (symptom extraction) so "feeling tired" / "shaky" can flag a hypo trend.</li>
+      <li>Every successful save shows a green toast at top of the Home screen ("Reading saved · 已保存") and refreshes the Home chart + KPI tiles.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

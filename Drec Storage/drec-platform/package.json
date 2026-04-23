@@ -1,0 +1,40 @@
+{
+  "name": "drec-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DREC Healthcare Academy — Patient Management Platform (100-Day Diabetes Reversal)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "next": "14.2.13",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "clsx": "2.1.1",
+    "zod": "3.23.8",
+    "date-fns": "3.6.0",
+    "@prisma/client": "5.19.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.10",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.19",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.13",
+    "postcss": "8.4.39",
+    "prisma": "5.19.1",
+    "tailwindcss": "3.4.7",
+    "tsx": "4.16.2",
+    "typescript": "5.5.4"
+  }
+}

@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DREC Healthcare Academy — Patient Desktop UI (v3)</title>
+<style>
+  :root {
+    --brand:      #1E88E5;   /* DREC primary blue */
+    --brand-2:    #26C1E8;   /* Light cyan */
+    --brand-deep: #1565C0;   /* Deep blue */
+    --accent:     #7BC142;   /* DREC logo green */
+    --accent-2:   #4CAF50;   /* Deeper green */
+    --grad-start: #7BC142;   /* Gradient: green */
+    --grad-end:   #1E88E5;   /* Gradient: blue */
+    --hero-red:   #5C1F2A;   /* Cover maroon */
+    --accent-red: #D63A4D;   /* Cover accent red */
+    --bg:         #F4F8FC;
+    --card:       #FFFFFF;
+    --ink:        #1A2A3A;
+    --muted:      #6B7A8A;
+    --ok:         #4CAF50;
+    --warn:       #FFA726;
+    --bad:        #E53935;
+    --line:       #E3E8F0;
+    --chip:       #E8F4FC;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .preview-note {
+    background: #FFF7E6;
+    border-bottom: 1px solid #F4D68F;
+    padding: 10px 24px;
+    font-size: 13px;
+    color: #7A5B1A;
+    text-align: center;
+  }
+  .app {
+    max-width: 1180px;
+    margin: 0 auto;
+    background: var(--bg);
+    min-height: 100vh;
+  }
+  /* Header */
+  header.topbar {
+    background: linear-gradient(120deg, #1565C0 0%, #1E88E5 45%, #26C1E8 75%, #7BC142 100%);
+    color: #fff;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 20px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; letter-spacing: .5px; }
+  .logo .logo-mark {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: #fff; display: grid; place-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    overflow: hidden;
+  }
+  .logo .logo-mark img { width: 40px; height: 40px; object-fit: contain; }
+  .spacer { flex: 1; }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.14); padding: 6px 12px 6px 6px;
+    border-radius: 30px;
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #F6C57F; color: #6A4A13; display: grid; place-items: center; font-weight: 700; font-size: 14px;
+  }
+  .bell { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.14); display: grid; place-items: center; cursor: pointer; position: relative; }
+  .bell::after { content: ''; position: absolute; top: 7px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: #FFC94A; border: 2px solid var(--brand); }
+
+  /* Tabs */
+  nav.tabs {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 0 16px;
+    display: flex; gap: 4px; overflow-x: auto;
+  }
+  nav.tabs button {
+    border: none; background: transparent; padding: 16px 18px;
+    font-size: 15px; font-weight: 600; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent;
+    display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  nav.tabs button:hover { color: var(--brand); }
+  nav.tabs button.active { color: var(--brand); border-bottom-color: var(--brand); }
+  nav.tabs .ico { font-size: 18px; }
+
+  /* Main */
+  main { padding: 24px 28px 60px; }
+  .view { display: none; animation: fade .2s ease; }
+  .view.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  h1.welcome { font-size: 26px; margin: 0 0 4px; }
+  .welcome-sub { color: var(--muted); margin-bottom: 20px; }
+
+  .progress-strip {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 22px; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+  }
+  .progress-strip .days { font-size: 30px; font-weight: 800; color: var(--brand); }
+  .progress-strip .label { color: var(--muted); font-size: 14px; }
+  .bar { flex: 1; min-width: 240px; height: 12px; background: #EAF0F7; border-radius: 8px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; width: 45%; background: linear-gradient(90deg, var(--brand-2), var(--accent)); border-radius: 8px; }
+  .pct { font-weight: 700; color: var(--brand); }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 820px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(30, 50, 80, .04);
+  }
+  .card h3 { margin: 0 0 8px; font-size: 15px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .big { font-size: 30px; font-weight: 800; color: var(--ink); }
+  .sub-small { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .delta-good { color: var(--ok); font-weight: 700; }
+  .delta-bad  { color: var(--bad); font-weight: 700; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  }
+  .pill-ok { background: #E7F6E9; color: var(--ok); }
+  .pill-warn { background: #FDF1DC; color: var(--warn); }
+  .pill-bad { background: #FCE3E2; color: var(--bad); }
+
+  /* Validity / access control */
+  .validity-banner {
+    border-radius: 12px; padding: 14px 18px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px; font-size: 14px;
+  }
+  .validity-banner.grace { background: #FEF9EF; border: 1px solid #F4D68F; color: #7A5B1A; }
+  .validity-banner.expired { background: #FCE3E2; border: 1px solid #F4BABA; color: #7A1A1A; }
+  .validity-banner .vb-icon { font-size: 26px; flex-shrink: 0; }
+  .validity-banner .vb-body { flex: 1; }
+  .validity-banner .vb-title { font-weight: 700; margin-bottom: 2px; }
+  .locked-overlay {
+    position: relative;
+  }
+  .locked-overlay::after {
+    content: '🔒 Chat access has ended · Please re-enroll to continue chatting';
+    position: absolute; inset: 0; background: rgba(244,248,252,0.93);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    border-radius: 14px; text-align: center; padding: 20px;
+  }
+
+  .section-title { font-size: 20px; font-weight: 700; margin: 28px 0 12px; }
+
+  /* Quick actions */
+  .qa-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .qa-btn {
+    flex: 1; min-width: 180px;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px; cursor: pointer; display: flex; align-items: center; gap: 14px;
+    transition: transform .1s ease, box-shadow .15s ease, border-color .15s ease;
+    text-align: left; font: inherit; color: inherit;
+  }
+  .qa-btn:hover { border-color: var(--brand-2); box-shadow: 0 4px 12px rgba(46,117,182,.15); transform: translateY(-1px); }
+  .qa-btn .ic { width: 44px; height: 44px; border-radius: 12px; background: var(--chip); display: grid; place-items: center; font-size: 22px; }
+  .qa-btn .ttl { font-weight: 700; font-size: 15px; }
+  .qa-btn .des { font-size: 13px; color: var(--muted); }
+
+  /* Chart */
+  .chart-wrap { position: relative; }
+
+  /* Chat */
+  .chat-layout {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; display: grid; grid-template-rows: auto 1fr auto;
+    height: 650px;
+  }
+  .chat-head {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border-bottom: 1px solid var(--line); background: #FAFBFD;
+  }
+  .chat-head .avatar { background: var(--brand); color: #fff; }
+  .chat-head .who { font-weight: 700; }
+  .chat-head .sub { font-size: 13px; color: var(--muted); }
+  .online-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; margin-right: 4px; }
+
+  .chat-body {
+    padding: 20px; background: #F4F6FA;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+  }
+  .day-sep { text-align: center; color: var(--muted); font-size: 12px; position: relative; }
+  .day-sep span { background: #F4F6FA; padding: 0 10px; z-index: 1; position: relative; }
+  .day-sep::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+
+  .bubble-row { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
+  .bubble-row.ai { align-self: flex-start; }
+  .bubble-row.me { align-self: flex-end; flex-direction: row-reverse; }
+  .bubble {
+    padding: 10px 14px; border-radius: 14px;
+    font-size: 15px; line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .bubble.ai { background: #fff; color: var(--ink); border-top-left-radius: 4px; }
+  .bubble.me { background: var(--brand); color: #fff; border-top-right-radius: 4px; }
+  .bubble.photo { padding: 6px; }
+  .bubble.photo .img { width: 240px; height: 160px; background: linear-gradient(135deg, #F7C27A, #E98F52); border-radius: 10px; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 600; }
+  .bubble-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .mini-card {
+    background: #EAF7F0; border: 1px solid #BFE5CF; border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; color: #1F6B3A; margin-top: 6px;
+  }
+  .avatar.sm { width: 28px; height: 28px; font-size: 12px; }
+
+  .chat-input {
+    border-top: 1px solid var(--line); background: #fff;
+    padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .chat-input .icbtn { width: 40px; height: 40px; border-radius: 50%; background: var(--chip); display: grid; place-items: center; font-size: 18px; cursor: pointer; }
+  .chat-input input {
+    flex: 1; border: 1px solid var(--line); border-radius: 22px;
+    padding: 10px 16px; font-size: 15px; outline: none; background: #FAFBFD;
+  }
+  .chat-input .send {
+    background: var(--brand); color: #fff; border: none; padding: 10px 18px;
+    border-radius: 22px; font-weight: 700; cursor: pointer;
+  }
+
+  /* Learning resources */
+  .lr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 820px) { .lr-grid { grid-template-columns: 1fr; } }
+  .lr-item { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform .1s ease, box-shadow .15s ease; position: relative; }
+  .lr-item:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30,50,80,.08); }
+  .lr-cover { height: 120px; background: linear-gradient(135deg, var(--brand-2), var(--accent)); position: relative; display: grid; place-items: center; color: #fff; font-size: 36px; }
+  .lr-cover.pdf    { background: linear-gradient(135deg, #E07A5F, #F2CC8F); }
+  .lr-cover.video  { background: linear-gradient(135deg, #3D5A80, #98C1D9); }
+  .lr-cover.info   { background: linear-gradient(135deg, #6A8EAE, #9CC5A1); }
+  .lr-cover.locked { background: linear-gradient(135deg, #B8C2CC, #96A4B2); }
+  .lr-cover.sg     { background: linear-gradient(135deg, #C0392B, #E74C3C); }
+  .lr-body { padding: 14px 16px; }
+  .lr-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .lr-meta { font-size: 13px; color: var(--muted); }
+  .lr-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 12px; background: var(--chip); color: var(--brand); font-weight: 600; margin-right: 6px; }
+  .lr-tag.locked-tag { background: #ECEEF3; color: var(--muted); }
+  .lr-tag.sg-tag { background: #FDECEB; color: #C0392B; }
+  /* NEW badge — red dot top-right corner */
+  .lr-new-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--bad); border: 2px solid #fff; z-index: 2;
+  }
+  .lr-new-label {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    background: var(--bad); color: #fff; padding: 1px 6px;
+    border-radius: 8px; margin-right: 5px; letter-spacing: .3px;
+  }
+
+  /* Appointment */
+  .appt-card {
+    display: grid; grid-template-columns: 72px 1fr auto; gap: 18px;
+    padding: 18px 20px; border-radius: 14px; background: #fff; border: 1px solid var(--line);
+    margin-bottom: 12px; align-items: center;
+  }
+  .appt-card.done { background: #F7FAF8; }
+  .date-tile {
+    background: var(--brand); color: #fff; border-radius: 10px; padding: 10px 0;
+    text-align: center; font-weight: 700;
+  }
+  .date-tile .m { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; opacity: .9; }
+  .date-tile .d { font-size: 24px; line-height: 1; margin-top: 2px; }
+  .date-tile.done { background: #AAB7C4; }
+  .appt-title { font-weight: 700; font-size: 16px; }
+  .appt-meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .appt-meta span { margin-right: 14px; }
+  .btn {
+    background: var(--brand); color: #fff; border: none; padding: 10px 16px;
+    border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px;
+  }
+  .btn.ghost { background: #fff; color: var(--brand); border: 1px solid var(--brand); }
+  .btn.muted { background: #EAEEF4; color: var(--muted); cursor: default; }
+
+  /* Progress */
+  .trend-legend { display: flex; gap: 16px; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .trend-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+  table.compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.compare th, table.compare td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+  table.compare th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+  table.compare td.good { color: var(--ok); font-weight: 700; }
+  table.compare td.bad  { color: var(--bad); font-weight: 700; }
+
+  footer.ft { text-align: center; color: var(--muted); padding: 30px 20px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="preview-note">
+  <strong>UI Preview — Patient View</strong> &nbsp;·&nbsp;
+  Sample data for demo only. All screens are clickable; use the top tabs to navigate.
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <strong>Validity demo:</strong>
+  <button onclick="setValidity('active')" style="margin:0 3px;padding:2px 8px;border-radius:4px;border:1px solid #ccc;background:#E7F6E9;cursor:pointer;font-size:12px;">✅ Active (Day 45)</button>
+  <button onclick="setValidity('grace')" style="margin:0 3px;padding:2px 8px;border-radius:4px;border:1px solid #ccc;background:#FEF9EF;cursor:pointer;font-size:12px;">⏳ Grace Period (Day 108)</button>
+  <button onclick="setValidity('expired')" style="margin:0 3px;padding:2px 8px;border-radius:4px;border:1px solid #ccc;background:#FCE3E2;cursor:pointer;font-size:12px;">🔒 Expired (Day 125)</button>
+</div>
+
+<div class="app">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark"><img src="../DREC Company logo.jpeg" alt="DREC"></div>
+      <div>
+        DREC Healthcare Academy
+        <div style="font-size: 11px; font-weight: 400; opacity: .9; letter-spacing: .3px;">100-Day Diabetes Reversal Journey · 100天逆糖之旅</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="bell" title="Notifications">🔔</div>
+    <div class="user-chip">
+      <div class="avatar">美</div>
+      <div style="font-size: 14px; line-height: 1.2;">
+        <div style="font-weight: 700;">陈美玲</div>
+        <div id="headerStatus" style="font-size: 11px; opacity: .85;">Day 45 · Active · Valid until 3 Aug 2026</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TABS ============ -->
+  <nav class="tabs" id="tabs">
+    <button class="active" data-view="home">       <span class="ico">🏠</span> 首页 · Home</button>
+    <button         data-view="chat">       <span class="ico">💬</span> 聊天 · Chat</button>
+    <button         data-view="learn">      <span class="ico">📚</span> 学习资源 · Resources</button>
+    <button         data-view="appt">       <span class="ico">📅</span> 预约 · Appointments</button>
+    <button         data-view="progress">   <span class="ico">📈</span> 我的进展 · My Progress</button>
+    <button         data-view="settings">   <span class="ico">⚙️</span> 设置 · Settings</button>
+  </nav>
+
+  <main>
+
+    <!-- =============== HOME =============== -->
+    <section class="view active" id="view-home">
+      <!-- Validity banner — shown conditionally by JS -->
+      <div id="validityBanner" style="display:none;"></div>
+
+      <h1 class="welcome">您好，美玲 👋</h1>
+      <div class="welcome-sub">欢迎回来！继续加油，您的身体正在慢慢恢复 💪</div>
+
+      <div class="progress-strip">
+        <div>
+          <div class="days" id="progressDay">Day 45<span style="font-size:18px;color:var(--muted);font-weight:600;"> / 100</span></div>
+          <div class="label">逆转糖尿病之旅 Reversal Journey</div>
+        </div>
+        <div class="bar" aria-label="Progress"><span id="progressBar" style="width:45%;"></span></div>
+        <div class="pct" id="progressPct">45%</div>
+        <div style="border-left:1px solid var(--line); padding-left:18px; min-width:160px;">
+          <div style="font-size:13px; font-weight:700;" id="validityLabel">✅ Program Active</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px;" id="validityDate">Valid until: <strong>3 Aug 2026</strong></div>
+          <div style="font-size:11px; color:var(--muted);" id="validityDaysLeft">55 days remaining</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- Next appointment -->
+        <div class="card">
+          <h3>Next Appointment</h3>
+          <div class="big" style="font-size: 22px;">3rd Consultation</div>
+          <div class="sub-small">📅 Monday, 15 June 2026 · 10:00 AM</div>
+          <div class="sub-small">👩‍⚕️ with Dietitian Suk Sin · Zoom</div>
+          <div style="margin-top: 12px;"><button class="btn">Join Zoom Meeting</button></div>
+        </div>
+
+        <!-- Latest Glucose -->
+        <div class="card">
+          <h3>Latest Fasting Glucose</h3>
+          <div class="big">5.8 <span style="font-size:16px;color:var(--muted);">mmol/L</span></div>
+          <div class="sub-small"><span class="status-pill pill-ok">🟢 In range</span> · 2h ago</div>
+          <div class="sub-small" style="margin-top: 6px;">
+            Weekly avg: <strong>6.1</strong> mmol/L
+            <span class="delta-good">↓ 12%</span>
+          </div>
+        </div>
+
+        <!-- Weight & Waist -->
+        <div class="card">
+          <h3>Weight &amp; Waist</h3>
+          <div style="display:flex;gap:18px;align-items:baseline;">
+            <div>
+              <div class="big" style="font-size:22px;">68.4 kg</div>
+              <div class="sub-small"><span class="delta-good">↓ 3.6 kg</span> since Day 1</div>
+            </div>
+            <div>
+              <div class="big" style="font-size:22px;">88 cm</div>
+              <div class="sub-small"><span class="delta-good">↓ 5 cm</span> waist</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sugar trend chart -->
+      <div class="section-title">📊 血糖趋势 · Sugar Trend (past 30 days)</div>
+      <div class="card chart-wrap">
+        <div class="trend-legend">
+          <span><span class="dot" style="background:var(--brand-2);"></span>Fasting</span>
+          <span><span class="dot" style="background:#E89B2B;"></span>2h Post-meal</span>
+          <span><span class="dot" style="background:#ccc;"></span>Target range (4–7 mmol/L)</span>
+        </div>
+        <svg viewBox="0 0 800 220" width="100%" height="220" aria-label="Glucose trend chart">
+          <!-- target band -->
+          <rect x="40" y="55" width="740" height="85" fill="#EAF2FA" opacity="0.5"/>
+          <!-- horizontal grid -->
+          <g stroke="#E3E8F0" stroke-width="1">
+            <line x1="40" y1="30"  x2="780" y2="30"/>
+            <line x1="40" y1="70"  x2="780" y2="70"/>
+            <line x1="40" y1="110" x2="780" y2="110"/>
+            <line x1="40" y1="150" x2="780" y2="150"/>
+            <line x1="40" y1="190" x2="780" y2="190"/>
+          </g>
+          <!-- y labels -->
+          <g font-size="11" fill="#6B7A8A" font-family="sans-serif">
+            <text x="8" y="34">11</text>
+            <text x="8" y="74">9</text>
+            <text x="8" y="114">7</text>
+            <text x="8" y="154">5</text>
+            <text x="8" y="194">3</text>
+          </g>
+          <!-- fasting polyline (generally declining) -->
+          <polyline fill="none" stroke="#2E75B6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+            points="60,60 90,70 120,68 150,78 180,85 210,92 240,100 270,98 300,110 330,115 360,118 390,125 420,128 450,132 480,135 510,138 540,140 570,142 600,145 630,148 660,150 690,148 720,152 750,150"/>
+          <!-- post-meal polyline (higher) -->
+          <polyline fill="none" stroke="#E89B2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+            points="60,40 90,50 120,48 150,62 180,70 210,78 240,85 270,82 300,92 330,95 360,100 390,108 420,110 450,115 480,118 510,122 540,125 570,128 600,130 630,132 660,135 690,134 720,138 750,136"/>
+          <!-- dots on latest -->
+          <circle cx="750" cy="150" r="4" fill="#2E75B6"/>
+          <circle cx="750" cy="136" r="4" fill="#E89B2B"/>
+          <!-- x labels -->
+          <g font-size="11" fill="#6B7A8A" font-family="sans-serif">
+            <text x="60"  y="210">Day 15</text>
+            <text x="240" y="210">Day 22</text>
+            <text x="440" y="210">Day 30</text>
+            <text x="640" y="210">Day 38</text>
+            <text x="730" y="210">Today</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="section-title">🎯 Quick Actions</div>
+      <div class="qa-row">
+        <button class="qa-btn">
+          <div class="ic">📸</div>
+          <div><div class="ttl">Upload meal photo</div><div class="des">Get instant AI feedback</div></div>
+        </button>
+        <button class="qa-btn">
+          <div class="ic">💧</div>
+          <div><div class="ttl">Log blood glucose</div><div class="des">Fasting or post-meal</div></div>
+        </button>
+        <button class="qa-btn">
+          <div class="ic">⚖️</div>
+          <div><div class="ttl">Log weight / waist</div><div class="des">Weekly check-in</div></div>
+        </button>
+        <button class="qa-btn">
+          <div class="ic">💬</div>
+          <div><div class="ttl">Ask your care team</div><div class="des">Questions anytime</div></div>
+        </button>
+      </div>
+    </section>
+
+    <!-- =============== CHAT =============== -->
+    <section class="view" id="view-chat">
+      <div class="chat-layout">
+        <div class="chat-head">
+          <div class="avatar">DR</div>
+          <div>
+            <div class="who">DREC Healthcare Team</div>
+            <div class="sub"><span class="online-dot"></span>Mon–Fri 10am–5pm · Responses endorsed by Dietitian Suk Sin &amp; Dr Eason Chang</div>
+          </div>
+          <div class="spacer"></div>
+          <div style="color: var(--muted); font-size: 13px;">🔒 End-to-end synced with WhatsApp</div>
+        </div>
+
+        <div class="chat-body" id="chat-body">
+
+          <div class="day-sep"><span>Today · 早上 08:15</span></div>
+
+          <!-- Emergency alert bubble example (shown when glucose critical) -->
+          <div style="background:#FCE3E2; border:1.5px solid #E53935; border-radius:12px; padding:12px 16px; margin:0 0 4px; font-size:14px; color:#7A1A1A;">
+            <strong>🚨 紧急提醒 Emergency Alert</strong><br/>
+            我们检测到您的血糖读数 <strong>2.8 mmol/L</strong> 低于安全范围。<br/>
+            请立即进食含糖食物（如糖果、果汁），并通知身边的人。<br/>
+            <span style="font-size:12px; opacity:.8;">This message was sent automatically by the system · 已通知 Dr. Chang · 08:02</span>
+          </div>
+
+          <div class="bubble-row ai">
+            <div class="avatar sm" style="background: var(--brand); color: #fff;">AI</div>
+            <div>
+              <div class="bubble ai">早安美玲 😊 今天是 Day 45，记得起床30分钟内测空腹血糖哦！</div>
+              <div class="bubble-meta">08:15</div>
+            </div>
+          </div>
+
+          <div class="bubble-row me">
+            <div>
+              <div class="bubble me">空腹 5.8 mmol/L ✅</div>
+              <div class="bubble-meta" style="text-align: right;">08:22 · ✓✓</div>
+            </div>
+          </div>
+
+          <div class="bubble-row ai">
+            <div class="avatar sm" style="background: var(--brand); color: #fff;">AI</div>
+            <div>
+              <div class="bubble ai">
+                太棒了 👏 5.8 mmol/L 在正常范围内（4–7 mmol/L）。<br/>
+                对比上周平均 6.5，进步很明显！继续加油 💪
+              </div>
+              <div class="bubble-meta">08:22</div>
+            </div>
+          </div>
+
+          <div class="day-sep"><span>中午 13:04</span></div>
+
+          <div class="bubble-row me">
+            <div>
+              <div class="bubble me photo">
+                <div class="img">🍛 Lunch photo</div>
+              </div>
+              <div class="bubble me" style="margin-top: 6px;">午餐：一碗糙米饭 + 清蒸鱼 + 炒青菜</div>
+              <div class="bubble-meta" style="text-align: right;">13:04</div>
+            </div>
+          </div>
+
+          <div class="bubble-row ai">
+            <div class="avatar sm" style="background: var(--brand); color: #fff;">AI</div>
+            <div>
+              <div class="bubble ai">
+                <strong>✅ 做得好的地方：</strong><br/>
+                · 糙米饭代替白饭，升糖更慢<br/>
+                · 清蒸鱼是很好的蛋白质选择<br/>
+                · 有加入青菜，纤维充足<br/><br/>
+                <strong>💡 小建议：</strong><br/>
+                糙米饭份量可以减到半碗 (~100g)，再加一份豆腐或蛋增加饱腹感。
+                <div class="mini-card">
+                  🧾 已记录到 <strong>3rd Appointment Slide · Meal Log</strong>
+                </div>
+              </div>
+              <div class="bubble-meta">13:05</div>
+            </div>
+          </div>
+
+          <div class="bubble-row me">
+            <div>
+              <div class="bubble me">好的，谢谢 🙏 下次试试！</div>
+              <div class="bubble-meta" style="text-align: right;">13:06 · ✓✓</div>
+            </div>
+          </div>
+
+          <div class="day-sep"><span>下午 15:30</span></div>
+
+          <div class="bubble-row me">
+            <div>
+              <div class="bubble me">请问这个饼干我可以吃吗？</div>
+              <div class="bubble me photo" style="margin-top: 6px;">
+                <div class="img" style="background: linear-gradient(135deg, #B8C2CC, #96A4B2);">📋 Nutrition label</div>
+              </div>
+              <div class="bubble-meta" style="text-align: right;">15:30 · ✓✓</div>
+            </div>
+          </div>
+
+          <div class="bubble-row ai">
+            <div class="avatar sm" style="background: var(--brand); color: #fff;">AI</div>
+            <div>
+              <div class="bubble ai">
+                我看了营养标签：<br/>
+                每100g 含糖 <strong>24g</strong> · 总碳水 <strong>58g</strong><br/><br/>
+                ⚠️ 糖分偏高，不建议在 100 天 program 期间食用。<br/>
+                可以用 <strong>无糖坚果</strong> 或 <strong>无糖豆浆 + 鸡蛋</strong> 替代作为下午茶哦。
+                <div class="mini-card" style="background: #FDF1DC; border-color: #F4D68F; color: #7A5B1A;">
+                  ⏳ Dietitian 正在复查此建议 (out-of-office)
+                </div>
+              </div>
+              <div class="bubble-meta">15:31</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <div class="icbtn" title="📷 Take / upload meal photo or nutrition label" onclick="alert('Upload photo: meal photo or nutrition label for analysis')">📷</div>
+          <div class="icbtn" title="🎤 Send voice note" onclick="alert('Hold to record voice note')">🎤</div>
+          <input type="text" placeholder="输入讯息... / Type a message (Mon–Fri 10am–5pm)" />
+          <button class="send">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== LEARNING RESOURCES =============== -->
+    <section class="view" id="view-learn">
+      <h1 class="welcome">📚 Learning Resources</h1>
+      <div class="welcome-sub">根据您的 program 进度解锁 · Content unlocks as you progress through the 100-day program.</div>
+
+      <div style="margin-top: 14px; margin-bottom: 20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="lr-tag">✅ 4 Unlocked</span>
+        <span class="lr-tag locked-tag">🔒 3 Locked</span>
+        <span style="font-size:12px; color:var(--muted);">·</span>
+        <span style="font-size:12px; color:var(--muted);">🔴 Red dot = new content you haven't viewed yet</span>
+      </div>
+
+      <div class="lr-grid">
+        <!-- Viewed — no dot -->
+        <div class="lr-item" onclick="this.querySelector('.lr-new-dot') && this.querySelector('.lr-new-dot').remove()">
+          <div class="lr-cover video">▶</div>
+          <div class="lr-body">
+            <div class="lr-title">Welcome &amp; Program Overview</div>
+            <div class="lr-meta"><span class="lr-tag">Video · 12 min</span> Day 1 · Unlocked</div>
+          </div>
+        </div>
+        <!-- Viewed — no dot -->
+        <div class="lr-item">
+          <div class="lr-cover pdf">📄</div>
+          <div class="lr-body">
+            <div class="lr-title">均衡餐盘指南 · Balanced Plate Guide</div>
+            <div class="lr-meta"><span class="lr-tag">PDF · 8 pages</span> Day 1 · Unlocked</div>
+          </div>
+        </div>
+        <!-- NEW — unread, red dot -->
+        <div class="lr-item" onclick="this.querySelector('.lr-new-dot') && this.querySelector('.lr-new-dot').remove()">
+          <div class="lr-new-dot" title="New — not yet viewed"></div>
+          <div class="lr-cover info">🧠</div>
+          <div class="lr-body">
+            <div class="lr-title">糖尿病 vs 预糖尿病</div>
+            <div class="lr-meta"><span class="lr-new-label">NEW</span><span class="lr-tag">Infographic</span> Day 7 · Unlocked</div>
+          </div>
+        </div>
+        <!-- NEW — unread, red dot -->
+        <div class="lr-item" onclick="this.querySelector('.lr-new-dot') && this.querySelector('.lr-new-dot').remove()">
+          <div class="lr-new-dot" title="New — not yet viewed"></div>
+          <div class="lr-cover video">▶</div>
+          <div class="lr-body">
+            <div class="lr-title">认识 GI 与 GL · GI/GL Explained</div>
+            <div class="lr-meta"><span class="lr-new-label">NEW</span><span class="lr-tag">Video · 18 min</span> Day 30 · Unlocked</div>
+          </div>
+        </div>
+        <!-- Locked -->
+        <div class="lr-item" style="cursor:default;">
+          <div class="lr-cover locked">🔒</div>
+          <div class="lr-body">
+            <div class="lr-title">外食族生存指南</div>
+            <div class="lr-meta"><span class="lr-tag locked-tag">PDF · Locked</span> Unlocks on Day 60</div>
+          </div>
+        </div>
+        <div class="lr-item" style="cursor:default;">
+          <div class="lr-cover locked">🔒</div>
+          <div class="lr-body">
+            <div class="lr-title">运动 &amp; 血糖管理</div>
+            <div class="lr-meta"><span class="lr-tag locked-tag">Video · Locked</span> Unlocks on Day 75</div>
+          </div>
+        </div>
+        <div class="lr-item" style="cursor:default;">
+          <div class="lr-cover locked">🔒</div>
+          <div class="lr-body">
+            <div class="lr-title">毕业 Maintenance Plan</div>
+            <div class="lr-meta"><span class="lr-tag locked-tag">PDF · Locked</span> Unlocks on Day 100</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SG-Exclusive: Dr Eason's 100-Day Companion Videos -->
+      <div style="margin-top:30px;">
+        <div class="section-title" style="display:flex; align-items:center; gap:10px;">
+          🇸🇬 Dr Eason's 100-Day Companion Videos
+          <span style="font-size:12px; font-weight:400; background:#FDECEB; color:#C0392B; padding:2px 9px; border-radius:12px;">Singapore Patients Only</span>
+        </div>
+        <div class="welcome-sub" style="margin-bottom:16px;">一天一个小视频，陪你走过100天 · One 30-second video per day, unlocks automatically each day.</div>
+        <div class="lr-grid">
+          <!-- Day 45 = current, watched -->
+          <div class="lr-item">
+            <div class="lr-cover sg" style="font-size:18px; flex-direction:column; gap:4px;">
+              <span>▶</span>
+              <span style="font-size:11px; opacity:.9;">Day 45</span>
+            </div>
+            <div class="lr-body">
+              <div class="lr-title">Day 45: 为什么血糖还是波动？</div>
+              <div class="lr-meta"><span class="lr-tag sg-tag">🇸🇬 SG Exclusive</span> Video · 30 sec · Watched</div>
+            </div>
+          </div>
+          <!-- Day 44, watched -->
+          <div class="lr-item">
+            <div class="lr-cover sg" style="font-size:18px; flex-direction:column; gap:4px;">
+              <span>▶</span>
+              <span style="font-size:11px; opacity:.9;">Day 44</span>
+            </div>
+            <div class="lr-body">
+              <div class="lr-title">Day 44: 睡眠与血糖的关系</div>
+              <div class="lr-meta"><span class="lr-tag sg-tag">🇸🇬 SG Exclusive</span> Video · 30 sec · Watched</div>
+            </div>
+          </div>
+          <!-- Day 46, NEW unlocks tomorrow — locked -->
+          <div class="lr-item" style="cursor:default; opacity:.6;">
+            <div class="lr-cover locked" style="font-size:18px; flex-direction:column; gap:4px;">
+              <span>🔒</span>
+              <span style="font-size:11px; opacity:.9;">Day 46</span>
+            </div>
+            <div class="lr-body">
+              <div class="lr-title">Day 46: 运动时间与血糖控制</div>
+              <div class="lr-meta"><span class="lr-tag locked-tag">Unlocks tomorrow</span> Video · 30 sec</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-size:13px; color:var(--muted);">
+          📺 45 / 100 videos watched · <a href="#" style="color:var(--brand);">View all companion videos →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== APPOINTMENT =============== -->
+    <section class="view" id="view-appt">
+      <h1 class="welcome">📅 My Appointments</h1>
+      <div class="welcome-sub">Your 4 consultations are <strong>auto-scheduled</strong> based on your program timeline. Contact us only if you need to reschedule — please try to attend on the fixed date to keep your program on track.</div>
+
+      <div style="margin-top: 18px;">
+
+        <!-- Appt 1 - done -->
+        <div class="appt-card done">
+          <div class="date-tile done"><div class="m">Mar</div><div class="d">20</div></div>
+          <div>
+            <div class="appt-title">1st Appointment <span class="status-pill pill-ok" style="margin-left:6px;">Completed</span></div>
+            <div class="appt-meta"><span>🕙 10:00 AM</span><span>👩‍⚕️ Dietitian SS</span><span>⏱️ 60 min</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">📌 Date was selected by you via WhatsApp before program start.</div>
+          </div>
+          <div><button class="btn ghost">View Slides</button></div>
+        </div>
+
+        <!-- Appt 2 - done -->
+        <div class="appt-card done">
+          <div class="date-tile done"><div class="m">Apr</div><div class="d">08</div></div>
+          <div>
+            <div class="appt-title">2nd Appointment · Medical Report Review <span class="status-pill pill-ok" style="margin-left:6px;">Completed</span></div>
+            <div class="appt-meta"><span>🕙 10:00 AM</span><span>👨‍⚕️ Doctor Chang</span><span>⏱️ 45 min</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">📅 Auto-scheduled at Day 20 of your program.</div>
+          </div>
+          <div><button class="btn ghost">View Slides</button></div>
+        </div>
+
+        <!-- Appt 3 - upcoming, auto-scheduled -->
+        <div class="appt-card">
+          <div class="date-tile"><div class="m">Jun</div><div class="d">15</div></div>
+          <div>
+            <div class="appt-title">3rd Appointment <span class="status-pill pill-warn" style="margin-left:6px;">Upcoming · in 6 days</span></div>
+            <div class="appt-meta"><span>🕙 10:00 AM</span><span>👩‍⚕️ Dietitian SS</span><span>🔗 Zoom link ready</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">📅 Auto-scheduled at Day 60 of your program.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <button class="btn">Join Zoom</button>
+            <a href="#" style="font-size:12px;color:var(--muted);" onclick="document.getElementById('reschedule-modal').style.display='flex'; return false;">Need to reschedule?</a>
+          </div>
+        </div>
+
+        <!-- Appt 4 - auto-scheduled -->
+        <div class="appt-card">
+          <div class="date-tile" style="background:#8FA3B8;"><div class="m">Aug</div><div class="d">27</div></div>
+          <div>
+            <div class="appt-title">4th Appointment · Graduation 🎓 <span class="status-pill pill-warn" style="margin-left:6px;">Scheduled · Day 100</span></div>
+            <div class="appt-meta"><span>🕙 10:00 AM</span><span>👨‍⚕️ Doctor + Dietitian</span><span>Pre/post comparison</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">📅 Auto-scheduled at Day 100. Zoom link will appear 24h before.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <button class="btn muted" style="cursor:default; background:#EAEEF4; color:var(--muted);">55 days away</button>
+            <a href="#" style="font-size:12px;color:var(--muted);" onclick="document.getElementById('reschedule-modal').style.display='flex'; return false;">Need to reschedule?</a>
+          </div>
+        </div>
+
+        <!-- Reschedule modal -->
+        <div id="reschedule-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; align-items:center; justify-content:center;">
+          <div style="background:#fff; border-radius:16px; padding:24px; max-width:440px; width:90%;">
+            <div style="font-weight:700; font-size:16px; margin-bottom:4px;">Request to Reschedule · 更改会诊时间</div>
+            <div style="font-size:13px; color:var(--muted); background:#FEF9EF; border:1px solid #F4D68F; border-radius:8px; padding:10px 12px; margin:12px 0 16px;">
+              ⚠️ Rescheduling will delay your program timeline. Please attend on the fixed date if possible.<br>
+              <span style="font-size:12px;">更改时间会延误您的计划进度，请尽量按原定日期出席。</span>
+            </div>
+            <label style="font-size:13px; font-weight:600; color:var(--muted);">Which appointment · 哪一次会诊</label>
+            <select style="width:100%; margin:6px 0 12px; padding:8px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px;">
+              <option>3rd Appointment (Jun 15)</option>
+              <option>4th Appointment / Graduation (Aug 27)</option>
+            </select>
+            <label style="font-size:13px; font-weight:600; color:var(--muted);">Reason · 原因</label>
+            <select style="width:100%; margin:6px 0 12px; padding:8px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px;">
+              <option>Work commitment · 工作原因</option>
+              <option>Medical / health issue · 身体不适</option>
+              <option>Family emergency · 家庭紧急事务</option>
+              <option>Travel · 出行</option>
+              <option>Other · 其他</option>
+            </select>
+            <label style="font-size:13px; font-weight:600; color:var(--muted);">Preferred new date · 希望改到</label>
+            <input type="date" style="width:100%; margin:6px 0 16px; padding:8px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px;"/>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+              <button class="btn ghost" onclick="document.getElementById('reschedule-modal').style.display='none'">Cancel</button>
+              <button class="btn" onclick="alert('✅ Request sent. Our team will contact you via WhatsApp within 24 hours.'); document.getElementById('reschedule-modal').style.display='none'">Submit Request</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">📝 Before each consultation</div>
+      <div class="card">
+        <ul style="margin: 0; padding-left: 20px; color: var(--ink);">
+          <li>Charge your device and test Zoom 10 minutes before the session.</li>
+          <li>Make sure your latest glucose readings, meal log, weight &amp; waist are updated.</li>
+          <li>Upload latest medical report if requested (optional for 4th appointment).</li>
+          <li>Find a quiet place with good lighting.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =============== MY PROGRESS =============== -->
+    <section class="view" id="view-progress">
+      <h1 class="welcome">📈 My Progress</h1>
+      <div class="welcome-sub">A complete picture of your 100-day journey so far.</div>
+
+      <div class="grid-4" style="margin-top: 18px;">
+        <div class="card">
+          <h3>HbA1c</h3>
+          <div class="big">6.4%</div>
+          <div class="sub-small"><span class="delta-good">↓ from 8.2%</span> · pre-program</div>
+        </div>
+        <div class="card">
+          <h3>Avg Fasting Glucose</h3>
+          <div class="big">6.1 <span style="font-size:14px;color:var(--muted);">mmol/L</span></div>
+          <div class="sub-small"><span class="delta-good">↓ 2.3</span> since Day 1</div>
+        </div>
+        <div class="card">
+          <h3>Weight</h3>
+          <div class="big">68.4 kg</div>
+          <div class="sub-small"><span class="delta-good">↓ 3.6 kg</span></div>
+        </div>
+        <div class="card">
+          <h3>Compliance</h3>
+          <div class="big">92%</div>
+          <div class="sub-small">Meal + glucose logs</div>
+        </div>
+      </div>
+
+      <div class="section-title">📈 Glucose Trend Over Time</div>
+      <div class="card">
+        <svg viewBox="0 0 800 220" width="100%" height="220" aria-label="Glucose trend chart">
+          <!-- Reference lines -->
+          <g stroke="#E3E8F0" stroke-width="1">
+            <line x1="40" y1="30"  x2="780" y2="30"/>
+            <line x1="40" y1="80"  x2="780" y2="80"/>
+            <line x1="40" y1="130" x2="780" y2="130"/>
+            <line x1="40" y1="180" x2="780" y2="180"/>
+          </g>
+          <!-- HYPER warning line >10 mmol/L -->
+          <line x1="40" y1="55" x2="780" y2="55" stroke="#E53935" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.85"/>
+          <text x="784" y="52" font-size="10" fill="#E53935" font-family="sans-serif" font-weight="600">10 ⚠</text>
+          <!-- Target zone band (4–7.8 mmol/L), mapped to y=90–170 -->
+          <rect x="40" y="90" width="740" height="80" fill="#EAF7F0" opacity="0.6"/>
+          <line x1="40" y1="90" x2="780" y2="90" stroke="#7BC142" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+          <text x="784" y="94" font-size="10" fill="#7BC142" font-family="sans-serif">7.8</text>
+          <line x1="40" y1="170" x2="780" y2="170" stroke="#7BC142" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+          <text x="784" y="174" font-size="10" fill="#7BC142" font-family="sans-serif">4.0</text>
+          <!-- HYPO warning line <3 mmol/L -->
+          <line x1="40" y1="190" x2="780" y2="190" stroke="#E53935" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.85"/>
+          <text x="784" y="188" font-size="10" fill="#E53935" font-family="sans-serif" font-weight="600">3 ⚠</text>
+          <!-- Fasting Glucose (improving, starts high, trends down) -->
+          <polyline fill="none" stroke="#1E88E5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+            points="60,60 140,72 220,88 300,105 380,118 460,128 540,135 620,142 700,148 750,152"/>
+          <!-- 2hPP Glucose (higher, also trending down) -->
+          <polyline fill="none" stroke="#E89B2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+            points="60,38 140,52 220,68 300,85 380,100 460,112 540,122 620,132 700,140 750,145"/>
+          <g font-size="11" fill="#6B7A8A" font-family="sans-serif">
+            <text x="40" y="210">Day 1</text>
+            <text x="220" y="210">Day 15</text>
+            <text x="400" y="210">Day 30</text>
+            <text x="580" y="210">Day 40</text>
+            <text x="720" y="210">Day 45</text>
+          </g>
+        </svg>
+        <div class="trend-legend" style="margin-top: 6px;">
+          <span><span class="dot" style="background:#1E88E5;"></span>Fasting Glucose (mmol/L)</span>
+          <span><span class="dot" style="background:#E89B2B;"></span>2hPP Glucose (mmol/L)</span>
+          <span><span class="dot" style="background:#7BC142; border-radius:2px;"></span>Target zone (4.0–7.8)</span>
+          <span><span class="dot" style="background:#E53935; border-radius:2px;"></span>Warning (&lt;3 / &gt;10)</span>
+        </div>
+      </div>
+
+      <div class="section-title">🧪 Medical Report — Pre vs Latest</div>
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <table class="compare">
+          <thead>
+            <tr><th>Test</th><th>Pre-program</th><th>Latest (Day 45)</th><th>Change</th><th>Reference Range</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>HbA1c (%)</td><td>8.2</td><td>6.4</td><td class="good">↓ 1.8</td><td>&lt; 7.0</td></tr>
+            <tr><td>Fasting Glucose (mmol/L)</td><td>8.4</td><td>6.1</td><td class="good">↓ 2.3</td><td>4.0 – 6.0</td></tr>
+            <tr><td>2hPP Glucose (mmol/L)</td><td>12.1</td><td>7.8</td><td class="good">↓ 4.3</td><td>&lt; 7.8</td></tr>
+            <tr><td>eGFR (mL/min/1.73m²)</td><td>72</td><td>78</td><td class="good">↑ 6</td><td>≥ 60</td></tr>
+            <tr><td>Total Cholesterol (mmol/L)</td><td>6.2</td><td>5.1</td><td class="good">↓ 1.1</td><td>&lt; 5.2</td></tr>
+            <tr><td>LDL (mmol/L)</td><td>4.1</td><td>3.0</td><td class="good">↓ 1.1</td><td>&lt; 3.4</td></tr>
+            <tr><td>Triglycerides (mmol/L)</td><td>2.3</td><td>1.4</td><td class="good">↓ 0.9</td><td>&lt; 1.7</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title">💊 Medication Changes</div>
+      <div class="card">
+        <ul style="margin: 0; padding-left: 20px;">
+          <li><strong>Metformin 1000mg BD</strong> → reduced to <strong>500mg BD</strong> (Day 35, endorsed by Doctor Chang)</li>
+          <li>Supplements continued: Vitamin D3 1000 IU daily</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =============== ABOUT =============== -->
+    <section class="view" id="view-settings">
+      <h1 class="welcome">⚙️ Settings &amp; Profile · 设置</h1>
+      <div class="welcome-sub">Manage your preferences and view your care team info.</div>
+
+      <div class="grid-2" style="margin-top:18px;">
+        <!-- Personal Preferences -->
+        <div class="card">
+          <h3>🌐 Language &amp; Timezone · 语言与时区</h3>
+          <div style="margin-top:12px;">
+            <label style="font-size:13px;font-weight:600;color:var(--muted);">Preferred Language · 语言偏好</label>
+            <select style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+              <option>简体中文 (Simplified Chinese)</option>
+              <option>English</option>
+              <option>Bahasa Malaysia</option>
+            </select>
+          </div>
+          <div style="margin-top:14px;">
+            <label style="font-size:13px;font-weight:600;color:var(--muted);">Timezone · 时区</label>
+            <select style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+              <option>Asia/Kuala_Lumpur (GMT+8) 马来西亚</option>
+              <option>Asia/Singapore (GMT+8) 新加坡</option>
+            </select>
+          </div>
+          <div style="margin-top:14px;">
+            <label style="font-size:13px;font-weight:600;color:var(--muted);">Country · 所在国家</label>
+            <select style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+              <option>🇲🇾 Malaysia</option>
+              <option>🇸🇬 Singapore</option>
+            </select>
+          </div>
+          <button class="btn" style="margin-top:16px;width:100%;" onclick="alert('✅ Preferences saved')">Save Preferences · 保存</button>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card">
+          <h3>🔔 Notifications · 通知设置</h3>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px;">
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:14px;">
+              <span>Morning glucose reminder (08:00)<br><span style="font-size:12px;color:var(--muted);">晨间血糖提醒</span></span>
+              <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand);">
+            </label>
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:14px;">
+              <span>Weekly weigh-in reminder<br><span style="font-size:12px;color:var(--muted);">每周体重提醒</span></span>
+              <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand);">
+            </label>
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:14px;">
+              <span>New learning resource unlocked<br><span style="font-size:12px;color:var(--muted);">新学习资源解锁</span></span>
+              <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand);">
+            </label>
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:14px;">
+              <span>Appointment reminders<br><span style="font-size:12px;color:var(--muted);">会诊提醒</span></span>
+              <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand);">
+            </label>
+          </div>
+        </div>
+
+        <!-- Care Team -->
+        <div class="card">
+          <h3>👩‍⚕️ Your Care Team · 您的医疗团队</h3>
+          <div style="display:flex;gap:14px;align-items:center;margin-top:12px;">
+            <div class="avatar" style="width:48px;height:48px;background:var(--brand);color:#fff;font-size:16px;">DC</div>
+            <div>
+              <div style="font-weight:700;">Dr. Eason Chang</div>
+              <div class="sub-small">Medical Lead · 医疗主任</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">DREC Healthcare Academy</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:center;margin-top:14px;">
+            <div class="avatar" style="width:48px;height:48px;background:#E89B2B;color:#fff;">SS</div>
+            <div>
+              <div style="font-weight:700;">Suk Sin</div>
+              <div class="sub-small">Your assigned Dietitian · 您的营养师</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Mon–Fri, 10am–5pm</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Program Info -->
+        <div class="card">
+          <h3>📋 Program Info · 计划资料</h3>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:14px;">
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);">
+              <span style="color:var(--muted);">Program</span><span style="font-weight:600;">100-Day Diabetes Reversal</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);">
+              <span style="color:var(--muted);">Start Date</span><span style="font-weight:600;">20 March 2026</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);">
+              <span style="color:var(--muted);">Valid Until</span><span style="font-weight:600;color:var(--ok);">3 August 2026</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);">
+              <span style="color:var(--muted);">Consultations</span><span style="font-weight:600;">4 sessions (Day 1, 20, 60, 100)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;">
+              <span style="color:var(--muted);">Support Hours</span><span style="font-weight:600;">Mon–Fri, 10am–5pm</span>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:#EAF2FB;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--brand);">
+            ℹ️ For program enquiries, contact us via Chat during support hours.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="ft">
+    © DREC Healthcare Academy · Doctor Chang · UI Preview v1.0
+  </footer>
+
+</div>
+
+<script>
+  /* ── VALIDITY STATES ─────────────────────────────────────────
+     active  : Day 1–100  → full access
+     grace   : Day 101–114 (default 14-day grace) → full access + warning banner
+     expired : Day 115+   → all tabs accessible EXCEPT Chat (locked)
+  ─────────────────────────────────────────────────────────────── */
+  const VALIDITY = {
+    active: {
+      day: 45, pct: 45, barW: '45%',
+      headerStatus: 'Day 45 · Active · Valid until 3 Aug 2026',
+      labelText: '✅ Program Active', labelColor: 'var(--ok)',
+      dateText: 'Valid until: <strong>3 Aug 2026</strong>',
+      daysLeft: '55 days remaining',
+      banner: null,
+      chatLocked: false
+    },
+    grace: {
+      day: 108, pct: 100, barW: '100%',
+      headerStatus: 'Day 108 · Grace Period · Expires 17 May 2026',
+      labelText: '⏳ Grace Period', labelColor: 'var(--warn)',
+      dateText: 'Access expires: <strong>17 May 2026</strong>',
+      daysLeft: '6 days left in grace period',
+      banner: {
+        type: 'grace',
+        title: '⏳ You are in your 14-day Grace Period',
+        body: 'Your 100-day program ended on 3 May 2026. You have full access to all features until <strong>17 May 2026</strong>. To continue beyond that, please re-enroll or ask your care team to extend your program.',
+        btn: 'Contact Us to Re-enroll'
+      },
+      chatLocked: false
+    },
+    expired: {
+      day: 125, pct: 100, barW: '100%',
+      headerStatus: 'Day 125 · Program Ended · Chat unavailable',
+      labelText: '🔒 Program Ended', labelColor: 'var(--bad)',
+      dateText: 'Access ended: <strong>17 May 2026</strong>',
+      daysLeft: 'Chat access has ended',
+      banner: {
+        type: 'expired',
+        title: '🔒 Your program access has ended',
+        body: 'Your 100-day program and 14-day grace period have ended. You can still view your <strong>progress, resources, and appointments</strong>, but <strong>chat is no longer available</strong>. Re-enroll to restore full access.',
+        btn: 'Re-enroll / Extend Program'
+      },
+      chatLocked: true
+    }
+  };
+
+  let currentState = 'active';
+
+  function setValidity(state) {
+    currentState = state;
+    const v = VALIDITY[state];
+
+    // Header chip
+    document.getElementById('headerStatus').textContent = v.headerStatus;
+
+    // Progress strip
+    document.getElementById('progressDay').innerHTML =
+      'Day ' + v.day + '<span style="font-size:18px;color:var(--muted);font-weight:600;"> / 100</span>';
+    document.getElementById('progressBar').style.width = v.barW;
+    document.getElementById('progressPct').textContent = v.pct + '%';
+    document.getElementById('validityLabel').textContent = v.labelText;
+    document.getElementById('validityLabel').style.color = v.labelColor;
+    document.getElementById('validityDate').innerHTML = 'Valid until: ' +
+      (state === 'expired' ? '<strong style="color:var(--bad);">Ended 17 May 2026</strong>' :
+       state === 'grace'   ? '<strong style="color:var(--warn);">17 May 2026</strong>' :
+                             '<strong>3 Aug 2026</strong>');
+    document.getElementById('validityDaysLeft').textContent = v.daysLeft;
+    document.getElementById('validityDaysLeft').style.color =
+      state === 'expired' ? 'var(--bad)' : state === 'grace' ? 'var(--warn)' : 'var(--muted)';
+
+    // Banner
+    const banner = document.getElementById('validityBanner');
+    if (v.banner) {
+      banner.style.display = 'flex';
+      banner.className = 'validity-banner ' + v.banner.type;
+      banner.innerHTML = `
+        <div class="vb-icon">${v.banner.type === 'grace' ? '⏳' : '🔒'}</div>
+        <div class="vb-body">
+          <div class="vb-title">${v.banner.title}</div>
+          <div style="font-size:13px; margin-top:2px;">${v.banner.body}</div>
+        </div>
+        <button class="btn${v.banner.type === 'expired' ? '' : ' ghost'}" style="white-space:nowrap; flex-shrink:0;"
+          onclick="alert('Redirecting to re-enrollment...')">${v.banner.btn}</button>
+      `;
+    } else {
+      banner.style.display = 'none';
+    }
+
+    // Chat tab — lock if expired
+    const chatBtn = document.querySelector('nav.tabs button[data-view="chat"]');
+    if (v.chatLocked) {
+      chatBtn.style.opacity = '0.45';
+      chatBtn.title = 'Chat access has ended. Please re-enroll to continue.';
+    } else {
+      chatBtn.style.opacity = '';
+      chatBtn.title = '';
+    }
+
+    // Chat view overlay
+    const chatView = document.getElementById('view-chat');
+    if (v.chatLocked) {
+      chatView.classList.add('locked-overlay');
+    } else {
+      chatView.classList.remove('locked-overlay');
+    }
+  }
+
+  /* ── TAB SWITCHING ──────────────────────────────────────────── */
+  const tabs = document.querySelectorAll('nav.tabs button');
+  const views = document.querySelectorAll('.view');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      // Block chat click when expired
+      if (t.dataset.view === 'chat' && VALIDITY[currentState].chatLocked) {
+        alert('Chat access has ended.\n\nYou can still view your progress, resources, and appointments.\n\nPlease contact your care team or re-enroll to restore chat access.');
+        return;
+      }
+      tabs.forEach(x => x.classList.remove('active'));
+      views.forEach(v => v.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('view-' + t.dataset.view).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Init
+  setValidity('active');
+</script>
+
+</body>
+</html>

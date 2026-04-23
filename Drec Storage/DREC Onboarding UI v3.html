@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DREC Healthcare Academy — Onboarding UI (v3)</title>
+<style>
+  :root {
+    --brand:      #1E88E5;   /* DREC primary blue */
+    --brand-2:    #26C1E8;   /* Light cyan */
+    --brand-deep: #1565C0;
+    --accent:     #7BC142;   /* DREC logo green */
+    --accent-2:   #4CAF50;
+    --grad-start: #7BC142;
+    --grad-end:   #1E88E5;
+    --hero-red:   #5C1F2A;
+    --accent-red: #D63A4D;
+    --bg:         #F4F8FC;
+    --card:       #FFFFFF;
+    --ink:        #1A2A3A;
+    --muted:      #6B7A8A;
+    --ok:         #4CAF50;
+    --warn:       #FFA726;
+    --bad:        #E53935;
+    --line:       #E3E8F0;
+    --chip:       #E8F4FC;
+    --radius:     14px;
+    --shadow:     0 1px 2px rgba(30, 50, 80, .04);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .app {
+    max-width: 1180px;
+    margin: 0 auto;
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  /* ============== Top bar ============== */
+  header.topbar {
+    background: linear-gradient(120deg, #1565C0 0%, #1E88E5 45%, #26C1E8 75%, #7BC142 100%);
+    color: #fff;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 20px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; letter-spacing: .5px; }
+  .logo-mark {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: #fff; display: grid; place-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18); overflow: hidden;
+  }
+  .logo-mark img { width: 40px; height: 40px; object-fit: contain; }
+  .logo-sub { font-size: 12px; font-weight: 500; opacity: .85; letter-spacing: .3px; margin-top: 2px; }
+  .spacer { flex: 1; }
+  .top-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.14); color: #fff;
+    padding: 6px 14px; border-radius: 30px; font-size: 13px; font-weight: 500;
+  }
+
+  /* ============== Cover banner ============== */
+  .cover-banner {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(92, 31, 42, .18);
+    background: #5C1F2A;
+  }
+  .cover-img {
+    width: 100%; display: block;
+    max-height: 260px; object-fit: cover;
+    object-position: center 35%;
+  }
+  .cover-overlay {
+    position: absolute;
+    right: 6%; top: 50%; transform: translateY(-50%);
+    color: #fff; text-align: right;
+    max-width: 55%;
+    text-shadow: 0 2px 8px rgba(0,0,0,.5);
+  }
+  .cover-tagline {
+    font-size: clamp(20px, 3.5vw, 36px);
+    font-weight: 800; line-height: 1.2;
+    letter-spacing: 1px;
+  }
+  .cover-tagline-2 {
+    font-size: clamp(20px, 3.5vw, 36px);
+    font-weight: 800; line-height: 1.2;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .cover-sub {
+    font-size: clamp(11px, 1.4vw, 14px);
+    opacity: .92;
+    margin-top: 10px;
+    letter-spacing: .3px;
+  }
+  @media (max-width: 620px) {
+    .cover-img { max-height: 180px; }
+    .cover-overlay { max-width: 65%; right: 5%; }
+    .cover-sub { display: none; }
+  }
+
+  /* ============== Hero ============== */
+  main { padding: 24px 28px 60px; }
+  .hero {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .hero h1 {
+    font-size: 24px; margin: 0 0 6px; color: var(--brand); font-weight: 800; line-height: 1.3;
+  }
+  .hero .cn { font-size: 18px; color: var(--ink); font-weight: 700; margin: 4px 0 10px; }
+  .hero .meta { color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .hero .meta a { color: var(--brand-2); text-decoration: none; font-weight: 600; }
+  .hero .req-note { color: var(--bad); font-size: 13px; margin-top: 10px; }
+
+  /* ============== Progress strip (mirrors patient UI) ============== */
+  .progress-strip {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 22px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+  }
+  .progress-strip .days {
+    font-size: 26px; font-weight: 800; color: var(--brand);
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .progress-strip .days small { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .progress-strip .label { color: var(--muted); font-size: 14px; }
+  .bar { flex: 1; min-width: 240px; height: 12px; background: #EAF0F7; border-radius: 8px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-2), var(--accent)); border-radius: 8px; transition: width .3s ease; }
+  .pct { font-weight: 700; color: var(--brand); }
+
+  /* ============== Stepper rail ============== */
+  .stepper {
+    display: flex; align-items: center; gap: 6px;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 20px; margin-bottom: 20px; overflow-x: auto;
+  }
+  .step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 0; white-space: nowrap;
+  }
+  .step .num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #EAF0F7; color: var(--muted);
+    display: grid; place-items: center; font-weight: 800; font-size: 14px;
+    border: 2px solid transparent;
+  }
+  .step .ttl { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .step.active .num { background: var(--brand); color: #fff; border-color: #CCE0F3; box-shadow: 0 0 0 4px #EAF2FA; }
+  .step.active .ttl { color: var(--brand); }
+  .step.done .num { background: var(--accent); color: #fff; }
+  .step.done .ttl { color: var(--ink); }
+  .step-sep { flex: 1; height: 2px; background: #EAF0F7; min-width: 20px; border-radius: 99px; }
+  .step-sep.done { background: var(--accent); }
+
+  /* ============== Pages ============== */
+  .page { display: none; animation: fade .2s ease; }
+  .page.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* ============== Section title / card ============== */
+  .section-title {
+    display: flex; align-items: center; gap: 12px;
+    margin: 24px 0 12px;
+  }
+  .section-title .ico {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--chip); color: var(--brand);
+    display: grid; place-items: center; font-size: 18px;
+  }
+  .section-title h2 {
+    margin: 0; font-size: 18px; color: var(--ink); font-weight: 700;
+  }
+  .section-title .cn {
+    color: var(--muted); font-size: 14px; font-weight: 500;
+  }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px 22px;
+    box-shadow: var(--shadow);
+    margin: 12px 0;
+  }
+  .qlabel {
+    font-weight: 700; font-size: 15px; color: var(--ink);
+    margin-bottom: 2px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px;
+  }
+  .qlabel .star { color: var(--bad); margin-left: 4px; }
+  .qhelp { color: var(--muted); font-size: 13px; margin: 4px 0 12px; line-height: 1.5; }
+
+  /* Inputs */
+  input[type=text], input[type=email], input[type=tel], input[type=number], textarea, select {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    color: var(--ink);
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--brand-2);
+    box-shadow: 0 0 0 3px rgba(46,117,182,.15);
+  }
+  textarea { min-height: 70px; resize: vertical; line-height: 1.5; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7A8A' d='M6 8L2 4h8z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+
+  /* Radio / Check chips */
+  .opt-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .opt-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: #fff; cursor: pointer; user-select: none;
+    font-size: 14px; color: var(--ink); font-weight: 500;
+    transition: all .15s;
+  }
+  .opt-chip:hover { border-color: var(--brand-2); background: var(--chip); }
+  .opt-chip input { accent-color: var(--brand); width: 16px; height: 16px; margin: 0; cursor: pointer; }
+  .opt-chip.selected { border-color: var(--brand); background: var(--chip); color: var(--brand); font-weight: 600; }
+
+  .check-col { display: flex; flex-direction: column; gap: 8px; }
+  .check-col .opt-chip { width: 100%; justify-content: flex-start; }
+
+  .sub-input { margin-top: 12px; max-width: 420px; }
+  .sub-input .qhelp { margin-top: 0; margin-bottom: 6px; }
+
+  /* Buttons */
+  .btn-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 22px; padding: 0 4px; gap: 12px; flex-wrap: wrap;
+  }
+  .btn-left { display: flex; gap: 10px; }
+  .btn {
+    border: none; border-radius: 10px; padding: 11px 22px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-primary:hover { background: #17416a; box-shadow: 0 4px 12px rgba(31,78,121,.25); }
+  .btn-ghost { background: #fff; color: var(--brand); border: 1px solid var(--line); }
+  .btn-ghost:hover { border-color: var(--brand-2); background: var(--chip); }
+  .btn-link { background: transparent; color: var(--muted); border: none; font-weight: 600; padding: 10px 8px; cursor: pointer; font-size: 14px; }
+  .btn-link:hover { color: var(--bad); text-decoration: underline; }
+
+  /* Protocol box */
+  .protocol-box {
+    background: #F4F8FC;
+    border-left: 4px solid var(--brand-2);
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin: 8px 0;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .protocol-box ol { padding-left: 20px; margin: 8px 0; }
+  .protocol-box li { margin-bottom: 4px; }
+  .protocol-box.warn { border-left-color: var(--warn); background: #FFF9EE; }
+
+  /* Review */
+  .review-card h3 {
+    margin: 0 0 10px; color: var(--brand); font-size: 15px;
+    text-transform: uppercase; letter-spacing: .5px; font-weight: 700;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .review-row {
+    display: flex; padding: 8px 0;
+    font-size: 14px;
+    border-bottom: 1px dashed #EAF0F7;
+  }
+  .review-row:last-child { border-bottom: none; }
+  .review-k { flex: 0 0 40%; color: var(--muted); }
+  .review-v { flex: 1; color: var(--ink); font-weight: 500; }
+  .empty-val { color: #B5BFCC; font-style: italic; font-weight: 400; }
+
+  /* Success */
+  .success-card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 50px 40px; box-shadow: var(--shadow); text-align: center;
+  }
+  .success-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #5BC7B6);
+    margin: 0 auto 18px;
+    display: grid; place-items: center; color: #fff; font-size: 40px;
+    box-shadow: 0 8px 24px rgba(63,167,150,.3);
+  }
+  .success-card h2 { color: var(--brand); margin: 0 0 8px; font-size: 24px; }
+  .success-card h2 .cn { display: block; font-size: 18px; color: var(--ink); margin-top: 4px; }
+  .success-card p { color: var(--muted); margin: 6px 0; }
+  .success-meta {
+    background: var(--chip); border-radius: 12px; padding: 18px 20px; margin: 22px auto;
+    text-align: left; font-size: 14px; max-width: 480px;
+  }
+  .success-meta .row { display: flex; justify-content: space-between; padding: 6px 0; }
+  .success-meta .row + .row { border-top: 1px solid rgba(31,78,121,.08); }
+  .success-meta b { color: var(--brand); }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+  }
+  .pill-ok { background: #E7F6E9; color: var(--ok); }
+  .pill-info { background: var(--chip); color: var(--brand); }
+
+  .mini { font-size: 13px; color: var(--muted); }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    main { padding: 16px 14px 50px; }
+    header.topbar { padding: 12px 16px; gap: 10px; }
+    .logo { font-size: 15px; }
+    .logo-sub { display: none; }
+    .hero { padding: 18px 20px; }
+    .hero h1 { font-size: 19px; }
+    .hero .cn { font-size: 15px; }
+    .card { padding: 16px 18px; }
+    .section-title h2 { font-size: 16px; }
+    .btn { padding: 10px 16px; font-size: 14px; }
+    .step .ttl { display: none; }
+    .stepper { padding: 12px 14px; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ TOP BAR (matches Patient UI) ============ -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark"><img src="../DREC Company logo.jpeg" alt="DREC"></div>
+      <div>
+        <div>DREC Healthcare Academy</div>
+        <div class="logo-sub">100-Day Diabetes Reversal Journey · 100天逆糖之旅</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <span class="top-chip">📝 Official Enrollment · 正式报名</span>
+  </header>
+
+  <main>
+    <!-- Cover banner (Stage 1 only — shown on Welcome page) -->
+    <div class="cover-banner" id="coverBanner">
+      <img src="../company cover.png" alt="糖尿病不是终点，而是新生的起点" class="cover-img">
+      <div class="cover-overlay">
+        <div class="cover-tagline">糖尿病不是终点</div>
+        <div class="cover-tagline-2">而是新生的<span style="color:#F7A4AE;">起点</span></div>
+        <div class="cover-sub">Diabetes is not the end — it's the start of a new life.</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>DREC 100-Day Reversal Journey: Official Enrollment</h1>
+      <div class="cn">DREC 100天逆糖之旅 · 正式报名与承诺书</div>
+      <div class="meta">
+        <span>📧 drechealthcare.cs@gmail.com</span>
+        <span>·</span>
+        <a href="#">Switch account</a>
+        <span style="margin-left:auto; color:var(--muted);">☁️ Draft auto-saved</span>
+      </div>
+      <div class="req-note">* Indicates required question · 带 * 为必填项</div>
+    </div>
+
+    <!-- Progress strip (mirrors patient UI day counter) -->
+    <div class="progress-strip">
+      <div class="days" id="daysLabel">Step 1 <small>of 5</small></div>
+      <div class="label" id="stepName">Welcome · 欢迎</div>
+      <div class="bar"><span id="pbar" style="width:20%"></span></div>
+      <div class="pct" id="ppct">20%</div>
+    </div>
+
+    <!-- Stepper rail -->
+    <div class="stepper" id="stepper">
+      <div class="step active" data-n="1"><div class="num">1</div><div class="ttl">Welcome</div></div>
+      <div class="step-sep"></div>
+      <div class="step" data-n="2"><div class="num">2</div><div class="ttl">Basic & Health</div></div>
+      <div class="step-sep"></div>
+      <div class="step" data-n="3"><div class="num">3</div><div class="ttl">Lifestyle</div></div>
+      <div class="step-sep"></div>
+      <div class="step" data-n="4"><div class="num">4</div><div class="ttl">Dietary</div></div>
+      <div class="step-sep"></div>
+      <div class="step" data-n="5"><div class="num">5</div><div class="ttl">Review</div></div>
+    </div>
+
+    <!-- ============ PAGE 1: Dietitian ============ -->
+    <div class="page active" id="page1">
+      <div class="section-title">
+        <div class="ico">👋</div>
+        <div>
+          <h2>Welcome to DREC</h2>
+          <div class="cn">欢迎加入 — 让我们先认识一下您的饮食治疗师</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="qlabel">Dietitian in charge · 饮食治疗师<span class="star">*</span></div>
+        <div class="qhelp">Please select the dietitian who is guiding you through the enrollment. 请选择负责您报名的饮食治疗师。</div>
+        <select id="q_dietitian" style="max-width:360px;">
+          <option value="">Choose — 请选择</option>
+          <option value="SS">SS · 施治疗师</option>
+          <option value="Jen">Jen · 陈治疗师</option>
+          <option value="CY">CY · 蔡治疗师</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <div class="btn-left">
+          <button class="btn btn-primary" onclick="goNext(1)">Next →</button>
+        </div>
+        <button class="btn-link" onclick="clearForm()">Clear form</button>
+      </div>
+    </div>
+
+    <!-- ============ PAGE 2: Basic / Health / Motivation / Commitment ============ -->
+    <div class="page" id="page2">
+
+      <div class="section-title">
+        <div class="ico">👤</div>
+        <div>
+          <h2>Section 1 · Basic Information</h2>
+          <div class="cn">基本资料</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Full Name (as per IC) · 姓名<span class="star">*</span></div>
+        <input type="text" id="q_name" placeholder="Your answer">
+      </div>
+      <div class="card">
+        <div class="qlabel">WhatsApp Phone Number · 联系电话<span class="star">*</span></div>
+        <input type="tel" id="q_phone" placeholder="e.g. +60 12-345 6789">
+      </div>
+      <div class="card">
+        <div class="qlabel">Email Address · 电子邮箱<span class="star">*</span></div>
+        <input type="email" id="q_email" placeholder="name@example.com">
+      </div>
+      <div class="card">
+        <div class="qlabel">Country / Nation · 所在国家<span class="star">*</span></div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+          <label class="opt-chip"><input type="radio" name="q_nation" value="Malaysia" id="q_nation_my"> 🇲🇾 Malaysia · 马来西亚</label>
+          <label class="opt-chip"><input type="radio" name="q_nation" value="Singapore" id="q_nation_sg"> 🇸🇬 Singapore · 新加坡</label>
+        </div>
+        <div class="qhelp" style="margin-top:8px;">Your country determines your programme content and care team availability. · 您的所在国家决定您的课程内容和医疗团队。</div>
+      </div>
+
+      <div class="section-title">
+        <div class="ico">🩺</div>
+        <div>
+          <h2>Section 2 · Health Profile & Medical History</h2>
+          <div class="cn">身体状况与病史</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:14px;" class="grid-resp">
+          <div>
+            <div class="qlabel">Age · 岁数<span class="star">*</span></div>
+            <input type="number" id="q_age" min="1" max="120" placeholder="e.g. 52">
+          </div>
+          <div>
+            <div class="qlabel">Height (cm) · 身高<span class="star">*</span></div>
+            <input type="number" id="q_height" min="50" max="250" placeholder="e.g. 168">
+          </div>
+          <div>
+            <div class="qlabel">Weight (kg) · 体重<span class="star">*</span></div>
+            <input type="number" id="q_weight" min="20" max="250" step="0.1" placeholder="e.g. 78.5">
+          </div>
+          <div>
+            <div class="qlabel">Waist (cm) · 腰围</div>
+            <input type="number" id="q_waist" min="40" max="200" placeholder="e.g. 92">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Past Medical History · 既往病史<span class="star">*</span></div>
+        <div class="qhelp">(e.g., Hypertension, High Cholesterol, Fatty Liver, etc. 例如：高血压、高胆固醇、脂肪肝等)</div>
+        <input type="text" id="q_pmh" placeholder="Your answer">
+      </div>
+      <div class="card">
+        <div class="qlabel">Past Surgical History · 手术史<span class="star">*</span></div>
+        <input type="text" id="q_surgery" placeholder="Type 'Nil' if none">
+      </div>
+      <div class="card">
+        <div class="qlabel">Current Medications · 目前服用药物<span class="star">*</span></div>
+        <div class="qhelp">Drug names and dosages · 药物名称及剂量</div>
+        <textarea id="q_meds" placeholder="e.g. Metformin 500mg bd, Gliclazide 80mg od"></textarea>
+      </div>
+      <div class="card">
+        <div class="qlabel">Drug Allergies · 药物过敏<span class="star">*</span></div>
+        <input type="text" id="q_allergies" placeholder="Type 'Nil' if none">
+      </div>
+      <div class="card">
+        <div class="qlabel">Symptoms & Complications · 症状与并发症</div>
+        <div class="qhelp">Select all that apply · 可多选</div>
+        <div class="check-col" id="symptom-box">
+          <label class="opt-chip"><input type="checkbox" value="Thirsty 口渴">口渴 Thirsty</label>
+          <label class="opt-chip"><input type="checkbox" value="Frequent urination 尿频">尿频 Frequent urination</label>
+          <label class="opt-chip"><input type="checkbox" value="Blurred vision 视线模糊">视线模糊 Blurred vision</label>
+          <label class="opt-chip"><input type="checkbox" value="Fatigue 疲劳">疲劳 Fatigue</label>
+          <label class="opt-chip"><input type="checkbox" value="Weight loss 体重下降">体重下降 Weight loss</label>
+          <label class="opt-chip"><input type="checkbox" value="Numbness 手脚麻木">手脚麻木 Numbness</label>
+          <label class="opt-chip"><input type="checkbox" value="Slow wound healing 伤口愈合慢">伤口愈合慢 Slow wound healing</label>
+          <label class="opt-chip"><input type="checkbox" value="Recurring infections 反复感染">反复感染 Recurring infections</label>
+          <label class="opt-chip"><input type="checkbox" id="sym_other_cb" onchange="toggleSub('sub_sym9', this)">Other · 其他</label>
+        </div>
+        <div class="sub-input" id="sub_sym9" style="display:none;">
+          <div class="qhelp">Please specify · 请说明</div>
+          <input type="text" id="q_sym_other" placeholder="Your answer">
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div class="ico">🎯</div>
+        <div>
+          <h2>Section 3 · Motivation & Goals</h2>
+          <div class="cn">动力与目标</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Your Top 3 reasons for joining this program · 您加入本计划的三大动机<span class="star">*</span></div>
+        <div class="qhelp">(e.g., To stop medication, for my family, to regain energy, etc.)</div>
+        <textarea id="q_reasons" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+      </div>
+      <div class="card">
+        <div class="qlabel">Realistic expectations for these 100 days · 对这100天的期望<span class="star">*</span></div>
+        <div class="qhelp">(e.g., Stable blood sugar, weight loss of 5kg, better HbA1c, etc.)</div>
+        <textarea id="q_expect" placeholder="Your answer"></textarea>
+      </div>
+
+      <div class="section-title">
+        <div class="ico">🤝</div>
+        <div>
+          <h2>Section 4 · Commitment & Consent</h2>
+          <div class="cn">承诺与同意</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom:8px;">
+          <a href="https://drive.google.com/file/d/1-yOVbQuc73F1a_tHV3RUKmIgadVJlGAj/view?usp=sharing" target="_blank" style="color:var(--brand-2); font-weight:600; text-decoration:none;">📄 View full commitment agreement · 查看完整承诺书 →</a>
+        </div>
+        <div class="qlabel">Personal Commitment · 个人承诺<span class="star">*</span></div>
+        <div class="qhelp">Which of the following are you ready to commit to for the next 100 days? (Select all that apply)<br>在接下来的 100 天里，您准备好对以下哪些选项做出承诺？（可多选）</div>
+        <div class="check-col">
+          <label class="opt-chip"><input type="checkbox" id="com1">Dietary Changes · 饮食调整</label>
+          <label class="opt-chip"><input type="checkbox" id="com2">Lifestyle & Exercise · 生活方式与运动</label>
+          <label class="opt-chip"><input type="checkbox" id="com3">Blood Sugar Monitoring · 血糖监测</label>
+          <label class="opt-chip"><input type="checkbox" id="com4">Fasting · 断食</label>
+          <label class="opt-chip"><input type="checkbox" id="com5">Medication Adjustments · 药物调整</label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Service Agreement & Emergency Protocol · 服务协议与紧急医疗流程<span class="star">*</span></div>
+        <div class="protocol-box">
+          Our team is available Monday to Friday, 10 am – 5 pm. Please be informed that responses may be delayed as our medical team is attending to patients in clinical consultations.<br><br>
+          服务时间为周一至周五 10 am - 5 pm。由于医疗团队需实时诊治病人，回复可能会有所延迟。<br><br>
+          <b>In the event of an acute medical emergency</b> (e.g., severe hypoglycemia or other sudden illness): 若发生急性医疗紧急状况（如：严重低血糖或其他突发疾病）：
+          <ol>
+            <li>Seek immediate medical attention at the nearest clinic or hospital. 请立即前往最近的诊所或医院寻求医疗救治。</li>
+            <li>Inform our DREC team immediately after you have secured medical help. 在获得医疗救助后，请立即通知我们的 DREC 团队。</li>
+          </ol>
+        </div>
+        <label class="opt-chip" style="margin-top:8px;"><input type="radio" name="emerg" value="agree">I understand and will follow this emergency protocol. 我已理解并会遵守此紧急情况协议。</label>
+      </div>
+      <div class="card">
+        <div class="qlabel">Which program are you signing up for? · 您报名的是哪项计划？<span class="star">*</span></div>
+        <select id="q_program" style="max-width:460px;">
+          <option value="">Choose — 请选择</option>
+          <option value="100-Day Reversal (Standard)">100-Day Reversal (Standard) · 100天逆糖标准计划</option>
+          <option value="100-Day Reversal (Premium 1-to-1)">100-Day Reversal (Premium 1-to-1) · 尊贵1-1 私教计划</option>
+          <option value="100-Day Reversal (Couple)">100-Day Reversal (Couple) · 夫妻同行计划</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="qlabel">Official Enrollment · 正式报名<span class="star">*</span></div>
+        <div class="protocol-box warn">
+          By clicking 'Yes', I agree to enroll in the DREC 100-Day Reversal Journey and abide by the academy's rules and regulations. <b>I acknowledge that all fees paid are strictly non-refundable and non-transferable.</b><br><br>
+          点击"是"，即表示我同意加入 DREC 100天逆糖之旅，并遵守各项规章制度。<b>我确认所有已支付的费用概不退还，也不得转让。</b>
+        </div>
+        <label class="opt-chip" style="margin-top:8px;"><input type="radio" name="enroll" value="yes">Yes, I agree · 是的，我同意</label>
+      </div>
+
+      <div class="btn-row">
+        <div class="btn-left">
+          <button class="btn btn-ghost" onclick="goPrev(2)">← Back</button>
+          <button class="btn btn-primary" onclick="goNext(2)">Next →</button>
+        </div>
+        <button class="btn-link" onclick="clearForm()">Clear form</button>
+      </div>
+    </div>
+
+    <!-- ============ PAGE 3: Lifestyle ============ -->
+    <div class="page" id="page3">
+      <div class="section-title">
+        <div class="ico">🌙</div>
+        <div>
+          <h2>Lifestyle & Daily Routine</h2>
+          <div class="cn">生活作息</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="qlabel">Occupation · 职业<span class="star">*</span></div>
+        <input type="text" id="q_occ" placeholder="Your answer">
+      </div>
+      <div class="card">
+        <div class="qlabel">Working Hours · 上班时间<span class="star">*</span></div>
+        <input type="text" id="q_hours" placeholder="e.g., 9am - 6pm">
+      </div>
+      <div class="card">
+        <div class="qlabel">Do you work shifts? · 是否轮班?<span class="star">*</span></div>
+        <div class="opt-grid">
+          <label class="opt-chip"><input type="radio" name="shift" value="Yes">Yes · 是</label>
+          <label class="opt-chip"><input type="radio" name="shift" value="No">No · 否</label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Smoking Status · 是否抽烟?<span class="star">*</span></div>
+        <div class="opt-grid">
+          <label class="opt-chip"><input type="radio" name="smoke" value="Never" onchange="toggleSub('sub_smoke', null, false)">Never · 从不</label>
+          <label class="opt-chip"><input type="radio" name="smoke" value="Formerly" onchange="toggleSub('sub_smoke', null, false)">Formerly · 曾经</label>
+          <label class="opt-chip"><input type="radio" name="smoke" value="Currently" onchange="toggleSub('sub_smoke', null, true)">Currently · 目前</label>
+        </div>
+        <div class="sub-input" id="sub_smoke" style="display:none;">
+          <div class="qhelp">If currently, how many sticks per day? · 每天几支?</div>
+          <input type="number" id="q_smoke_count" min="0" placeholder="e.g. 10">
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Alcohol Consumption · 是否饮酒?<span class="star">*</span></div>
+        <div class="opt-grid">
+          <label class="opt-chip"><input type="radio" name="alc" value="Never" onchange="toggleSub('sub_alc', null, false)">Never · 从不</label>
+          <label class="opt-chip"><input type="radio" name="alc" value="Formerly" onchange="toggleSub('sub_alc', null, false)">Formerly · 曾经</label>
+          <label class="opt-chip"><input type="radio" name="alc" value="Currently" onchange="toggleSub('sub_alc', null, true)">Currently · 目前</label>
+        </div>
+        <div class="sub-input" id="sub_alc" style="display:none;">
+          <div class="qhelp">Please list the type of alcohol and frequency (e.g., 2 glasses of red wine, 3x a week)</div>
+          <input type="text" id="q_alc_detail" placeholder="Your answer">
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Sleep Duration · 睡眠时间<span class="star">*</span></div>
+        <div class="qhelp">How many hours do you sleep on average?</div>
+        <input type="text" id="q_sleep_dur" placeholder="e.g., 6-7 hours">
+      </div>
+      <div class="card">
+        <div class="qlabel">Sleep Quality · 睡得好吗?<span class="star">*</span></div>
+        <div class="opt-grid">
+          <label class="opt-chip"><input type="radio" name="sleepq" value="Good">😴 Good · 好</label>
+          <label class="opt-chip"><input type="radio" name="sleepq" value="Average">😐 Average · 一般</label>
+          <label class="opt-chip"><input type="radio" name="sleepq" value="Poor">😩 Poor · 差</label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">General Physical Activity Level · 平时运动量<span class="star">*</span></div>
+        <div class="opt-grid">
+          <label class="opt-chip"><input type="radio" name="act" value="Sedentary">🪑 Sedentary (Mostly sitting) · 久坐</label>
+          <label class="opt-chip"><input type="radio" name="act" value="Moderate">🚶 Moderate · 中等</label>
+          <label class="opt-chip"><input type="radio" name="act" value="Active">🏃 Active · 活跃</label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Exercise Details · 运动种类与频率<span class="star">*</span></div>
+        <textarea id="q_exercise" placeholder="e.g., Brisk walk 30 min, 3x a week"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <div class="btn-left">
+          <button class="btn btn-ghost" onclick="goPrev(3)">← Back</button>
+          <button class="btn btn-primary" onclick="goNext(3)">Next →</button>
+        </div>
+        <button class="btn-link" onclick="clearForm()">Clear form</button>
+      </div>
+    </div>
+
+    <!-- ============ PAGE 4: Dietary ============ -->
+    <div class="page" id="page4">
+      <div class="section-title">
+        <div class="ico">🥗</div>
+        <div>
+          <h2>Dietary Habits</h2>
+          <div class="cn">饮食习惯</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="qlabel">Vegetarian · 素食者<span class="star">*</span></div>
+        <div class="opt-grid">
+          <label class="opt-chip"><input type="radio" name="veg" value="Yes">Yes · 是</label>
+          <label class="opt-chip"><input type="radio" name="veg" value="No">No · 否</label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="qlabel">Typical Meals<span class="star">*</span></div>
+        <div class="qhelp">三餐在家准备或外食</div>
+        <input type="text" id="q_meals" placeholder="e.g., Breakfast at home, lunch outside, dinner at home">
+      </div>
+      <div class="card">
+        <div class="qlabel">Food Allergies or Dislikes · 食物过敏或忌口<span class="star">*</span></div>
+        <div class="qhelp">Please list any foods you must avoid for medical or personal reasons.</div>
+        <input type="text" id="q_food_allergy" placeholder="Type 'Nil' if none">
+      </div>
+      <div class="card">
+        <div class="qlabel">Skip Meals<span class="star">*</span></div>
+        <input type="text" id="q_skip" placeholder="e.g., Often skip breakfast">
+      </div>
+      <div class="card">
+        <div class="qlabel">Water Intake · 每天喝水量<span class="star">*</span></div>
+        <input type="text" id="q_water" placeholder="e.g., About 1.5 liters per day">
+      </div>
+      <div class="card">
+        <div class="qlabel">Frequency of Sugary Drinks & Snacks · 含糖饮料与零食频率<span class="star">*</span></div>
+        <input type="text" id="q_sugar" placeholder="e.g., 1 can of soda per day, dessert 3x a week">
+      </div>
+
+      <div class="btn-row">
+        <div class="btn-left">
+          <button class="btn btn-ghost" onclick="goPrev(4)">← Back</button>
+          <button class="btn btn-primary" onclick="goReview()">Review & Submit →</button>
+        </div>
+        <button class="btn-link" onclick="clearForm()">Clear form</button>
+      </div>
+    </div>
+
+    <!-- ============ PAGE 5: Review ============ -->
+    <div class="page" id="page5">
+      <div class="section-title">
+        <div class="ico">✅</div>
+        <div>
+          <h2>Review Your Information</h2>
+          <div class="cn">提交前确认</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="qhelp">Please verify all details below. Use <b>Back</b> to edit any answer, or click <b>Submit Enrollment</b> to officially enroll.<br>
+        请再次确认以下信息。点击"返回"可修改，点击"正式提交"完成报名。</div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Dietitian · 饮食治疗师</h3>
+        <div class="review-row"><div class="review-k">In charge of</div><div class="review-v" id="r_dietitian"></div></div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Section 1 · Basic Information</h3>
+        <div class="review-row"><div class="review-k">Full Name · 姓名</div><div class="review-v" id="r_name"></div></div>
+        <div class="review-row"><div class="review-k">WhatsApp · 联系电话</div><div class="review-v" id="r_phone"></div></div>
+        <div class="review-row"><div class="review-k">Email · 电子邮箱</div><div class="review-v" id="r_email"></div></div>
+        <div class="review-row"><div class="review-k">Country / Nation · 国家</div><div class="review-v" id="r_nation"></div></div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Section 2 · Health Profile & Medical History</h3>
+        <div class="review-row"><div class="review-k">Age · 岁数</div><div class="review-v" id="r_age"></div></div>
+        <div class="review-row"><div class="review-k">Height · 身高 (cm)</div><div class="review-v" id="r_height"></div></div>
+        <div class="review-row"><div class="review-k">Weight · 体重 (kg)</div><div class="review-v" id="r_weight"></div></div>
+        <div class="review-row"><div class="review-k">Waist · 腰围 (cm)</div><div class="review-v" id="r_waist"></div></div>
+        <div class="review-row"><div class="review-k">Past Medical History · 既往病史</div><div class="review-v" id="r_pmh"></div></div>
+        <div class="review-row"><div class="review-k">Surgical History · 手术史</div><div class="review-v" id="r_surgery"></div></div>
+        <div class="review-row"><div class="review-k">Current Medications · 目前用药</div><div class="review-v" id="r_meds"></div></div>
+        <div class="review-row"><div class="review-k">Drug Allergies · 药物过敏</div><div class="review-v" id="r_allergies"></div></div>
+        <div class="review-row"><div class="review-k">Symptoms · 症状</div><div class="review-v" id="r_symptoms"></div></div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Section 3 · Motivation & Goals</h3>
+        <div class="review-row"><div class="review-k">Top 3 Reasons · 三大动机</div><div class="review-v" id="r_reasons"></div></div>
+        <div class="review-row"><div class="review-k">Realistic Expectations · 期望</div><div class="review-v" id="r_expect"></div></div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Section 4 · Commitment & Consent</h3>
+        <div class="review-row"><div class="review-k">Personal Commitments</div><div class="review-v" id="r_commit"></div></div>
+        <div class="review-row"><div class="review-k">Emergency Protocol</div><div class="review-v" id="r_emerg"></div></div>
+        <div class="review-row"><div class="review-k">Program · 计划</div><div class="review-v" id="r_program"></div></div>
+        <div class="review-row"><div class="review-k">Official Enrollment</div><div class="review-v" id="r_enroll"></div></div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Lifestyle · 生活作息</h3>
+        <div class="review-row"><div class="review-k">Occupation · 职业</div><div class="review-v" id="r_occ"></div></div>
+        <div class="review-row"><div class="review-k">Working Hours</div><div class="review-v" id="r_hours"></div></div>
+        <div class="review-row"><div class="review-k">Work Shifts · 轮班</div><div class="review-v" id="r_shift"></div></div>
+        <div class="review-row"><div class="review-k">Smoking · 抽烟</div><div class="review-v" id="r_smoke"></div></div>
+        <div class="review-row"><div class="review-k">Alcohol · 饮酒</div><div class="review-v" id="r_alc"></div></div>
+        <div class="review-row"><div class="review-k">Sleep Duration</div><div class="review-v" id="r_sleep_dur"></div></div>
+        <div class="review-row"><div class="review-k">Sleep Quality</div><div class="review-v" id="r_sleep_q"></div></div>
+        <div class="review-row"><div class="review-k">Activity Level</div><div class="review-v" id="r_act"></div></div>
+        <div class="review-row"><div class="review-k">Exercise Details</div><div class="review-v" id="r_exercise"></div></div>
+      </div>
+
+      <div class="card review-card">
+        <h3>Dietary Habits · 饮食习惯</h3>
+        <div class="review-row"><div class="review-k">Vegetarian · 素食</div><div class="review-v" id="r_veg"></div></div>
+        <div class="review-row"><div class="review-k">Typical Meals · 三餐</div><div class="review-v" id="r_meals"></div></div>
+        <div class="review-row"><div class="review-k">Food Allergies/Dislikes</div><div class="review-v" id="r_food_allergy"></div></div>
+        <div class="review-row"><div class="review-k">Skip Meals</div><div class="review-v" id="r_skip"></div></div>
+        <div class="review-row"><div class="review-k">Water Intake · 每天喝水量</div><div class="review-v" id="r_water"></div></div>
+        <div class="review-row"><div class="review-k">Sugary Drinks & Snacks</div><div class="review-v" id="r_sugar"></div></div>
+      </div>
+
+      <div class="btn-row">
+        <div class="btn-left">
+          <button class="btn btn-ghost" onclick="goPrev(5)">← Back</button>
+          <button class="btn btn-primary" onclick="submitForm()">✓ Submit Enrollment · 正式提交</button>
+        </div>
+        <button class="btn-link" onclick="clearForm()">Clear form</button>
+      </div>
+    </div>
+
+    <!-- ============ SUCCESS ============ -->
+    <div class="page" id="pageDone">
+      <div class="success-card">
+        <div class="success-icon">✓</div>
+        <h2>Welcome to DREC 100-Day Reversal Journey!
+          <span class="cn">欢迎加入 DREC 100天逆糖之旅！</span>
+        </h2>
+        <p>Your enrollment has been received. 您的报名已成功提交。</p>
+        <p>Our team will contact you within <b>24 working hours</b> via WhatsApp to schedule your first consultation.<br>
+        我们的团队将在 <b>24个工作小时</b> 内通过 WhatsApp 联系您。</p>
+
+        <div class="success-meta">
+          <div class="row"><span>Enrollment ID · 报名编号</span><b id="refId">DREC-2026-00011</b></div>
+          <div class="row"><span>Submitted · 提交时间</span><b id="refTime"></b></div>
+          <div class="row"><span>Dietitian · 饮食治疗师</span><b id="refDt"></b></div>
+          <div class="row"><span>Program · 计划</span><b id="refProg"></b></div>
+          <div class="row"><span>Status</span><span class="pill pill-ok">✓ Received</span></div>
+        </div>
+        <p class="mini" style="margin-top:18px;">If you do not hear from us within 24 working hours, please email <a href="mailto:drechealthcare.cs@gmail.com" style="color:var(--brand-2);">drechealthcare.cs@gmail.com</a>.</p>
+        <button class="btn btn-ghost" style="margin-top:16px;" onclick="location.reload()">Start New Enrollment · 再次报名</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const STEPS = [
+  { n:1, title:"Welcome · 欢迎", pct:20 },
+  { n:2, title:"Basic Info & Health · 基本资料与病史", pct:40 },
+  { n:3, title:"Lifestyle · 生活作息", pct:60 },
+  { n:4, title:"Dietary Habits · 饮食习惯", pct:80 },
+  { n:5, title:"Review & Submit · 确认提交", pct:100 }
+];
+let current = 1;
+
+function showStep(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page'+n).classList.add('active');
+  // Show cover banner only on Welcome step
+  const cover = document.getElementById('coverBanner');
+  if(cover) cover.style.display = (n === 1) ? 'block' : 'none';
+  // Stepper
+  document.querySelectorAll('#stepper .step').forEach(s=>{
+    const i = parseInt(s.dataset.n);
+    s.classList.remove('active','done');
+    if(i < n) s.classList.add('done');
+    if(i === n) s.classList.add('active');
+  });
+  document.querySelectorAll('#stepper .step-sep').forEach((sep, idx)=>{
+    sep.classList.toggle('done', idx+1 < n);
+  });
+  // Progress
+  const t = STEPS.find(s=>s.n===n);
+  document.getElementById('daysLabel').innerHTML = `Step ${n} <small>of 5</small>`;
+  document.getElementById('stepName').textContent = t.title;
+  document.getElementById('pbar').style.width = t.pct + '%';
+  document.getElementById('ppct').textContent = t.pct + '%';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goNext(from){
+  if(from===1){
+    if(!document.getElementById('q_dietitian').value){
+      alert("Please select your dietitian. 请先选择饮食治疗师。"); return;
+    }
+  }
+  if(from===2){
+    const req = ['q_name','q_phone','q_email','q_age','q_height','q_weight','q_pmh','q_surgery','q_meds','q_allergies','q_reasons','q_expect','q_program'];
+    for(const id of req){
+      const el = document.getElementById(id);
+      if(!el.value || !el.value.trim()){ el.focus(); alert("Please complete all required fields marked with *. 请填写所有带 * 的必填项。"); return; }
+    }
+    if(!document.querySelector('input[name=emerg]:checked')){ alert("Please acknowledge the emergency protocol."); return; }
+    if(!document.querySelector('input[name=enroll]:checked')){ alert("Please confirm your enrollment."); return; }
+  }
+  if(from===3){
+    const req = ['q_occ','q_hours','q_sleep_dur','q_exercise'];
+    for(const id of req){
+      const el = document.getElementById(id);
+      if(!el.value || !el.value.trim()){ el.focus(); alert("Please complete all required fields. 请填写所有必填项。"); return; }
+    }
+    if(!document.querySelector('input[name=shift]:checked')){ alert("Please indicate if you work shifts."); return; }
+    if(!document.querySelector('input[name=smoke]:checked')){ alert("Please select your smoking status."); return; }
+    if(!document.querySelector('input[name=alc]:checked')){ alert("Please select your alcohol consumption."); return; }
+    if(!document.querySelector('input[name=sleepq]:checked')){ alert("Please select your sleep quality."); return; }
+    if(!document.querySelector('input[name=act]:checked')){ alert("Please select your activity level."); return; }
+  }
+  current = from + 1;
+  showStep(current);
+}
+function goPrev(from){ current = from - 1; showStep(current); }
+
+function toggleSub(id, cb, force){
+  const el = document.getElementById(id);
+  if(typeof force === 'boolean'){ el.style.display = force ? 'block' : 'none'; }
+  else { el.style.display = cb.checked ? 'block' : 'none'; }
+}
+
+function clearForm(){
+  if(!confirm("Clear all answers? 确定清空所有答案吗？")) return;
+  document.querySelectorAll('input[type=text], input[type=email], input[type=tel], input[type=number], textarea').forEach(e=>e.value='');
+  document.querySelectorAll('input[type=checkbox], input[type=radio]').forEach(e=>e.checked=false);
+  document.querySelectorAll('select').forEach(e=>e.selectedIndex=0);
+  document.querySelectorAll('.sub-input').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.opt-chip').forEach(c=>c.classList.remove('selected'));
+  current = 1;
+  showStep(1);
+}
+
+// Selected-chip visual state
+document.addEventListener('change', (e)=>{
+  if(e.target.matches('.opt-chip input[type=radio]')){
+    const name = e.target.name;
+    document.querySelectorAll(`input[name=${name}]`).forEach(r=>{
+      r.closest('.opt-chip').classList.toggle('selected', r.checked);
+    });
+  }
+  if(e.target.matches('.opt-chip input[type=checkbox]')){
+    e.target.closest('.opt-chip').classList.toggle('selected', e.target.checked);
+  }
+});
+
+function val(id){ const el = document.getElementById(id); return el ? (el.value||'').trim() : ''; }
+function radio(name){ const el = document.querySelector(`input[name=${name}]:checked`); return el ? el.value : ''; }
+function dietitianLabel(v){ return v==='SS'?'SS · 施治疗师':v==='Jen'?'Jen · 陈治疗师':v==='CY'?'CY · 蔡治疗师':v; }
+function setText(id, v){
+  const el = document.getElementById(id);
+  if(!v){ el.innerHTML = '<span class="empty-val">— not provided —</span>'; }
+  else { el.textContent = v; }
+}
+
+function goReview(){
+  const req = ['q_meals','q_food_allergy','q_skip','q_water','q_sugar'];
+  for(const id of req){
+    const el = document.getElementById(id);
+    if(!el.value || !el.value.trim()){ el.focus(); alert("Please complete all required fields. 请填写所有必填项。"); return; }
+  }
+  if(!document.querySelector('input[name=veg]:checked')){ alert("Please indicate if you are vegetarian."); return; }
+
+  setText('r_dietitian', dietitianLabel(val('q_dietitian')));
+  setText('r_name', val('q_name'));
+  setText('r_phone', val('q_phone'));
+  setText('r_email', val('q_email'));
+  setText('r_nation', radio('q_nation') || '—');
+  setText('r_age', val('q_age'));
+  setText('r_height', val('q_height'));
+  setText('r_weight', val('q_weight'));
+  setText('r_waist', val('q_waist'));
+  setText('r_pmh', val('q_pmh'));
+  setText('r_surgery', val('q_surgery'));
+  setText('r_meds', val('q_meds'));
+  setText('r_allergies', val('q_allergies'));
+
+  const syms = [];
+  document.querySelectorAll('#symptom-box input[type=checkbox]').forEach(cb=>{
+    if(cb.checked){
+      if(cb.id==='sym_other_cb'){
+        const extra = val('q_sym_other');
+        if(extra) syms.push('Other: '+extra);
+        else syms.push('Other');
+      } else syms.push(cb.value);
+    }
+  });
+  setText('r_symptoms', syms.join(', '));
+
+  setText('r_reasons', val('q_reasons'));
+  setText('r_expect', val('q_expect'));
+
+  const commits = [];
+  document.querySelectorAll('#page2 input[id^="com"]').forEach(cb=>{
+    if(cb.checked){
+      const lbl = cb.parentElement.textContent.trim();
+      commits.push(lbl);
+    }
+  });
+  setText('r_commit', commits.join(', '));
+
+  setText('r_emerg', radio('emerg')==='agree' ? '✓ Acknowledged · 已确认' : '');
+  setText('r_program', val('q_program'));
+  setText('r_enroll', radio('enroll')==='yes' ? '✓ Yes, I agree · 是的，我同意' : '');
+
+  setText('r_occ', val('q_occ'));
+  setText('r_hours', val('q_hours'));
+  setText('r_shift', radio('shift'));
+  const smoke = radio('smoke');
+  let smokeStr = smoke;
+  if(smoke==='Currently' && val('q_smoke_count')) smokeStr += ` (${val('q_smoke_count')} sticks/day)`;
+  setText('r_smoke', smokeStr);
+  const alc = radio('alc');
+  let alcStr = alc;
+  if(alc==='Currently' && val('q_alc_detail')) alcStr += ` — ${val('q_alc_detail')}`;
+  setText('r_alc', alcStr);
+  setText('r_sleep_dur', val('q_sleep_dur'));
+  setText('r_sleep_q', radio('sleepq'));
+  setText('r_act', radio('act'));
+  setText('r_exercise', val('q_exercise'));
+
+  setText('r_veg', radio('veg'));
+  setText('r_meals', val('q_meals'));
+  setText('r_food_allergy', val('q_food_allergy'));
+  setText('r_skip', val('q_skip'));
+  setText('r_water', val('q_water'));
+  setText('r_sugar', val('q_sugar'));
+
+  current = 5;
+  showStep(5);
+}
+
+function submitForm(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const d = new Date();
+  const pad = n=>String(n).padStart(2,'0');
+  document.getElementById('refTime').textContent = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  document.getElementById('refDt').textContent = dietitianLabel(val('q_dietitian')) || '—';
+  document.getElementById('refProg').textContent = val('q_program') || '—';
+  const rid = 'DREC-' + d.getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
+  document.getElementById('refId').textContent = rid;
+  document.getElementById('pageDone').classList.add('active');
+  document.querySelectorAll('#stepper .step').forEach(s=>{ s.classList.remove('active'); s.classList.add('done'); });
+  document.querySelectorAll('#stepper .step-sep').forEach(sep=>sep.classList.add('done'));
+  document.getElementById('daysLabel').innerHTML = `Complete <small>✓</small>`;
+  document.getElementById('stepName').textContent = 'Enrollment Submitted · 报名已提交';
+  document.getElementById('pbar').style.width = '100%';
+  document.getElementById('ppct').textContent = '100%';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Responsive grid fallback
+const style = document.createElement('style');
+style.textContent = `@media (max-width:600px){ .grid-resp{ grid-template-columns: repeat(2, 1fr) !important; } }`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
