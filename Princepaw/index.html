@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prince Paw · Vet-formulated pet skincare</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles/colors_and_type.css">
+<link rel="stylesheet" href="styles/site.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ── Full-image hero overlay + carousel ── */
+.pp-hero-img {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #0d0a07;
+}
+
+.pp-hero-img__slides-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.pp-hero-img__slides {
+  position: relative;
+  width: 100%;
+  height: clamp(340px, 54vw, 680px);
+  max-height: 76vh;
+  background: #0d0a07;
+}
+
+.pp-hero-img__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.85s ease;
+  pointer-events: none;
+}
+.pp-hero-img__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+.pp-hero-img__slide img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: left center;
+}
+
+.pp-hero-img__dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+.pp-hero-img__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255,255,255,.35);
+  transition: transform 0.2s, background 0.2s;
+}
+.pp-hero-img__dot:hover { background: rgba(255,255,255,.55); }
+.pp-hero-img__dot.is-active {
+  background: var(--gold-400);
+  transform: scale(1.15);
+}
+
+/* Image-only slides: hide headline block (desktop overlay + mobile stack) */
+.pp-hero-img.pp-hero-img--plain .pp-hero-img__content {
+  display: none !important;
+}
+
+.pp-hero-img__content {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding: 48px 20px 48px 80px;
+}
+
+.pp-hero-img__content .pp-hero__title {
+  color: #fff;
+  font-size: 52px;
+  line-height: 1.05;
+  margin: 4px 0 0;
+}
+.pp-hero-img__content .pp-hero__title em {
+  font-family: var(--font-script);
+  font-style: normal;
+  background: none;
+  -webkit-text-fill-color: var(--gold-300);
+  color: var(--gold-300);
+}
+.pp-hero-img__content .pp-hero__lead  { color: rgba(255,255,255,.82); }
+.pp-hero-img__content .pp-eyebrow     { color: var(--gold-300); border-color: rgba(255,255,255,.18); }
+.pp-hero-img__content .pp-hero__trust {
+  border-top-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.65);
+}
+.pp-hero-img__content .pp-hero__trust i { color: var(--gold-300); }
+.pp-hero-img__content .pp-btn--ghost {
+  border-color: rgba(255,255,255,.45);
+  color: #fff;
+  background: rgba(255,255,255,.08);
+}
+.pp-hero-img__content .pp-btn--ghost:hover {
+  border-color: #fff;
+  background: rgba(255,255,255,.15);
+}
+
+@media (max-width: 900px) {
+  .pp-hero-img__slides {
+    height: clamp(320px, 60vw, 520px);
+    max-height: 68vh;
+  }
+  .pp-hero-img__slide img { object-position: 30% center; }
+  .pp-hero-img__content { position: static; width: 100%; padding: 36px 24px; background: #100d09; }
+  .pp-hero-img__content .pp-hero__title { font-size: 40px; }
+}
+@media (max-width: 520px) {
+  .pp-hero-img__content .pp-hero__title { font-size: 34px; }
+}
+</style>
+</head>
+<body style="font-size: 1px; font-family: &quot;PingFang SC&quot;">
+
+<main data-screen-label="Home">
+
+  <!-- ===================== HERO (carousel; copy on first slide only) ===================== -->
+  <section class="pp-hero-img" id="pp-hero-section" aria-roledescription="carousel">
+    <div class="pp-hero-img__slides-wrap">
+      <div class="pp-hero-img__slides" id="pp-hero-slides" aria-live="polite"></div>
+      <div class="pp-hero-img__dots" id="pp-hero-dots" hidden></div>
+    </div>
+
+    <div class="pp-hero-img__content reveal" id="pp-hero-copy">
+      <span class="pp-eyebrow no-dot">
+        <i data-lucide="crown" style="width:14px;height:14px;color:var(--gold-400);"></i>
+        <span data-en>Pet skincare · Vet-formulated</span>
+        <span data-cn>宠物护肤 · 兽医配方</span>
+      </span>
+
+      <div>
+        <h1 class="pp-hero__title" data-en>Skin &amp; coat care, <em>fit for royalty.</em></h1>
+        <h1 class="pp-hero__title" data-cn>专属<em>御宠</em>的肌肤护理</h1>
+      </div>
+
+      <p class="pp-hero__lead" data-en>Six gentle formulas that soothe cracked pads, calm itchy bellies, and bring real shine to dull coats — safe for both dogs and cats.</p>
+      <p class="pp-hero__lead" data-cn>六款温和配方，舒缓干裂肉垫、止痒护肤、焕发毛感光泽 — 犬猫皆适用。</p>
+
+      <div class="pp-hero__cta">
+        <a href="shop.html" class="pp-btn pp-btn--primary pp-btn--lg">
+          <span data-en>Shop the bar cart</span><span data-cn>立即选购</span>
+          <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="quiz.html" class="pp-btn pp-btn--ghost pp-btn--lg">
+          <span data-en>Find my pet's match</span><span data-cn>护肤测试</span>
+        </a>
+      </div>
+
+      <div class="pp-hero__trust">
+        <span><i data-lucide="check"></i><span data-en>Vet-reviewed</span><span data-cn>兽医审核</span></span>
+        <span><i data-lucide="check"></i><span data-en>Cat-safe oils</span><span data-cn>猫咪安全</span></span>
+        <span><i data-lucide="check"></i><span data-en>Cruelty-free</span><span data-cn>零残忍</span></span>
+        <span><i data-lucide="check"></i><span data-en>Made small-batch</span><span data-cn>小批次精造</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TICKER ===================== -->
+  <div class="pp-ticker" aria-hidden="true">
+    <div class="pp-ticker__track">
+      <span data-en>🐾 Pet skincare specialist</span><span class="dot">✦</span>
+      <span data-en>Soothing since 2021</span><span class="dot">✦</span>
+      <span data-en>For dogs &amp; cats</span><span class="dot">✦</span>
+      <span data-en>Made for the royal kind</span><span class="dot">✦</span>
+      <span data-en>Vet-approved formulas</span><span class="dot">✦</span>
+      <span data-cn>🐾 宠物护肤专家</span><span class="dot">✦</span>
+      <span data-cn>自 2021 年开始守护</span><span class="dot">✦</span>
+      <span data-cn>犬猫皆适用</span><span class="dot">✦</span>
+      <span data-cn>为我们爱的宠物而作</span><span class="dot">✦</span>
+      <!-- duplicate for seamless scroll -->
+      <span data-en>🐾 Pet skincare specialist</span><span class="dot">✦</span>
+      <span data-en>Soothing since 2021</span><span class="dot">✦</span>
+      <span data-en>For dogs &amp; cats</span><span class="dot">✦</span>
+      <span data-en>Made for the royal kind</span><span class="dot">✦</span>
+      <span data-en>Vet-approved formulas</span><span class="dot">✦</span>
+      <span data-cn>🐾 宠物护肤专家</span><span class="dot">✦</span>
+      <span data-cn>自 2021 年开始守护</span><span class="dot">✦</span>
+      <span data-cn>犬猫皆适用</span><span class="dot">✦</span>
+      <span data-cn>为我们爱的宠物而作</span><span class="dot">✦</span>
+    </div>
+  </div>
+
+  <!-- ===================== FEATURED PRODUCTS ===================== -->
+  <section class="pp-section" id="shop">
+    <div class="pp-section__head reveal">
+      <span class="pp-eyebrow"><span data-en>The Lineup</span><span data-cn>明星产品</span></span>
+      <h2 class="pp-section__title" data-en>Six bottles. <em>Endless tail wags.</em></h2>
+      <h2 class="pp-section__title" data-cn>六瓶守护，<em>无限欢颜。</em></h2>
+      <p class="pp-section__lead" data-en>Each formula is built around one job — done gently, done well.</p>
+      <p class="pp-section__lead" data-cn>每款产品专注解决一个问题 — 温柔而有效。</p>
+    </div>
+
+    <div class="pp-grid" id="featured-products"></div>
+
+    <div style="display:flex;justify-content:center;margin-top:48px;" class="reveal">
+      <a href="shop.html" class="pp-btn pp-btn--cocoa pp-btn--lg">
+        <span data-en>See all products</span><span data-cn>查看全部</span>
+        <i data-lucide="arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURES ROW ===================== -->
+  <section class="pp-section pp-section--narrow" style="padding-top:0;">
+    <div class="pp-features__row">
+      <div class="pp-feature reveal">
+        <div class="pp-feature__ic"><i data-lucide="stethoscope"></i></div>
+        <h3 class="pp-feature__title" data-en>Built by vets</h3>
+        <h3 class="pp-feature__title" data-cn>兽医共创</h3>
+        <p class="pp-feature__body" data-en>Every formula reviewed by our 7-vet panel before a single drop leaves the lab.</p>
+        <p class="pp-feature__body" data-cn>每款配方都由 7 人兽医顾问团审核后才离开实验室。</p>
+      </div>
+      <div class="pp-feature reveal" data-delay="1">
+        <div class="pp-feature__ic"><i data-lucide="leaf"></i></div>
+        <h3 class="pp-feature__title" data-en>No nasties</h3>
+        <h3 class="pp-feature__title" data-cn>无害成分</h3>
+        <p class="pp-feature__body" data-en>No parabens, no sulfates, no cat-toxic essential oils. Ever.</p>
+        <p class="pp-feature__body" data-cn>无防腐剂、无硫酸盐、无对猫有毒精油，永远不用。</p>
+      </div>
+      <div class="pp-feature reveal" data-delay="2">
+        <div class="pp-feature__ic"><i data-lucide="recycle"></i></div>
+        <h3 class="pp-feature__title" data-en>Refill, repeat</h3>
+        <h3 class="pp-feature__title" data-cn>循环补充</h3>
+        <p class="pp-feature__body" data-en>Refill pouches at 30% off. We mail prepaid recycling labels for empty pumps.</p>
+        <p class="pp-feature__body" data-cn>补充装享 7 折，配回收快递面单。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INGREDIENTS / SCIENCE ===================== -->
+  <section class="pp-ingredients">
+    <div class="pp-section">
+      <div class="pp-ingredients__layout">
+        <div class="pp-ingredients__art reveal">
+          <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=900&q=80&auto=format&fit=crop" alt="">
+          <div class="pp-ingredients__sticker">
+            <span class="num">26</span>
+            <span class="lbl" data-en>Hero ingredients<br>across the line</span>
+            <span class="lbl" data-cn>26 种<br>核心成分</span>
+          </div>
+        </div>
+
+        <div class="reveal" data-delay="1">
+          <span class="pp-eyebrow"><span data-en>Inside the bottle</span><span data-cn>瓶中故事</span></span>
+          <h2 class="pp-section__title" style="text-align:left;margin-top:8px;" data-en>Plant-led. <em>Skin-fluent.</em></h2>
+          <h2 class="pp-section__title" style="text-align:left;margin-top:8px;" data-cn>植物萃取，<em>懂宠物的肌肤。</em></h2>
+          <p class="pp-section__lead" style="text-align:left;max-width:none;" data-en>We choose ingredients with two questions: does it actually work on pet skin? And does it stay gentle, every single bath?</p>
+          <p class="pp-section__lead" style="text-align:left;max-width:none;" data-cn>我们用两个问题挑选成分：在宠物肌肤上真的有效吗？每次洗护都依然温和吗？</p>
+
+          <div class="pp-ing__list">
+            <div class="pp-ing__item">
+              <div class="pp-ing__icon is-gold">🌾</div>
+              <div>
+                <h4 class="pp-ing__name">
+                  <span data-en>Colloidal Oat</span><span data-cn>胶体燕麦</span>
+                  <small data-en>Soothes</small><small data-cn>舒缓</small>
+                </h4>
+                <p class="pp-ing__body" data-en>Forms a thin moisture-locking film. Calms itchy spots within minutes.</p>
+                <p class="pp-ing__body" data-cn>形成锁水薄膜，几分钟舒缓痒感。</p>
+              </div>
+            </div>
+            <div class="pp-ing__item">
+              <div class="pp-ing__icon is-pink">🌸</div>
+              <div>
+                <h4 class="pp-ing__name">
+                  <span data-en>Calendula Extract</span><span data-cn>金盏花萃取</span>
+                  <small data-en>Heals</small><small data-cn>修护</small>
+                </h4>
+                <p class="pp-ing__body" data-en>Time-honored skin healer. Speeds repair on cracked pads and irritated bellies.</p>
+                <p class="pp-ing__body" data-cn>古老的护肤之友，加快肉垫与腹部肌肤修复。</p>
+              </div>
+            </div>
+            <div class="pp-ing__item">
+              <div class="pp-ing__icon is-mint">🌿</div>
+              <div>
+                <h4 class="pp-ing__name">
+                  <span data-en>Centella Asiatica</span><span data-cn>积雪草</span>
+                  <small data-en>Strengthens</small><small data-cn>修复</small>
+                </h4>
+                <p class="pp-ing__body" data-en>Boosts collagen at the skin barrier — coat grows back stronger, faster.</p>
+                <p class="pp-ing__body" data-cn>强化肌肤屏障，毛发再生更快更壮。</p>
+              </div>
+            </div>
+            <div class="pp-ing__item">
+              <div class="pp-ing__icon">🍯</div>
+              <div>
+                <h4 class="pp-ing__name">
+                  <span data-en>Manuka Honey</span><span data-cn>麦卢卡蜂蜜</span>
+                  <small data-en>Protects</small><small data-cn>保护</small>
+                </h4>
+                <p class="pp-ing__body" data-en>Natural antibacterial. Keeps clean skin clean between washes.</p>
+                <p class="pp-ing__body" data-cn>天然抗菌，洗护间隔保持清洁。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TESTIMONIALS ===================== -->
+  <section class="pp-section">
+    <div class="pp-section__head reveal">
+      <span class="pp-eyebrow"><span data-en>Loved by pet parents</span><span data-cn>主人们都爱</span></span>
+      <h2 class="pp-section__title" data-en>Tail wags, <em>in their words.</em></h2>
+      <h2 class="pp-section__title" data-cn>主人心声，<em>摇尾认证。</em></h2>
+    </div>
+
+    <div class="pp-reviews" id="home-reviews"></div>
+  </section>
+
+  <!-- ===================== BANNER ===================== -->
+  <section class="pp-banner">
+    <div class="pp-banner__inner">
+      <div class="reveal">
+        <span class="pp-eyebrow pp-eyebrow--gold"><span data-en>Not sure where to start?</span><span data-cn>不知从何入手？</span></span>
+        <h2 class="pp-banner__title" data-en>Take the 60-second skin quiz and find your pet's <em>perfect match.</em></h2>
+        <h2 class="pp-banner__title" data-cn>60 秒护肤测试，<em>为爱宠找到对的产品。</em></h2>
+        <p class="pp-banner__lead" data-en>Answer 5 questions about coat, skin, lifestyle, and the routine you can stick to. We'll build a 3-step routine just for them.</p>
+        <p class="pp-banner__lead" data-cn>回答 5 道关于毛发、肌肤、生活习惯的问题，我们为爱宠定制一套三步护理流程。</p>
+      </div>
+      <div class="pp-banner__cta reveal" data-delay="1">
+        <a href="quiz.html" class="pp-btn pp-btn--primary pp-btn--xl">
+          <span data-en>Start the quiz</span><span data-cn>开始测试</span>
+          <i data-lucide="arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="pp-section">
+    <div class="pp-section__head reveal">
+      <span class="pp-eyebrow"><span data-en>Asked a lot</span><span data-cn>常见问题</span></span>
+      <h2 class="pp-section__title" data-en>Got <em>questions?</em></h2>
+      <h2 class="pp-section__title" data-cn>有<em>疑问吗？</em></h2>
+    </div>
+
+    <div class="pp-faq" id="home-faqs"></div>
+  </section>
+
+</main>
+
+<!-- ====== Tweaks panel mount ====== -->
+<div id="tweaks-root"></div>
+
+<!-- Scripts -->
+<script src="scripts/data.js"></script>
+<script src="scripts/store.js"></script>
+<script src="scripts/chrome.js"></script>
+<script src="scripts/app.js"></script>
+
+<!-- React (for tweaks panel) -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="scripts/tweaks-panel.jsx"></script>
+<script type="text/babel" src="scripts/site-tweaks.jsx"></script>
+
+<script>
+  // Mount chrome
+  PPChrome.mount({ active: "home" });
+
+  // ---------- Home hero carousel (slide 1 = headline + CTAs; rest = photo only) ----------
+  (function initHeroCarousel() {
+    const section = document.getElementById("pp-hero-section");
+    const slidesEl = document.getElementById("pp-hero-slides");
+    const dotsEl = document.getElementById("pp-hero-dots");
+    if (!section || !slidesEl || !dotsEl) return;
+
+    const escAttr = (s) =>
+      String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;");
+
+    const urls = window.PP_STORE?.getHeroSlides?.() || ["photo/main.png"];
+    const altFirst =
+      "Prince Paw pet skincare — skin and coat care fit for royalty";
+
+    slidesEl.innerHTML = urls
+      .map(
+        (src, i) =>
+          `<div class="pp-hero-img__slide${i === 0 ? " is-active" : ""}" role="group" aria-roledescription="slide" aria-label="Slide ${i + 1} of ${urls.length}" data-idx="${i}">
+        <img src="${escAttr(src)}" alt="${i === 0 ? escAttr(altFirst) : ""}" loading="${i === 0 ? "eager" : "lazy"}">
+      </div>`
+      )
+      .join("");
+
+    let idx = 0;
+    const getSlides = () => [...slidesEl.querySelectorAll(".pp-hero-img__slide")];
+
+    function setPlain(plain) {
+      section.classList.toggle("pp-hero-img--plain", plain);
+    }
+
+    function go(to) {
+      const s = getSlides();
+      if (!s.length) return;
+      idx = ((to % s.length) + s.length) % s.length;
+      s.forEach((el, i) => el.classList.toggle("is-active", i === idx));
+      dotsEl.querySelectorAll(".pp-hero-img__dot").forEach((d, i) => {
+        d.classList.toggle("is-active", i === idx);
+        d.setAttribute("aria-current", i === idx ? "true" : "false");
+      });
+      setPlain(idx !== 0);
+    }
+
+    if (urls.length > 1) {
+      dotsEl.hidden = false;
+      dotsEl.innerHTML = urls
+        .map(
+          (_, i) =>
+            `<button type="button" class="pp-hero-img__dot${i === 0 ? " is-active" : ""}" aria-label="Go to slide ${i + 1}" data-go="${i}"></button>`
+        )
+        .join("");
+      dotsEl.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-go]");
+        if (!b) return;
+        go(parseInt(b.dataset.go, 10));
+        resetTimer();
+      });
+    } else {
+      dotsEl.hidden = true;
+      dotsEl.innerHTML = "";
+    }
+
+    setPlain(false);
+
+    let timer;
+    function resetTimer() {
+      clearInterval(timer);
+      if (urls.length <= 1) return;
+      timer = setInterval(() => go(idx + 1), 6000);
+    }
+    resetTimer();
+    section.addEventListener("mouseenter", () => clearInterval(timer));
+    section.addEventListener("mouseleave", resetTimer);
+  })();
+
+  // ---------- Render featured products ----------
+  function productCardHTML(p) {
+    const lang = document.documentElement.lang || "en";
+    const ribbon = p.ribbon ? `<span class="pp-card__ribbon is-${p.ribbon.color}">
+      <span data-en>${p.ribbon.en}</span><span data-cn>${p.ribbon.cn}</span>
+    </span>` : "";
+    const fullStars = Math.floor(p.rating);
+    const stars = "★".repeat(fullStars) + "☆".repeat(5 - fullStars);
+    return `
+      <article class="pp-card reveal" data-id="${p.id}">
+        <a href="product.html?id=${p.id}" class="pp-card__img" style="text-decoration:none;display:block;">
+          ${ribbon}
+          <img src="${p.img}" alt="">
+          <button class="pp-card__quick" aria-label="Quick view" tabindex="-1">
+            <i data-lucide="eye"></i>
+          </button>
+        </a>
+        <div class="pp-card__body">
+          <a href="product.html?id=${p.id}" style="text-decoration:none;color:inherit;">
+            <h3 class="pp-card__name">
+              <span data-en>${p.name.en}</span><span data-cn>${p.name.cn}</span>
+            </h3>
+            <p class="pp-card__sub">
+              <span data-en>${p.sub.en}</span><span data-cn>${p.sub.cn}</span>
+            </p>
+          </a>
+          <div class="pp-card__stars">${stars}<span class="pp-card__reviews">(${p.reviews})</span></div>
+          <div class="pp-card__row">
+            <div class="pp-card__price">MYR ${p.price}</div>
+            <button class="pp-card__add" data-add="${p.id}">
+              <i data-lucide="plus"></i>
+              <span data-en>Add</span><span data-cn>加入</span>
+            </button>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  document.getElementById("featured-products").innerHTML =
+    (window.PP_STORE?.getProducts?.() || PP_DATA.products).slice(0, 6).map(productCardHTML).join("");
+
+  // ---------- Reviews ----------
+  document.getElementById("home-reviews").innerHTML = PP_DATA.reviews.map((r, i) => {
+    const stars = "★".repeat(r.stars);
+    return `
+      <article class="pp-review reveal" data-delay="${i+1}">
+        <div class="pp-review__stars">${stars}</div>
+        <p class="pp-review__quote" data-en>${r.quote.en}</p>
+        <p class="pp-review__quote" data-cn>${r.quote.cn}</p>
+        <div class="pp-review__author">
+          <div class="pp-review__avatar"><img src="${r.avatar}" alt=""></div>
+          <div class="pp-review__by">
+            <strong><span data-en>${r.by.en}</span><span data-cn>${r.by.cn}</span></strong>
+            <span data-en>${r.pet.en}</span><span data-cn>${r.pet.cn}</span>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+
+  // ---------- FAQs ----------
+  document.getElementById("home-faqs").innerHTML = PP_DATA.faqs.map((f, i) => `
+    <div class="pp-faq__item${i === 0 ? ' is-open' : ''}">
+      <button class="pp-faq__q">
+        <span><span data-en>${f.q.en}</span><span data-cn>${f.q.cn}</span></span>
+        <i data-lucide="plus"></i>
+      </button>
+      <div class="pp-faq__a">
+        <div class="pp-faq__a-inner">
+          <span data-en>${f.a.en}</span><span data-cn>${f.a.cn}</span>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  // ---------- Add to cart click handler ----------
+  document.body.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-add]");
+    if (!btn) return;
+    e.preventDefault();
+    const id = btn.dataset.add;
+    btn.classList.add("is-added");
+    setTimeout(() => btn.classList.remove("is-added"), 360);
+    window.PP.addToCart(id, null, 1, btn);
+  });
+
+  lucide.createIcons();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product · Prince Paw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/colors_and_type.css">
+<link rel="stylesheet" href="styles/site.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<main data-screen-label="Product">
+
+  <nav class="pp-bread" aria-label="Breadcrumb">
+    <a href="index.html" data-en>Home</a><a href="index.html" data-cn>首页</a>
+    &nbsp;/&nbsp;
+    <a href="shop.html" data-en>Shop</a><a href="shop.html" data-cn>商城</a>
+    &nbsp;/&nbsp;
+    <span id="bread-name">—</span>
+  </nav>
+
+  <section class="pp-pdp" id="pdp"></section>
+
+  <!-- Customer Reviews -->
+  <section class="pp-section" style="padding-top:32px;padding-bottom:0;" id="reviews-section">
+    <div class="pp-section__head reveal" style="margin-bottom:24px;">
+      <span class="pp-eyebrow"><span data-en>Verified buyers</span><span data-cn>买家评价</span></span>
+      <h2 class="pp-section__title" data-en>What pet owners <em>say.</em></h2>
+      <h2 class="pp-section__title" data-cn>宠物主人<em>怎么说。</em></h2>
+    </div>
+    <div id="reviews-summary" style="max-width:860px;margin:0 auto 28px;"></div>
+    <div id="reviews-list"    style="max-width:860px;margin:0 auto;display:grid;gap:14px;"></div>
+    <div id="reviews-empty"   style="max-width:860px;margin:0 auto;display:none;"></div>
+  </section>
+
+  <section class="pp-section" style="padding-top:32px;">
+    <div class="pp-section__head reveal">
+      <span class="pp-eyebrow"><span data-en>Pairs well with</span><span data-cn>搭配推荐</span></span>
+      <h2 class="pp-section__title" data-en>Build the <em>routine.</em></h2>
+      <h2 class="pp-section__title" data-cn>建立<em>护理流程。</em></h2>
+    </div>
+    <div class="pp-grid pp-grid--4" id="related"></div>
+  </section>
+
+</main>
+
+<div id="tweaks-root"></div>
+
+<script src="scripts/data.js"></script>
+<script src="scripts/store.js"></script>
+<script src="scripts/chrome.js"></script>
+<script src="scripts/app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="scripts/tweaks-panel.jsx"></script>
+<script type="text/babel" src="scripts/site-tweaks.jsx"></script>
+
+<script>
+  PPChrome.mount({ active: "shop" });
+
+  const params = new URLSearchParams(location.search);
+  const products = window.PP_STORE?.getProducts?.() || PP_DATA.products;
+  const id = params.get("id") || products[0].id;
+  const p = products.find((x) => x.id === id) || products[0];
+
+  if (window.PP && typeof PP.recordProductView === "function") PP.recordProductView(p.id);
+
+  document.title = `${p.name.en} · Prince Paw`;
+  document.getElementById("bread-name").innerHTML =
+    `<span data-en>${p.name.en}</span><span data-cn>${p.name.cn}</span>`;
+
+  const state = { variant: p.variants[0].id, qty: 1, thumb: 0 };
+
+  function fullStars(r) {
+    const f = Math.floor(r);
+    return "★".repeat(f) + "☆".repeat(5 - f);
+  }
+
+  function render() {
+    const v = p.variants.find((x) => x.id === state.variant) || p.variants[0];
+    document.getElementById("pdp").innerHTML = `
+      <div class="pp-pdp__gallery">
+        <div class="pp-pdp__main">
+          <img src="${p.gallery[state.thumb]}" alt="" id="main-img">
+        </div>
+        <div class="pp-pdp__thumbs">
+          ${p.gallery.map((src, i) => `
+            <div class="pp-pdp__thumb ${i === state.thumb ? 'is-active' : ''}" data-thumb="${i}">
+              <img src="${src}" alt="">
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="pp-pdp__info">
+        <span class="pp-eyebrow">
+          <span data-en>${p.ribbon?.en || 'Skincare'}</span>
+          <span data-cn>${p.ribbon?.cn || '护肤系列'}</span>
+        </span>
+        <h1 class="pp-pdp__title">
+          <span data-en>${p.name.en}</span><span data-cn>${p.name.cn}</span>
+        </h1>
+        <p class="pp-pdp__sub">
+          <span data-en>${p.sub.en}</span><span data-cn>${p.sub.cn}</span>
+        </p>
+        <div class="pp-pdp__rating">
+          <span class="stars">${fullStars(p.rating)}</span>
+          <span>${p.rating}</span>
+          <span>·</span>
+          <span>${p.reviews}<span data-en> reviews</span><span data-cn> 条评价</span></span>
+        </div>
+        <div class="pp-pdp__price">
+          MYR ${v.price}
+          ${p.compare ? `<del>MYR ${p.compare}</del>` : ''}
+        </div>
+        <p class="pp-pdp__lead" data-en>${p.tagline.en}</p>
+        <p class="pp-pdp__lead" data-cn>${p.tagline.cn}</p>
+
+        <div class="pp-variant">
+          <div class="pp-variant__label">
+            <span data-en>Size</span><span data-cn>规格</span>
+            <span class="picked">·
+              <span data-en>${v.label.en}</span><span data-cn>${v.label.cn}</span>
+            </span>
+          </div>
+          <div class="pp-variant__opts">
+            ${p.variants.map(opt => `
+              <button class="pp-variant__opt ${opt.id === state.variant ? 'is-on' : ''}" data-variant="${opt.id}">
+                <strong><span data-en>${opt.label.en}</span><span data-cn>${opt.label.cn}</span></strong>
+                <small><span data-en>${opt.sub.en} · MYR ${opt.price}</span><span data-cn>${opt.sub.cn} · MYR ${opt.price}</span></small>
+              </button>`).join('')}
+          </div>
+        </div>
+
+        <div class="pp-pdp__qty">
+          <div class="pp-qty">
+            <button data-q="dec">−</button>
+            <span id="qty">${state.qty}</span>
+            <button data-q="inc">+</button>
+          </div>
+          ${(()=>{ const s=p.stock??50; return s===0
+            ? `<span style="margin-left:12px;font-size:.8rem;font-weight:700;color:#c62828;background:#fde8e4;padding:4px 12px;border-radius:999px;"><span data-en>Out of stock</span><span data-cn>已售罄</span></span>`
+            : s<=10
+            ? `<span style="margin-left:12px;font-size:.8rem;font-weight:700;color:#f57f17;background:#fff8e1;padding:4px 12px;border-radius:999px;"><span data-en>Only ${s} left!</span><span data-cn>仅剩 ${s} 件！</span></span>`
+            : `<span style="margin-left:12px;font-size:.8rem;font-weight:700;color:#2e7d32;background:#e8f5e9;padding:4px 12px;border-radius:999px;"><span data-en>In stock</span><span data-cn>有货</span></span>`; })()}
+        </div>
+
+        <div class="pp-pdp__cta">
+          <button class="pp-btn pp-btn--primary pp-btn--lg" id="add" ${(p.stock??50)===0?'disabled style="opacity:.5;cursor:not-allowed;"':''}>
+            <i data-lucide="plus"></i>
+            <span data-en>${(p.stock??50)===0?'Out of Stock':'Add to bag'} — MYR ${(v.price * state.qty).toFixed(0)}</span>
+            <span data-cn>${(p.stock??50)===0?'已售罄':'加入购物袋'} — MYR ${(v.price * state.qty).toFixed(0)}</span>
+          </button>
+          <button class="pp-btn pp-btn--ghost pp-btn--lg" aria-label="Save">
+            <i data-lucide="heart"></i>
+          </button>
+        </div>
+
+        <div class="pp-pdp__perks">
+          <div class="pp-pdp__perk"><i data-lucide="truck"></i><span data-en>Free over MYR 60</span><span data-cn>满 MYR 60 包邮</span></div>
+          <div class="pp-pdp__perk"><i data-lucide="shield-check"></i><span data-en>60-day guarantee</span><span data-cn>60 天保证</span></div>
+          <div class="pp-pdp__perk"><i data-lucide="leaf"></i><span data-en>Cat & dog safe</span><span data-cn>犬猫皆适用</span></div>
+          <div class="pp-pdp__perk"><i data-lucide="recycle"></i><span data-en>Refill program</span><span data-cn>补充计划</span></div>
+        </div>
+      </div>
+    `;
+    lucide.createIcons();
+  }
+
+  // Related products
+  const others = products.filter((x) => x.id !== p.id).slice(0, 4);
+  document.getElementById("related").innerHTML = others.map((q) => {
+    const stars = fullStars(q.rating);
+    return `
+      <article class="pp-card reveal">
+        <a href="product.html?id=${q.id}" class="pp-card__img" style="display:block;text-decoration:none;">
+          <img src="${q.img}" alt="">
+        </a>
+        <div class="pp-card__body">
+          <a href="product.html?id=${q.id}" style="text-decoration:none;color:inherit;">
+            <h3 class="pp-card__name"><span data-en>${q.name.en}</span><span data-cn>${q.name.cn}</span></h3>
+            <p class="pp-card__sub"><span data-en>${q.sub.en}</span><span data-cn>${q.sub.cn}</span></p>
+          </a>
+          <div class="pp-card__stars">${stars}<span class="pp-card__reviews">(${q.reviews})</span></div>
+          <div class="pp-card__row">
+            <div class="pp-card__price">MYR ${q.price}</div>
+            <button class="pp-card__add" data-add="${q.id}">
+              <i data-lucide="plus"></i>
+              <span data-en>Add</span><span data-cn>加入</span>
+            </button>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+
+  render();
+
+  document.body.addEventListener("click", (e) => {
+    const thumb = e.target.closest("[data-thumb]");
+    if (thumb) { state.thumb = +thumb.dataset.thumb; render(); return; }
+    const variant = e.target.closest("[data-variant]");
+    if (variant) { state.variant = variant.dataset.variant; render(); return; }
+    const qBtn = e.target.closest("[data-q]");
+    if (qBtn) {
+      if (qBtn.dataset.q === "inc") state.qty++;
+      if (qBtn.dataset.q === "dec") state.qty = Math.max(1, state.qty - 1);
+      render(); return;
+    }
+    const addMain = e.target.closest("#add");
+    if (addMain) { window.PP.addToCart(p.id, state.variant, state.qty, addMain); return; }
+    const addRel = e.target.closest("[data-add]");
+    if (addRel) {
+      addRel.classList.add("is-added");
+      setTimeout(() => addRel.classList.remove("is-added"), 360);
+      window.PP.addToCart(addRel.dataset.add, null, 1, addRel);
+    }
+  });
+
+  lucide.createIcons();
+
+  // ── Customer Reviews ──────────────────────────────────────
+  (function renderReviews() {
+    const REVIEWS_KEY = 'pp:reviews';
+    let allRevs = [];
+    try { allRevs = JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]'); } catch {}
+
+    const revs = allRevs.filter(r => r.productId === p.id);
+
+    // Also pull any static reviews from PP_DATA if the product has them
+    const staticRevs = (window.PP_DATA?.reviews || [])
+      .filter(r => r.productId === p.id)
+      .map(r => ({ ...r, _static: true }));
+
+    const combined = [...revs, ...staticRevs];
+
+    const summaryEl = document.getElementById('reviews-summary');
+    const listEl    = document.getElementById('reviews-list');
+    const emptyEl   = document.getElementById('reviews-empty');
+
+    if (!combined.length) {
+      summaryEl.style.display = 'none';
+      listEl.style.display    = 'none';
+      emptyEl.style.display   = '';
+      emptyEl.innerHTML = `
+        <div style="background:white;border:1px solid var(--border-1);border-radius:var(--radius-lg);padding:36px 24px;text-align:center;color:var(--fg-3);">
+          <div style="font-size:2rem;margin-bottom:8px;">🐾</div>
+          <p style="font-size:.9rem;"><span data-en>No reviews yet — be the first to share your experience!</span><span data-cn>暂无评价，成为第一个评价者吧！</span></p>
+        </div>`;
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+
+    // Summary bar
+    const avg   = combined.reduce((s, r) => s + (r.rating || 0), 0) / combined.length;
+    const dist  = [5,4,3,2,1].map(n => ({ n, count: combined.filter(r => r.rating === n).length }));
+    const maxD  = Math.max(...dist.map(d => d.count), 1);
+
+    summaryEl.innerHTML = `
+      <div style="background:white;border:1px solid var(--border-1);border-radius:var(--radius-lg);padding:24px 28px;display:flex;gap:32px;align-items:center;flex-wrap:wrap;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:3.5rem;font-weight:700;line-height:1;color:var(--fg-1);">${avg.toFixed(1)}</div>
+          <div style="color:#f9a825;font-size:1.3rem;letter-spacing:2px;margin:4px 0;">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</div>
+          <div style="font-size:.78rem;color:var(--fg-3);">${combined.length} <span data-en>review${combined.length!==1?'s':''}</span><span data-cn> 条评价</span></div>
+        </div>
+        <div style="flex:1;min-width:180px;">
+          ${dist.map(d => `
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+              <span style="font-size:.75rem;font-weight:700;color:var(--fg-2);width:8px;">${d.n}</span>
+              <span style="color:#f9a825;font-size:.8rem;">★</span>
+              <div style="flex:1;height:7px;background:var(--cream-200);border-radius:999px;overflow:hidden;">
+                <div style="height:100%;background:#f9a825;border-radius:999px;width:${Math.round(d.count/maxD*100)}%;transition:width .5s;"></div>
+              </div>
+              <span style="font-size:.72rem;color:var(--fg-3);width:16px;text-align:right;">${d.count}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+
+    listEl.style.display  = '';
+    listEl.innerHTML = combined.map(r => `
+      <div style="background:white;border:1px solid var(--border-1);border-radius:var(--radius-lg);padding:20px 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--cream-200);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:var(--fg-2);flex-shrink:0;">
+              ${(r.customer||'?')[0].toUpperCase()}
+            </div>
+            <div>
+              <div style="font-size:.875rem;font-weight:700;color:var(--fg-1);">${r.customer || 'Verified Buyer'}</div>
+              <div style="font-size:.72rem;color:var(--fg-3);">${r.date || ''}</div>
+            </div>
+          </div>
+          <div style="color:#f9a825;font-size:1rem;letter-spacing:1px;">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</div>
+        </div>
+        ${r.text ? `<p style="font-size:.875rem;color:var(--fg-2);line-height:1.6;margin:0;">"${r.text}"</p>` : ''}
+      </div>`).join('');
+
+    if (window.lucide) lucide.createIcons();
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop · Prince Paw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/colors_and_type.css">
+<link rel="stylesheet" href="styles/site.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<main data-screen-label="Shop">
+
+  <section class="pp-page-head">
+    <div class="pp-page-head__inner">
+      <span class="pp-eyebrow"><span data-en>The whole shelf</span><span data-cn>全部产品</span></span>
+      <h1 data-en>Shop <em>Prince Paw</em></h1>
+      <h1 data-cn>御宠<em>商城</em></h1>
+      <p data-en>Six skin & coat formulas, three bundles, one delightful refill program.</p>
+      <p data-cn>六款肌肤护理 · 三款套装 · 一个温柔的循环计划。</p>
+    </div>
+  </section>
+
+  <section class="pp-shop">
+    <aside class="pp-filters" id="filters">
+      <div class="pp-filters__group">
+        <div class="pp-filters__title" data-en>For</div>
+        <div class="pp-filters__title" data-cn>适用</div>
+        <div class="pp-filters__opts">
+          <label class="pp-filters__opt"><input type="checkbox" data-filter="for" value="dog"><span data-en>Dogs</span><span data-cn>狗狗</span></label>
+          <label class="pp-filters__opt"><input type="checkbox" data-filter="for" value="cat"><span data-en>Cats</span><span data-cn>猫咪</span></label>
+        </div>
+      </div>
+      <div class="pp-filters__group">
+        <div class="pp-filters__title" data-en>Concern</div>
+        <div class="pp-filters__title" data-cn>关注</div>
+        <div class="pp-filters__chips">
+          <button class="pp-chip" data-filter="tag" value="dry"><span data-en>Cracked pads</span><span data-cn>干裂肉垫</span></button>
+          <button class="pp-chip" data-filter="tag" value="itchy"><span data-en>Itchy spots</span><span data-cn>瘙痒</span></button>
+          <button class="pp-chip" data-filter="tag" value="sensitive"><span data-en>Sensitive</span><span data-cn>敏感</span></button>
+          <button class="pp-chip" data-filter="tag" value="shine"><span data-en>Coat shine</span><span data-cn>毛感光泽</span></button>
+          <button class="pp-chip" data-filter="tag" value="longhair"><span data-en>Long coat</span><span data-cn>长毛</span></button>
+          <button class="pp-chip" data-filter="tag" value="gentle"><span data-en>Around-face</span><span data-cn>面部</span></button>
+        </div>
+      </div>
+      <div class="pp-filters__group">
+        <div class="pp-filters__title" data-en>Type</div>
+        <div class="pp-filters__title" data-cn>类型</div>
+        <div class="pp-filters__opts">
+          <label class="pp-filters__opt"><input type="checkbox" data-filter="tag" value="paws"><span data-en>Balms</span><span data-cn>膏霜</span></label>
+          <label class="pp-filters__opt"><input type="checkbox" data-filter="tag" value="coat"><span data-en>Wash & condition</span><span data-cn>洗护</span></label>
+          <label class="pp-filters__opt"><input type="checkbox" data-filter="tag" value="soothe"><span data-en>Sprays & mists</span><span data-cn>喷雾</span></label>
+          <label class="pp-filters__opt"><input type="checkbox" data-filter="tag" value="face"><span data-en>Face wash</span><span data-cn>洁颜</span></label>
+        </div>
+      </div>
+      <button class="pp-btn pp-btn--ghost pp-btn--small" id="clear-filters">
+        <i data-lucide="x"></i>
+        <span data-en>Clear filters</span><span data-cn>清除筛选</span>
+      </button>
+    </aside>
+
+    <div class="pp-shop__results">
+      <div class="pp-shop__bar">
+        <div class="pp-shop__count">
+          <strong id="count">6</strong>
+          <span data-en> products</span><span data-cn> 件商品</span>
+        </div>
+        <select class="pp-shop__sort" id="sort">
+          <option value="popular" data-en>Most popular</option>
+          <option value="price-asc" data-en>Price: low → high</option>
+          <option value="price-desc" data-en>Price: high → low</option>
+          <option value="rating" data-en>Top rated</option>
+        </select>
+      </div>
+      <div class="pp-grid pp-grid--4" id="grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="tweaks-root"></div>
+
+<script src="scripts/data.js"></script>
+<script src="scripts/store.js"></script>
+<script src="scripts/chrome.js"></script>
+<script src="scripts/app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="scripts/tweaks-panel.jsx"></script>
+<script type="text/babel" src="scripts/site-tweaks.jsx"></script>
+
+<script>
+  PPChrome.mount({ active: "shop" });
+
+  const grid = document.getElementById("grid");
+  const filterState = { for: new Set(), tag: new Set() };
+
+  function cardHTML(p) {
+    const fullStars = Math.floor(p.rating);
+    const stars = "★".repeat(fullStars) + "☆".repeat(5 - fullStars);
+    const ribbon = p.ribbon ? `<span class="pp-card__ribbon is-${p.ribbon.color}">
+      <span data-en>${p.ribbon.en}</span><span data-cn>${p.ribbon.cn}</span>
+    </span>` : "";
+    return `
+      <article class="pp-card reveal" data-id="${p.id}">
+        <a href="product.html?id=${p.id}" class="pp-card__img" style="display:block;text-decoration:none;">
+          ${ribbon}
+          <img src="${p.img}" alt="">
+          <button class="pp-card__quick" tabindex="-1" aria-label="Quick view"><i data-lucide="eye"></i></button>
+        </a>
+        <div class="pp-card__body">
+          <a href="product.html?id=${p.id}" style="text-decoration:none;color:inherit;">
+            <h3 class="pp-card__name"><span data-en>${p.name.en}</span><span data-cn>${p.name.cn}</span></h3>
+            <p class="pp-card__sub"><span data-en>${p.sub.en}</span><span data-cn>${p.sub.cn}</span></p>
+          </a>
+          <div class="pp-card__stars">${stars}<span class="pp-card__reviews">(${p.reviews})</span></div>
+          <div class="pp-card__row">
+            <div>
+              <div class="pp-card__price">MYR ${p.price}</div>
+              ${(()=>{ const s=p.stock??50; return s===0?`<div style="font-size:.7rem;font-weight:700;color:#c62828;margin-top:2px;"><span data-en>Out of stock</span><span data-cn>已售罄</span></div>`:s<=10?`<div style="font-size:.7rem;font-weight:700;color:#f57f17;margin-top:2px;"><span data-en>Only ${s} left</span><span data-cn>仅剩 ${s} 件</span></div>`:''; })()}
+            </div>
+            <button class="pp-card__add" data-add="${p.id}" ${(p.stock??50)===0?'disabled style="opacity:.45;cursor:not-allowed;"':''}>
+              <i data-lucide="plus"></i>
+              <span data-en>Add</span><span data-cn>加入</span>
+            </button>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function render() {
+    let list = [...(window.PP_STORE?.getProducts?.() || PP_DATA.products)];
+    // filter "for" — anything matching at least one selected for
+    if (filterState.for.size) {
+      list = list.filter((p) => p.tags.some((t) => filterState.for.has(t)));
+    }
+    if (filterState.tag.size) {
+      list = list.filter((p) => p.tags.some((t) => filterState.tag.has(t)));
+    }
+    const sort = document.getElementById("sort").value;
+    if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
+    if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+    if (sort === "rating") list.sort((a, b) => b.rating - a.rating);
+    if (sort === "popular") list.sort((a, b) => b.reviews - a.reviews);
+
+    document.getElementById("count").textContent = list.length;
+    grid.innerHTML = list.length
+      ? list.map(cardHTML).join("")
+      : `<div style="grid-column:1/-1;padding:64px;text-align:center;color:var(--fg-3);">
+          <span data-en>No matches. Try clearing filters.</span><span data-cn>暂无匹配，试着清除筛选。</span>
+        </div>`;
+    lucide.createIcons();
+    // re-trigger reveal on the new cards
+    grid.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
+  }
+
+  document.querySelectorAll("[data-filter]").forEach((el) => {
+    el.addEventListener(el.tagName === "BUTTON" ? "click" : "change", (e) => {
+      const key = el.dataset.filter;
+      const val = el.getAttribute("value");
+      if (el.tagName === "BUTTON") {
+        const set = filterState[key];
+        if (set.has(val)) set.delete(val); else set.add(val);
+        el.classList.toggle("is-on", set.has(val));
+      } else {
+        if (el.checked) filterState[key].add(val);
+        else filterState[key].delete(val);
+      }
+      render();
+    });
+  });
+
+  document.getElementById("sort").addEventListener("change", render);
+  document.getElementById("clear-filters").addEventListener("click", () => {
+    filterState.for.clear(); filterState.tag.clear();
+    document.querySelectorAll("[data-filter]").forEach((el) => {
+      if (el.tagName === "BUTTON") el.classList.remove("is-on");
+      else el.checked = false;
+    });
+    render();
+  });
+
+  document.body.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-add]");
+    if (!btn) return;
+    e.preventDefault();
+    btn.classList.add("is-added");
+    setTimeout(() => btn.classList.remove("is-added"), 360);
+    window.PP.addToCart(btn.dataset.add, null, 1, btn);
+  });
+
+  render();
+</script>
+
+</body>
+</html>

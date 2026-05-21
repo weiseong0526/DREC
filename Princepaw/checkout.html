@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout · Prince Paw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/colors_and_type.css">
+<link rel="stylesheet" href="styles/site.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ── Checkout page ── */
+.co-wrap   { max-width: 1060px; margin: 0 auto; padding: 36px 24px 80px; }
+.co-page-hd { margin-bottom: 28px; }
+.co-page-hd h1 { font-size: 2rem; color: var(--fg-1); margin-bottom: 4px; }
+.co-page-hd p  { color: var(--fg-3); font-size: .9rem; }
+
+.co-layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+
+.co-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-1);
+  padding: 26px 28px;
+  box-shadow: var(--shadow-xs);
+  margin-bottom: 18px;
+}
+.co-card:last-child { margin-bottom: 0; }
+
+.co-card__title {
+  font-family: var(--font-display-en);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg-1);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.co-card__title svg { width: 18px; height: 18px; color: var(--gold-500); }
+
+.co-field { margin-bottom: 14px; }
+.co-field:last-child { margin-bottom: 0; }
+.co-field label {
+  display: block;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  margin-bottom: 5px;
+}
+.co-field label .req { color: var(--danger); margin-left: 2px; }
+.co-field input,
+.co-field select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border-1);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: .95rem;
+  color: var(--fg-1);
+  background: var(--cream-50);
+  outline: none;
+  transition: border-color 140ms, background 140ms;
+}
+.co-field input:focus,
+.co-field select:focus { border-color: var(--gold-400); background: white; }
+.co-field input.is-error { border-color: var(--danger) !important; }
+.co-field .err-msg { font-size: .75rem; color: var(--danger); margin-top: 4px; display: none; }
+.co-field.has-err .err-msg { display: block; }
+
+.co-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.co-row3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; }
+
+/* Voucher */
+.co-voucher-row { display: flex; gap: 10px; align-items: flex-end; }
+.co-voucher-row .co-field { flex: 1; margin-bottom: 0; }
+.co-voucher-btn {
+  padding: 11px 20px;
+  background: var(--cocoa-500);
+  color: var(--cream-50);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display-en);
+  font-weight: 600;
+  font-size: .85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 140ms;
+  flex-shrink: 0;
+}
+.co-voucher-btn:hover { opacity: .85; }
+.co-voucher-msg { margin-top: 8px; font-size: .82rem; font-weight: 600; }
+.co-voucher-msg.is-ok      { color: var(--success); }
+.co-voucher-msg.is-invalid { color: var(--danger); }
+
+/* Order summary right column */
+.co-summary { position: sticky; top: 90px; }
+
+.co-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-1); }
+.co-item:last-child { border-bottom: none; }
+.co-item__imgwrap { position: relative; flex-shrink: 0; }
+.co-item__img { width: 60px; height: 60px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-1); display: block; }
+.co-item__qty-badge {
+  position: absolute; top: -7px; right: -7px;
+  width: 20px; height: 20px;
+  background: var(--cocoa-500); color: white;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.co-item__info { flex: 1; min-width: 0; }
+.co-item__name { font-weight: 700; font-size: .875rem; color: var(--fg-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.co-item__var  { font-size: .75rem; color: var(--fg-3); margin-top: 2px; }
+.co-item__price { font-weight: 700; font-size: .9rem; color: var(--fg-1); white-space: nowrap; flex-shrink: 0; }
+
+.co-divider { border: none; border-top: 1px solid var(--border-1); margin: 14px 0; }
+
+.co-total-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: .875rem; color: var(--fg-2); }
+.co-total-row.is-discount { color: var(--success); font-weight: 700; }
+.co-total-row.is-total { font-size: 1.1rem; font-weight: 800; color: var(--fg-1); border-top: 2px solid var(--border-1); padding-top: 12px; margin-top: 6px; }
+
+.co-submit {
+  width: 100%;
+  padding: 15px;
+  background: var(--grad-gold);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display-en);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--cocoa-500);
+  cursor: pointer;
+  box-shadow: var(--shadow-inset-gold), var(--shadow-sm);
+  transition: opacity 140ms;
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.co-submit:hover { opacity: .88; }
+.co-submit svg { width: 18px; height: 18px; }
+
+.co-secure-note { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: .75rem; color: var(--fg-3); margin-top: 12px; }
+.co-secure-note svg { width: 13px; height: 13px; }
+
+.co-empty { text-align: center; padding: 80px 24px; }
+.co-empty svg { width: 48px; height: 48px; color: var(--fg-4); margin-bottom: 16px; }
+.co-empty h3 { color: var(--fg-1); margin-bottom: 8px; }
+.co-empty p  { color: var(--fg-3); margin-bottom: 24px; }
+
+@media (max-width: 800px) {
+  .co-layout { grid-template-columns: 1fr; }
+  .co-summary { position: static; }
+  .co-row2, .co-row3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<main data-screen-label="Checkout">
+
+  <section class="co-wrap">
+    <div class="co-page-hd">
+      <h1>
+        <span data-en>Checkout</span>
+        <span data-cn>结账</span>
+      </h1>
+      <p>
+        <a href="shop.html" style="color:var(--gold-600);text-decoration:none;">
+          <span data-en>← Continue shopping</span>
+          <span data-cn>← 继续选购</span>
+        </a>
+      </p>
+    </div>
+
+    <!-- Empty cart state (hidden if cart has items) -->
+    <div class="co-empty" id="co-empty" style="display:none;">
+      <i data-lucide="shopping-bag"></i>
+      <h3 data-en>Your bag is empty</h3>
+      <h3 data-cn>购物袋是空的</h3>
+      <p data-en>Add some products before checking out.</p>
+      <p data-cn>请先加入产品再结账。</p>
+      <a href="shop.html" class="pp-btn pp-btn--primary">
+        <span data-en>Browse Products</span>
+        <span data-cn>浏览产品</span>
+      </a>
+    </div>
+
+    <!-- Main checkout layout -->
+    <div class="co-layout" id="co-layout">
+
+      <!-- LEFT: Form -->
+      <div>
+
+        <!-- Delivery Details -->
+        <div class="co-card">
+          <div class="co-card__title">
+            <i data-lucide="map-pin"></i>
+            <span data-en>Delivery Details</span>
+            <span data-cn>收货信息</span>
+          </div>
+
+          <div class="co-row2">
+            <div class="co-field" id="field-name">
+              <label><span data-en>Full Name</span><span data-cn>姓名</span><span class="req">*</span></label>
+              <input type="text" id="f-name" placeholder="e.g. Ahmad bin Ali" autocomplete="name">
+              <div class="err-msg" data-en>Please enter your name</div>
+              <div class="err-msg" data-cn>请输入姓名</div>
+            </div>
+            <div class="co-field" id="field-phone">
+              <label><span data-en>Phone Number</span><span data-cn>手机号码</span><span class="req">*</span></label>
+              <input type="tel" id="f-phone" placeholder="+601X-XXXXXXX" autocomplete="tel">
+              <div class="err-msg" data-en>Please enter a valid phone number</div>
+              <div class="err-msg" data-cn>请输入有效手机号码</div>
+            </div>
+          </div>
+
+          <div class="co-field" id="field-email">
+            <label><span data-en>Email Address</span><span data-cn>电子邮件</span><span class="req">*</span></label>
+            <input type="email" id="f-email" placeholder="you@email.com" autocomplete="email">
+            <div class="err-msg" data-en>Please enter a valid email</div>
+            <div class="err-msg" data-cn>请输入有效电子邮件</div>
+          </div>
+
+          <div class="co-field" id="field-addr1">
+            <label><span data-en>Address Line 1</span><span data-cn>地址第一行</span><span class="req">*</span></label>
+            <input type="text" id="f-addr1" placeholder="e.g. No. 12, Jalan Bukit Bintang" autocomplete="address-line1">
+            <div class="err-msg" data-en>Please enter your address</div>
+            <div class="err-msg" data-cn>请输入地址</div>
+          </div>
+
+          <div class="co-field">
+            <label><span data-en>Address Line 2</span><span data-cn>地址第二行</span><span style="color:var(--fg-4);font-weight:400;"> (optional)</span></label>
+            <input type="text" id="f-addr2" placeholder="e.g. Taman Bukit Permai, Apt 3B" autocomplete="address-line2">
+          </div>
+
+          <div class="co-row3">
+            <div class="co-field" id="field-city">
+              <label><span data-en>City</span><span data-cn>城市</span><span class="req">*</span></label>
+              <input type="text" id="f-city" placeholder="e.g. Kuala Lumpur" autocomplete="address-level2">
+              <div class="err-msg" data-en>Please enter your city</div>
+              <div class="err-msg" data-cn>请输入城市</div>
+            </div>
+            <div class="co-field" id="field-state">
+              <label><span data-en>State</span><span data-cn>州属</span><span class="req">*</span></label>
+              <select id="f-state" autocomplete="address-level1">
+                <option value="">— Select —</option>
+                <option>Johor</option>
+                <option>Kedah</option>
+                <option>Kelantan</option>
+                <option>Kuala Lumpur</option>
+                <option>Labuan</option>
+                <option>Melaka</option>
+                <option>Negeri Sembilan</option>
+                <option>Pahang</option>
+                <option>Penang</option>
+                <option>Perak</option>
+                <option>Perlis</option>
+                <option>Putrajaya</option>
+                <option>Sabah</option>
+                <option>Sarawak</option>
+                <option>Selangor</option>
+                <option>Terengganu</option>
+              </select>
+              <div class="err-msg" data-en>Please select a state</div>
+              <div class="err-msg" data-cn>请选择州属</div>
+            </div>
+            <div class="co-field" id="field-postcode">
+              <label><span data-en>Postcode</span><span data-cn>邮编</span><span class="req">*</span></label>
+              <input type="text" id="f-postcode" placeholder="50000" maxlength="5" autocomplete="postal-code">
+              <div class="err-msg" data-en>5-digit postcode</div>
+              <div class="err-msg" data-cn>请输入5位邮编</div>
+            </div>
+          </div>
+
+        </div><!-- /delivery card -->
+
+        <!-- Voucher -->
+        <div class="co-card">
+          <div class="co-card__title">
+            <i data-lucide="ticket"></i>
+            <span data-en>Voucher Code</span>
+            <span data-cn>优惠码</span>
+          </div>
+          <div class="co-voucher-row">
+            <div class="co-field">
+              <label><span data-en>Enter voucher</span><span data-cn>输入优惠码</span></label>
+              <input type="text" id="f-voucher" placeholder="e.g. WELCOME10" style="text-transform:uppercase;letter-spacing:.08em;">
+            </div>
+            <button class="co-voucher-btn" id="apply-voucher-btn">
+              <span data-en>Apply</span>
+              <span data-cn>使用</span>
+            </button>
+          </div>
+          <div class="co-voucher-msg" id="voucher-msg"></div>
+          <p style="font-size:.75rem;color:var(--fg-3);margin-top:10px;" data-en>Try: WELCOME10, PRINCE20, FREESHIP</p>
+          <p style="font-size:.75rem;color:var(--fg-3);margin-top:10px;" data-cn>可用：WELCOME10、PRINCE20、FREESHIP</p>
+        </div><!-- /voucher card -->
+
+      </div><!-- /left col -->
+
+      <!-- RIGHT: Order Summary -->
+      <div class="co-summary">
+        <div class="co-card">
+          <div class="co-card__title">
+            <i data-lucide="shopping-bag"></i>
+            <span data-en>Order Summary</span>
+            <span data-cn>订单摘要</span>
+          </div>
+
+          <div id="co-items-list"></div>
+
+          <hr class="co-divider">
+
+          <div class="co-total-row">
+            <span data-en>Subtotal</span><span data-cn>小计</span>
+            <span id="co-subtotal">MYR 0</span>
+          </div>
+          <div class="co-total-row">
+            <span data-en>Delivery</span><span data-cn>运费</span>
+            <span id="co-delivery">MYR 5</span>
+          </div>
+          <div class="co-total-row is-discount" id="co-discount-row" style="display:none;">
+            <span id="co-discount-label" data-en>Voucher discount</span>
+            <span id="co-discount-val">-MYR 0</span>
+          </div>
+          <div class="co-total-row is-total">
+            <span data-en>Total</span><span data-cn>总计</span>
+            <span id="co-total">MYR 0</span>
+          </div>
+
+          <button class="co-submit" id="co-submit-btn">
+            <i data-lucide="lock"></i>
+            <span data-en>Confirm Order</span>
+            <span data-cn>确认订单</span>
+          </button>
+
+          <div class="co-secure-note">
+            <i data-lucide="shield-check"></i>
+            <span data-en>Secure checkout · SSL encrypted</span>
+            <span data-cn>安全结账 · SSL 加密</span>
+          </div>
+
+        </div>
+      </div><!-- /right col -->
+
+    </div><!-- /co-layout -->
+  </section>
+
+</main>
+
+<script src="scripts/data.js"></script>
+<script src="scripts/store.js"></script>
+<script src="scripts/chrome.js"></script>
+<script src="scripts/app.js"></script>
+<script>
+PPChrome.mount({ active: "" });
+
+(function () {
+  const CART_KEY     = 'pp:cart';
+  const CHECKOUT_KEY = 'pp:checkout';
+
+  const VOUCHERS = {
+    'WELCOME10' : { type: 'pct',  value: 10, label: '10% off',   labelCn: '9折优惠' },
+    'PRINCE20'  : { type: 'pct',  value: 20, label: '20% off',   labelCn: '8折优惠' },
+    'FREESHIP'  : { type: 'ship', value: 0,  label: 'Free shipping', labelCn: '免运费' },
+  };
+  const DELIVERY_FEE = 5;
+  const FREE_DELIVERY_THRESHOLD = 60;
+
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+    catch { return []; }
+  }
+
+  const allProds = () => window.PP_STORE?.getProducts?.() || window.PP_DATA?.products || [];
+
+  let appliedVoucher = null;
+
+  // ── Render items ──────────────────────────────────
+  function renderItems() {
+    const cart = getCart();
+    const list = document.getElementById('co-items-list');
+    if (!cart.length) return;
+    list.innerHTML = cart.map(l => {
+      const p = allProds().find(x => x.id === l.productId) || {};
+      return `
+        <div class="co-item">
+          <div class="co-item__imgwrap">
+            <img class="co-item__img" src="${p.img || ''}" alt="">
+            <span class="co-item__qty-badge">${l.qty}</span>
+          </div>
+          <div class="co-item__info">
+            <div class="co-item__name">${p.name?.en || l.name}</div>
+            <div class="co-item__var">${l.variantLabel || ''}</div>
+          </div>
+          <div class="co-item__price">MYR ${(l.price * l.qty).toFixed(0)}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Calculate & render totals ─────────────────────
+  function calcTotals() {
+    const cart     = getCart();
+    const subtotal = cart.reduce((s, l) => s + l.qty * l.price, 0);
+    let deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+    let discount = 0;
+
+    if (appliedVoucher) {
+      if (appliedVoucher.type === 'pct') {
+        discount = parseFloat((subtotal * appliedVoucher.value / 100).toFixed(2));
+      } else if (appliedVoucher.type === 'ship') {
+        deliveryFee = 0;
+        discount = DELIVERY_FEE;
+      }
+    }
+
+    const total = Math.max(0, subtotal + deliveryFee - discount);
+
+    document.getElementById('co-subtotal').textContent = 'MYR ' + subtotal.toFixed(0);
+    document.getElementById('co-delivery').textContent = deliveryFee === 0 ? 'FREE' : 'MYR ' + deliveryFee.toFixed(0);
+
+    const discRow = document.getElementById('co-discount-row');
+    if (discount > 0) {
+      discRow.style.display = 'flex';
+      document.getElementById('co-discount-val').textContent = '-MYR ' + discount.toFixed(2);
+      if (appliedVoucher.type === 'ship') {
+        document.getElementById('co-discount-label').textContent = 'Free shipping voucher';
+      } else {
+        document.getElementById('co-discount-label').textContent =
+          'Voucher (' + appliedVoucher.label + ')';
+      }
+    } else {
+      discRow.style.display = 'none';
+    }
+
+    document.getElementById('co-total').textContent = 'MYR ' + total.toFixed(2);
+
+    return { subtotal, deliveryFee, discount, total };
+  }
+
+  // ── Voucher ───────────────────────────────────────
+  document.getElementById('apply-voucher-btn').addEventListener('click', () => {
+    const code  = document.getElementById('f-voucher').value.trim().toUpperCase();
+    const msgEl = document.getElementById('voucher-msg');
+    const v     = VOUCHERS[code];
+    if (!code) {
+      msgEl.textContent = '';
+      appliedVoucher = null;
+      calcTotals();
+      return;
+    }
+    if (v) {
+      appliedVoucher = v;
+      msgEl.className = 'co-voucher-msg is-ok';
+      msgEl.textContent = '✓ ' + v.label + ' applied!';
+    } else {
+      appliedVoucher = null;
+      msgEl.className = 'co-voucher-msg is-invalid';
+      msgEl.textContent = '✗ Invalid voucher code.';
+    }
+    calcTotals();
+  });
+
+  document.getElementById('f-voucher').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+
+  // ── Validation ────────────────────────────────────
+  function validate(id, condition) {
+    const field = document.getElementById('field-' + id);
+    if (!field) return condition;
+    const input = field.querySelector('input, select');
+    if (condition) {
+      field.classList.remove('has-err');
+      if (input) input.classList.remove('is-error');
+    } else {
+      field.classList.add('has-err');
+      if (input) input.classList.add('is-error');
+    }
+    return condition;
+  }
+
+  function validateAll() {
+    const name     = document.getElementById('f-name').value.trim();
+    const phone    = document.getElementById('f-phone').value.trim();
+    const email    = document.getElementById('f-email').value.trim();
+    const addr1    = document.getElementById('f-addr1').value.trim();
+    const city     = document.getElementById('f-city').value.trim();
+    const state    = document.getElementById('f-state').value;
+    const postcode = document.getElementById('f-postcode').value.trim();
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const phoneOk = phone.length >= 8;
+    const pcOk    = /^\d{5}$/.test(postcode);
+
+    const ok = [
+      validate('name',     name.length > 0),
+      validate('phone',    phoneOk),
+      validate('email',    emailOk),
+      validate('addr1',    addr1.length > 0),
+      validate('city',     city.length > 0),
+      validate('state',    state.length > 0),
+      validate('postcode', pcOk),
+    ].every(Boolean);
+
+    return ok
+      ? { name, phone, email, addr1, addr2: document.getElementById('f-addr2').value.trim(), city, state, postcode }
+      : null;
+  }
+
+  // ── Submit ────────────────────────────────────────
+  document.getElementById('co-submit-btn').addEventListener('click', () => {
+    const delivery = validateAll();
+    if (!delivery) {
+      document.querySelector('.has-err')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    const cart    = getCart();
+    const totals  = calcTotals();
+    const vCode   = appliedVoucher
+      ? document.getElementById('f-voucher').value.trim().toUpperCase()
+      : '';
+
+    localStorage.setItem(CHECKOUT_KEY, JSON.stringify({
+      delivery,
+      cart,
+      voucher      : vCode,
+      voucherLabel : appliedVoucher?.label || '',
+      subtotal     : totals.subtotal,
+      deliveryFee  : totals.deliveryFee,
+      discount     : totals.discount,
+      total        : totals.total,
+    }));
+
+    window.location.href = 'payment.html';
+  });
+
+  // ── Init ──────────────────────────────────────────
+  const cart = getCart();
+  if (!cart.length) {
+    document.getElementById('co-empty').style.display = 'block';
+    document.getElementById('co-layout').style.display = 'none';
+  } else {
+    renderItems();
+    calcTotals();
+  }
+
+  if (window.lucide) lucide.createIcons();
+})();
+</script>
+</body>
+</html>

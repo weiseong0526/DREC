@@ -1,0 +1,224 @@
+/* ============================================================
+   Prince Paw — Colors & Typography
+   Brand: Pet skincare specialist (CN/EN bilingual)
+   Aesthetic: Regal-cute. Honey gold + cocoa brown + soft cream.
+   ============================================================ */
+
+/* ---------- Webfonts ---------- */
+
+@font-face {
+  font-family: "Source Han Sans SC";
+  src: url("../fonts/SourceHanSansSC-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Latin pairings — loaded from Google Fonts in HTML:
+   - "Fredoka" (display, chunky friendly)
+   - "Nunito"  (body, rounded sans)
+   - "Caveat"  (handwritten accent for specialist/cute callouts)
+*/
+
+:root {
+  /* ============ Color — Brand core ============ */
+
+  /* Honey-gold scale (the metallic gold from the logo, flattened) */
+  --gold-50:  #FFF8E8;
+  --gold-100: #FBE9BC;
+  --gold-200: #F4D588;
+  --gold-300: #ECBE56;
+  --gold-400: #E0A93C;   /* primary brand gold */
+  --gold-500: #C68A26;
+  --gold-600: #9E6A18;
+  --gold-700: #6F4810;
+
+  /* Cocoa-brown scale (the dark outline) */
+  --cocoa-50:  #F5EEE6;
+  --cocoa-100: #E5D6C2;
+  --cocoa-200: #B89776;
+  --cocoa-300: #7A5734;
+  --cocoa-400: #4A311B;
+  --cocoa-500: #2F1C0E;   /* primary deep brown */
+  --cocoa-600: #1F1208;
+  --cocoa-700: #120A04;
+
+  /* Cream / paper neutrals (warm) */
+  --cream-50:  #FEFBF4;   /* page background */
+  --cream-100: #FBF4E2;
+  --cream-200: #F4E8CB;
+  --cream-300: #E9D8A8;
+
+  /* Soft accent — petal pink (skincare hint, cute) */
+  --pink-100: #FDE5E0;
+  --pink-300: #F5B5A6;
+  --pink-500: #E07A66;
+
+  /* Mint — used for "fresh / clean" callouts */
+  --mint-100: #E2F2E5;
+  --mint-500: #6FB57A;
+
+  /* Status — semantic */
+  --success: #6FB57A;
+  --warning: #E0A93C;
+  --danger:  #C9472E;
+  --info:    #4F86A9;
+
+  /* ============ Color — Semantic foreground/background ============ */
+
+  --bg-page:    var(--cream-50);
+  --bg-surface: #FFFFFF;
+  --bg-sunken:  var(--cream-100);
+  --bg-inverse: var(--cocoa-500);
+
+  --fg-1: var(--cocoa-500);   /* headlines & primary text */
+  --fg-2: var(--cocoa-400);   /* body text */
+  --fg-3: var(--cocoa-300);   /* secondary text / labels */
+  --fg-4: var(--cocoa-200);   /* placeholder / disabled */
+  --fg-on-gold:  var(--cocoa-500);
+  --fg-on-cocoa: var(--cream-50);
+
+  --border-1: var(--cream-300);
+  --border-2: var(--cocoa-300);
+  --border-strong: var(--cocoa-500);
+
+  --brand:        var(--gold-400);
+  --brand-hover:  var(--gold-500);
+  --brand-press:  var(--gold-600);
+
+  /* Signature gradient (the "metallic gold" look on labels & buttons) */
+  --grad-gold: linear-gradient(180deg, #F6D879 0%, #E8B14A 45%, #C88826 100%);
+  --grad-gold-shine: linear-gradient(180deg, #FFF1C8 0%, #F2C45C 35%, #B8771C 100%);
+
+  /* ============ Type — families ============ */
+
+  --font-display-en: "Fredoka", "Source Han Sans SC", system-ui, sans-serif;
+  --font-display-cn: "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body:       "Nunito", "Source Han Sans SC", "PingFang SC", system-ui, sans-serif;
+  --font-script:     "Caveat", cursive;     /* hand-drawn accent */
+  --font-mono:       "JetBrains Mono", ui-monospace, monospace;
+
+  /* ============ Type — scale ============ */
+
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-32: 2rem;
+  --fs-40: 2.5rem;
+  --fs-56: 3.5rem;
+  --fs-72: 4.5rem;
+
+  /* Line heights */
+  --lh-tight: 1.05;
+  --lh-snug:  1.2;
+  --lh-base:  1.5;
+  --lh-loose: 1.7;
+
+  /* Letter spacing — display uses positive tracking like the logo */
+  --ls-tight:   -0.01em;
+  --ls-normal:  0;
+  --ls-wide:    0.04em;
+  --ls-wider:   0.08em;
+  --ls-widest:  0.18em;   /* logo-style all-caps */
+
+  /* ============ Spacing ============ */
+
+  --space-2:  2px;
+  --space-4:  4px;
+  --space-8:  8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-96: 96px;
+
+  /* ============ Radii — friendly & rounded ============ */
+
+  --radius-sm:    6px;
+  --radius-md:    12px;
+  --radius-lg:    20px;
+  --radius-xl:    28px;
+  --radius-pill:  999px;
+  --radius-blob:  42% 58% 56% 44% / 48% 42% 58% 52%;  /* soft blob shape */
+
+  /* ============ Shadows ============ */
+
+  --shadow-xs: 0 1px 2px rgba(47, 28, 14, 0.06);
+  --shadow-sm: 0 2px 6px rgba(47, 28, 14, 0.08);
+  --shadow-md: 0 6px 18px rgba(47, 28, 14, 0.10);
+  --shadow-lg: 0 16px 40px rgba(47, 28, 14, 0.14);
+  --shadow-glow-gold: 0 8px 24px rgba(224, 169, 60, 0.35);
+
+  /* The signature "sticker" shadow — chunky offset, like the logo outline */
+  --shadow-sticker: 3px 4px 0 var(--cocoa-500);
+  --shadow-sticker-lg: 5px 6px 0 var(--cocoa-500);
+
+  /* Inner highlight for gold buttons */
+  --shadow-inset-gold: inset 0 1px 0 rgba(255, 255, 255, 0.55),
+                      inset 0 -2px 0 rgba(120, 70, 10, 0.25);
+
+  /* ============ Motion ============ */
+
+  --ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+  --ease-out:    cubic-bezier(.2, .8, .2, 1);
+  --dur-fast:    140ms;
+  --dur-base:    240ms;
+  --dur-slow:    420ms;
+}
+
+/* ============ Element semantics ============ */
+
+html, body {
+  font-family: var(--font-body);
+  font-size: var(--fs-16);
+  line-height: var(--lh-base);
+  color: var(--fg-1);
+  background: var(--bg-page);
+  font-feature-settings: "ss01", "cv01";
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display-en);
+  color: var(--fg-1);
+  letter-spacing: var(--ls-tight);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+h1 { font-size: var(--fs-56); line-height: var(--lh-tight); font-weight: 700; }
+h2 { font-size: var(--fs-40); }
+h3 { font-size: var(--fs-32); }
+h4 { font-size: var(--fs-24); }
+h5 { font-size: var(--fs-20); }
+
+p     { font-size: var(--fs-16); color: var(--fg-2); margin: 0; }
+small { font-size: var(--fs-14); color: var(--fg-3); }
+code, pre { font-family: var(--font-mono); font-size: 0.95em; }
+
+/* The "logo lockup" treatment — chunky uppercase with wide tracking */
+.brand-display {
+  font-family: var(--font-display-en);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-widest);
+  color: transparent;
+  background: var(--grad-gold-shine);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 2px var(--cocoa-500);
+  paint-order: stroke fill;
+}
+
+/* Hand-drawn accent (e.g. "specialist", playful labels) */
+.script {
+  font-family: var(--font-script);
+  font-weight: 700;
+  color: var(--gold-600);
+  font-size: 1.4em;
+}

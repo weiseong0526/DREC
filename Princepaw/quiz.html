@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skin Quiz · Prince Paw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/colors_and_type.css">
+<link rel="stylesheet" href="styles/site.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<main data-screen-label="Quiz">
+  <section class="pp-page-head" style="padding:48px 32px 32px;">
+    <div class="pp-page-head__inner">
+      <span class="pp-eyebrow"><span data-en>60 seconds · 5 questions</span><span data-cn>60 秒 · 5 题</span></span>
+      <h1 data-en>Build your pet's <em>skin routine.</em></h1>
+      <h1 data-cn>定制爱宠的<em>护肤流程。</em></h1>
+    </div>
+  </section>
+
+  <section class="pp-quiz">
+    <div class="pp-quiz__shell" id="quiz"></div>
+  </section>
+</main>
+
+<div id="tweaks-root"></div>
+
+<script src="scripts/data.js"></script>
+<script src="scripts/store.js"></script>
+<script src="scripts/chrome.js"></script>
+<script src="scripts/app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="scripts/tweaks-panel.jsx"></script>
+<script type="text/babel" src="scripts/site-tweaks.jsx"></script>
+
+<script>
+PPChrome.mount({ active: "quiz" });
+
+const QUESTIONS = [
+  {
+    id: "pet",
+    q: { en: "Who's it for?", cn: "为谁定制？" },
+    sub: { en: "Pick the species — formulas adjust automatically.", cn: "选择物种，配方将自动调整。" },
+    opts: [
+      { v: "dog", emoji: "🐶", label: { en: "Dog", cn: "狗狗" }, sub: { en: "Any breed", cn: "任意品种" } },
+      { v: "cat", emoji: "🐱", label: { en: "Cat", cn: "猫咪" }, sub: { en: "Sensitive nose included", cn: "敏感鼻也行" } },
+      { v: "both", emoji: "🐾", label: { en: "Both", cn: "都有" }, sub: { en: "Multi-pet home", cn: "多宠家庭" } },
+    ],
+  },
+  {
+    id: "main",
+    q: { en: "What's the main concern?", cn: "最关心什么？" },
+    sub: { en: "Pick the one that bugs them most.", cn: "选择最困扰的一项。" },
+    opts: [
+      { v: "dry",       emoji: "🐾", label: { en: "Cracked pads",   cn: "干裂肉垫" }, sub: { en: "Walking on rough", cn: "脚底粗糙" } },
+      { v: "itchy",     emoji: "🦟", label: { en: "Itchy spots",    cn: "局部瘙痒" }, sub: { en: "Scratch & nibble",  cn: "频繁挠咬" } },
+      { v: "dull",      emoji: "✨", label: { en: "Dull coat",      cn: "毛色暗淡" }, sub: { en: "Lost the shine",    cn: "失去光泽" } },
+      { v: "sensitive", emoji: "🌿", label: { en: "Sensitive skin", cn: "敏感肌" },  sub: { en: "Reacts to everything", cn: "对什么都过敏" } },
+    ],
+  },
+  {
+    id: "coat",
+    q: { en: "Coat length?", cn: "毛发长度？" },
+    opts: [
+      { v: "short",  emoji: "✂️", label: { en: "Short",   cn: "短毛" }, sub: { en: "Beagle, tabby",  cn: "比格、虎斑" } },
+      { v: "medium", emoji: "🐕", label: { en: "Medium",  cn: "中长毛" }, sub: { en: "Lab, shorthair", cn: "拉布拉多、短毛猫" } },
+      { v: "long",   emoji: "🦁", label: { en: "Long",    cn: "长毛" }, sub: { en: "Maltese, persian", cn: "马尔济斯、波斯" } },
+      { v: "double", emoji: "❄️", label: { en: "Double",  cn: "双层毛" }, sub: { en: "Husky, Maine coon", cn: "哈士奇、缅因" } },
+    ],
+  },
+  {
+    id: "life",
+    q: { en: "How active are they?", cn: "活跃程度？" },
+    sub: { en: "More mud = more bath.", cn: "越爱玩，洗得越勤。" },
+    opts: [
+      { v: "low",  emoji: "🛋️", label: { en: "Couch crew",   cn: "沙发派" }, sub: { en: "Low key", cn: "佛系" } },
+      { v: "med",  emoji: "🌳", label: { en: "Park walks",   cn: "公园散步" }, sub: { en: "Daily strolls", cn: "每日散步" } },
+      { v: "high", emoji: "🏃", label: { en: "Trail runner", cn: "户外健将" }, sub: { en: "Mud & all", cn: "泥水不怕" } },
+    ],
+  },
+  {
+    id: "time",
+    q: { en: "Routine you can actually keep?", cn: "你能坚持的频次？" },
+    opts: [
+      { v: "minimal", emoji: "⏱️", label: { en: "1 product, weekly",  cn: "1 件，每周" }, sub: { en: "Honest answer", cn: "实话实说" } },
+      { v: "duo",     emoji: "🧴", label: { en: "2 products, weekly", cn: "2 件，每周" }, sub: { en: "Wash + finish",   cn: "洗护+收尾" } },
+      { v: "trio",    emoji: "👑", label: { en: "Full 3-step ritual", cn: "完整三步" }, sub: { en: "We're committed",  cn: "认真护理" } },
+    ],
+  },
+];
+
+let step = 0;
+const answers = {};
+const root = document.getElementById("quiz");
+
+function render() {
+  if (step >= QUESTIONS.length) return renderResult();
+  const Q = QUESTIONS[step];
+  const total = QUESTIONS.length;
+  root.innerHTML = `
+    <div class="pp-quiz__progress">
+      <div class="pp-quiz__step-label">
+        <span data-en>Question ${step+1} / ${total}</span><span data-cn>第 ${step+1} 题，共 ${total} 题</span>
+      </div>
+      <div class="pp-quiz__bars">
+        ${QUESTIONS.map((_, i) => `<div class="pp-quiz__bar ${i <= step ? 'is-on' : ''}"></div>`).join('')}
+      </div>
+    </div>
+    <div class="pp-quiz__q">
+      <h2><span data-en>${Q.q.en}</span><span data-cn>${Q.q.cn}</span></h2>
+      ${Q.sub ? `<p><span data-en>${Q.sub.en}</span><span data-cn>${Q.sub.cn}</span></p>` : ''}
+    </div>
+    <div class="pp-quiz__opts">
+      ${Q.opts.map(o => `
+        <button class="pp-quiz__opt ${answers[Q.id] === o.v ? 'is-on' : ''}" data-opt="${o.v}">
+          <div class="pp-quiz__opt-emoji">${o.emoji}</div>
+          <div>
+            <div class="pp-quiz__opt-label"><span data-en>${o.label.en}</span><span data-cn>${o.label.cn}</span></div>
+            ${o.sub ? `<div class="pp-quiz__opt-sub"><span data-en>${o.sub.en}</span><span data-cn>${o.sub.cn}</span></div>` : ''}
+          </div>
+        </button>`).join('')}
+    </div>
+    <div class="pp-quiz__nav">
+      <button class="pp-btn pp-btn--ghost" id="back" ${step === 0 ? 'disabled style="opacity:0.4;cursor:default;"' : ''}>
+        <i data-lucide="arrow-left"></i>
+        <span data-en>Back</span><span data-cn>上一题</span>
+      </button>
+      <button class="pp-btn pp-btn--primary" id="next" ${!answers[Q.id] ? 'disabled style="opacity:0.5;cursor:default;"' : ''}>
+        <span data-en>${step === QUESTIONS.length - 1 ? 'See my routine' : 'Next'}</span>
+        <span data-cn>${step === QUESTIONS.length - 1 ? '查看推荐' : '下一题'}</span>
+        <i data-lucide="arrow-right"></i>
+      </button>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+// Recommendation logic
+function recommend() {
+  const a = answers;
+  // Hero: based on main concern
+  const heroMap = {
+    dry: "royal-paw-balm",
+    itchy: "calm-belly-mist",
+    dull: "coat-glow-shampoo",
+    sensitive: "calm-belly-mist",
+  };
+  // Secondary: based on coat
+  const secondMap = {
+    short: "soothe-itch-spray",
+    medium: "coat-glow-shampoo",
+    long: "velvet-conditioner",
+    double: "velvet-conditioner",
+  };
+  // Tertiary: face wash if multi-pet or sensitive
+  const third = a.pet === "both" || a.main === "sensitive" ? "crown-face-wash" : "soothe-itch-spray";
+
+  const ids = new Set([heroMap[a.main] || "royal-paw-balm", secondMap[a.coat] || "coat-glow-shampoo", third]);
+  // ensure we have right count
+  const list = [...ids].slice(0, a.time === "minimal" ? 1 : a.time === "duo" ? 2 : 3);
+  const products = window.PP_STORE?.getProducts?.() || PP_DATA.products;
+  return list.map((id) => products.find((p) => p.id === id)).filter(Boolean);
+}
+
+function renderResult() {
+  const list = recommend();
+  const total = list.reduce((s, p) => s + p.price, 0);
+  root.innerHTML = `
+    <div class="pp-quiz__result">
+      <span class="pp-eyebrow"><span data-en>Your match</span><span data-cn>你的方案</span></span>
+      <h2 data-en>We built a <em>${list.length}-step routine</em><br>just for them.</h2>
+      <h2 data-cn>已为爱宠定制 <em>${list.length} 步骤</em><br>护理流程。</h2>
+      <p style="font-size:15px;color:var(--fg-2);max-width:460px;margin:8px auto 0;line-height:1.55;">
+        <span data-en>Based on your answers — gentle, vet-formulated, and ready to ship.</span>
+        <span data-cn>根据你的回答 — 温和、兽医配方、即刻发货。</span>
+      </p>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:28px;">
+        ${list.map((p, i) => `
+          <div class="pp-quiz__result-card">
+            <img src="${p.img}" alt="">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span style="font-family:var(--font-display-en);font-weight:700;font-size:12px;letter-spacing:0.1em;color:var(--gold-600);text-transform:uppercase;">
+                  <span data-en>Step ${i+1}</span><span data-cn>第 ${i+1} 步</span>
+                </span>
+              </div>
+              <h3 class="pp-quiz__result-name">
+                <span data-en>${p.name.en}</span><span data-cn>${p.name.cn}</span>
+              </h3>
+              <p class="pp-quiz__result-sub">
+                <span data-en>${p.tagline.en}</span><span data-cn>${p.tagline.cn}</span>
+              </p>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <div class="pp-card__price">MYR ${p.price}</div>
+                <button class="pp-btn pp-btn--ghost pp-btn--small" data-add="${p.id}">
+                  <span data-en>Add</span><span data-cn>加入</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div style="margin-top:28px;padding:22px;border:1.5px dashed var(--cocoa-300);border-radius:18px;background:var(--cream-100);max-width:540px;margin-left:auto;margin-right:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+          <div style="text-align:left;">
+            <div style="font-family:var(--font-display-en);font-weight:700;font-size:18px;color:var(--cocoa-500);">
+              <span data-en>The complete routine</span><span data-cn>完整套装</span>
+            </div>
+            <small style="color:var(--fg-3);">
+              <span data-en>Bundle & save 15%</span><span data-cn>套装享 85 折</span>
+            </small>
+          </div>
+          <button class="pp-btn pp-btn--primary pp-btn--lg" id="add-bundle">
+            <i data-lucide="shopping-bag"></i>
+            <span data-en>Add all — MYR ${(total * 0.85).toFixed(0)}</span>
+            <span data-cn>全部加入 — MYR ${(total * 0.85).toFixed(0)}</span>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">
+        <button class="pp-btn pp-btn--ghost pp-btn--small" id="restart">
+          <i data-lucide="rotate-cw"></i>
+          <span data-en>Take again</span><span data-cn>再测一次</span>
+        </button>
+        <a href="shop.html" class="pp-btn pp-btn--ghost pp-btn--small">
+          <span data-en>Browse all</span><span data-cn>查看全部</span>
+        </a>
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+
+  document.getElementById("restart").addEventListener("click", () => {
+    Object.keys(answers).forEach((k) => delete answers[k]);
+    step = 0;
+    render();
+  });
+  document.getElementById("add-bundle").addEventListener("click", (e) => {
+    list.forEach((p) => window.PP.addToCart(p.id, null, 1));
+    window.PP.toast(document.documentElement.lang === "en" ? "Bundle added!" : "套装已加入！");
+    window.PP.openCart();
+  });
+}
+
+root.addEventListener("click", (e) => {
+  const opt = e.target.closest("[data-opt]");
+  if (opt) {
+    answers[QUESTIONS[step].id] = opt.dataset.opt;
+    render();
+    return;
+  }
+  if (e.target.closest("#next") && !e.target.closest("#next").disabled) {
+    step++;
+    render();
+    return;
+  }
+  if (e.target.closest("#back") && !e.target.closest("#back").disabled) {
+    step = Math.max(0, step - 1);
+    render();
+    return;
+  }
+  const addBtn = e.target.closest("[data-add]");
+  if (addBtn) {
+    window.PP.addToCart(addBtn.dataset.add, null, 1, addBtn);
+    return;
+  }
+});
+
+render();
+</script>
+
+</body>
+</html>
